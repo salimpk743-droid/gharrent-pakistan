@@ -14,7 +14,7 @@
     <header class="topbar">
       <a class="brand" href="#top" aria-label="GharRent Pakistan home"><span class="brand-mark">⌂</span><span>Ghar<span>Rent</span></span><small>Pakistan</small></a>
       <nav class="main-nav" aria-label="Main navigation"><a href="#browse">Browse homes</a><a href="#how">How it works</a><a href="#safety">Safety</a></nav>
-      <div class="header-actions"><button class="text-btn">Sign in</button><button class="post-btn" data-toast="Posting flow is ready for your property details.">＋ Post property</button></div>
+      <div class="header-actions"><button class="post-btn" data-action="open-post">＋ Post property</button></div>
     </header>
 
     <main id="top">
@@ -24,15 +24,15 @@
           <h1>Find a home<br />you’ll <em>love.</em></h1>
           <p class="hero-copy">Search houses, flats, portions, rooms and apartments across Pakistan — simply and safely.</p>
           <div class="search-box">
-            <div class="search-tabs"><button class="active">Rent a home</button><button data-toast="Commercial listings are coming soon.">Commercial</button></div>
+            <div class="search-tabs"><button class="active" type="button" data-search-tab="rent">Rent a home</button><button type="button" data-search-tab="commercial">Commercial</button></div>
             <form id="searchForm" class="search-fields">
               <label class="location-field"><span class="field-label">WHERE</span><input id="locationInput" placeholder="City, area or landmark" value="Lahore" /></label>
-              <label><span class="field-label">PROPERTY TYPE</span><select id="propertyType"><option value="All homes">All homes</option><option>House</option><option>Apartment</option><option>Portion</option><option>Room</option></select></label>
-              <label><span class="field-label">MONTHLY RENT</span><select id="rentRange"><option value="Any budget">Any budget</option><option>Under Rs. 50,000</option><option>Rs. 50k – 100k</option><option>Rs. 100k – 200k</option></select></label>
-              <button class="search-btn" aria-label="Search properties">⌕ <span>Search</span></button>
+              <label><span class="field-label">PROPERTY TYPE</span><select id="propertyType"><option value="All homes">All homes</option><option>House</option><option>Apartment</option><option>Portion</option><option>Room</option><option>Hostel</option></select></label>
+              <label><span class="field-label">MONTHLY RENT</span><select id="rentRange"><option value="Any budget">Any budget</option><option>Under Rs. 50,000</option><option>Rs. 50k – 100k</option><option>Rs. 100k – 200k</option><option>Above Rs. 200k</option></select></label>
+              <button class="search-btn" type="submit" aria-label="Search properties">⌕ <span>Search</span></button>
             </form>
           </div>
-          <div class="popular"><strong>Popular:</strong><a href="#browse">Islamabad</a><a href="#browse">Lahore</a><a href="#browse">Karachi</a><a href="#browse">Abbottabad</a></div>
+          <div class="popular"><strong>Popular:</strong><button type="button" data-city="Islamabad">Islamabad</button><button type="button" data-city="Lahore">Lahore</button><button type="button" data-city="Karachi">Karachi</button><button type="button" data-city="Abbottabad">Abbottabad</button></div>
         </div>
         <div class="hero-note"><span class="verified-dot">✓</span> Built for safer renting</div>
       </section>
@@ -40,35 +40,58 @@
       <section class="stats wrap"><div><strong>50,000+</strong><span>homes to discover</span></div><div><strong>50+</strong><span>cities and growing</span></div><div><strong>Simple</strong><span>for renters & owners</span></div><p>Designed for thoughtful listing review.<br /><a href="#safety">Learn about safety →</a></p></section>
 
       <section class="section wrap" id="browse">
-        <div class="section-heading"><div><p class="eyebrow">START WHERE YOU ARE</p><h2>Explore homes in popular cities</h2></div><button class="arrow-link" data-toast="Browse every city in Pakistan from the full search page.">View all cities <span>→</span></button></div>
+        <div class="section-heading"><div><p class="eyebrow">START WHERE YOU ARE</p><h2>Explore homes in popular cities</h2></div><button class="arrow-link" type="button" data-action="open-cities">View all cities <span>→</span></button></div>
         <div class="cities">
-          <a class="city city-lahore" href="#listings"><span><b>Lahore</b><small>1,240 homes</small></span></a>
-          <a class="city city-karachi" href="#listings"><span><b>Karachi</b><small>982 homes</small></span></a>
-          <a class="city city-isb" href="#listings"><span><b>Islamabad</b><small>756 homes</small></span></a>
-          <a class="city city-pindi" href="#listings"><span><b>Rawalpindi</b><small>438 homes</small></span></a>
-          <a class="city city-peshawar" href="#listings"><span><b>Peshawar</b><small>312 homes</small></span></a>
+          <button class="city city-lahore" type="button" data-city="Lahore"><span><b>Lahore</b><small>1,240 homes</small></span></button>
+          <button class="city city-karachi" type="button" data-city="Karachi"><span><b>Karachi</b><small>982 homes</small></span></button>
+          <button class="city city-isb" type="button" data-city="Islamabad"><span><b>Islamabad</b><small>756 homes</small></span></button>
+          <button class="city city-pindi" type="button" data-city="Rawalpindi"><span><b>Rawalpindi</b><small>438 homes</small></span></button>
+          <button class="city city-peshawar" type="button" data-city="Peshawar"><span><b>Peshawar</b><small>312 homes</small></span></button>
         </div>
       </section>
 
       <section class="section listings-section" id="listings"><div class="wrap">
-        <div class="section-heading"><div><p class="eyebrow">HANDPICKED FOR YOU</p><h2>Featured homes</h2><p class="muted">Sample listings for demonstration — availability is not live.</p></div><div class="carousel-controls"><button id="prev">←</button><button id="next">→</button></div></div>
+        <div class="section-heading"><div><p class="eyebrow">HANDPICKED FOR YOU</p><h2 id="listingTitle">Featured homes</h2><p class="muted" id="listingMeta">Browse verified-style demo listings or add your own property.</p></div><div class="carousel-controls"><button id="prev" type="button" aria-label="Previous">←</button><button id="next" type="button" aria-label="Next">→</button></div></div>
         <div class="cards" id="propertyCards"></div>
-        <div class="center"><button class="outline-btn" data-toast="Full search with filters will appear here.">Browse all properties <span>→</span></button></div>
+        <div class="center"><button class="outline-btn" type="button" data-action="open-cities">Browse all properties <span>→</span></button></div>
       </div></section>
 
-      <section class="section wrap types"><div class="section-heading"><div><p class="eyebrow">FIND YOUR FIT</p><h2>A place for every way of living</h2></div></div><div class="type-grid"><button><span>⌂</span><b>Houses</b><small>Family homes</small></button><button><span>▦</span><b>Apartments</b><small>City living</small></button><button><span>⌑</span><b>Portions</b><small>Independent spaces</small></button><button><span>▱</span><b>Rooms</b><small>Budget friendly</small></button><button><span>⌂</span><b>Hostels</b><small>Student living</small></button></div></section>
+      <section class="section wrap types"><div class="section-heading"><div><p class="eyebrow">FIND YOUR FIT</p><h2>A place for every way of living</h2></div></div><div class="type-grid"><button type="button" data-type="House"><span>⌂</span><b>Houses</b><small>Family homes</small></button><button type="button" data-type="Apartment"><span>▦</span><b>Apartments</b><small>City living</small></button><button type="button" data-type="Portion"><span>⌑</span><b>Portions</b><small>Independent spaces</small></button><button type="button" data-type="Room"><span>▱</span><b>Rooms</b><small>Budget friendly</small></button><button type="button" data-type="Hostel"><span>⌂</span><b>Hostels</b><small>Student living</small></button></div></section>
 
       <section class="why" id="how"><div class="wrap why-grid"><div class="why-image"><div class="image-badge"><b>3 simple steps</b><span>to your next home</span></div></div><div class="why-copy"><p class="eyebrow">RENTING, MADE HUMAN</p><h2>A better way to find your next place</h2><p>We bring transparent details, helpful search tools, and a little more peace of mind to the rental journey.</p><ol><li><span>01</span><div><b>Search with confidence</b><small>Explore homes by city, locality, budget and what matters to you.</small></div></li><li><span>02</span><div><b>Compare the details</b><small>Save favourites and see facilities, rental terms and photos at a glance.</small></div></li><li><span>03</span><div><b>Connect your way</b><small>Message an owner, request a visit and take the next step safely.</small></div></li></ol></div></div></section>
 
-      <section class="section wrap" id="safety"><div class="safety-card"><div><p class="eyebrow">RENT WITH PEACE OF MIND</p><h2>Good homes. Better information.</h2><p>We’re designing GharRent to make trust visible — with clear listing status, protected contact actions and easy reporting.</p><a href="#" data-toast="Safety centre content will open here.">Visit the safety centre →</a></div><div class="checks"><p><i>✓</i> Phone & email verification</p><p><i>✓</i> Listing review before publishing</p><p><i>✓</i> Simple report-a-listing tools</p></div></div></section>
+      <section class="section wrap" id="safety"><div class="safety-card"><div><p class="eyebrow">RENT WITH PEACE OF MIND</p><h2>Good homes. Better information.</h2><p>We’re designing GharRent to make trust visible — with clear listing status, protected contact actions and easy reporting.</p><button class="text-link" type="button" data-action="open-safety">Visit the safety centre →</button></div><div class="checks"><p><i>✓</i> Phone & email verification</p><p><i>✓</i> Listing review before publishing</p><p><i>✓</i> Simple report-a-listing tools</p></div></div></section>
 
-      <section class="cta"><div class="wrap"><p class="eyebrow light">HAVE A PLACE TO SHARE?</p><h2>Turn your property into<br />someone’s next <em>home.</em></h2><p>List in a few simple steps. Reach renters looking in your area.</p><button class="white-btn" data-toast="Let’s start your rental listing.">Post your property <span>→</span></button></div></section>
+      <section class="cta"><div class="wrap"><p class="eyebrow light">HAVE A PLACE TO SHARE?</p><h2>Turn your property into<br />someone’s next <em>home.</em></h2><p>List in a few simple steps. Reach renters looking in your area.</p><button class="white-btn" type="button" data-action="open-post">Post your property <span>→</span></button></div></section>
     </main>
 
-    <footer><div class="wrap footer-grid"><div><a class="brand" href="#top"><span class="brand-mark">⌂</span><span>Ghar<span>Rent</span></span><small>Pakistan</small></a><p>Making it easier to find a place<br />that feels like home.</p></div><div><b>Explore</b><a href="#browse">Browse homes</a><a href="#listings">Featured homes</a><a href="#">Popular cities</a><a href="#">Post a property</a></div><div><b>Support</b><a href="#safety">Safety centre</a><a href="#">Help centre</a><a href="#">Contact us</a><a href="#">Report a problem</a></div><div><b>Browse by province</b><a href="#">Punjab</a><a href="#">Sindh</a><a href="#">Khyber Pakhtunkhwa</a><a href="#">Islamabad Capital Territory</a></div></div><div class="footer-bottom wrap"><span>© 2026 GharRent Pakistan. Demo experience.</span><span>Privacy &nbsp; Terms &nbsp; Cookies</span></div></footer>
-    <nav class="mobile-nav"><a class="active" href="#top">⌂<small>Home</small></a><a href="#browse">⌕<small>Search</small></a><button data-toast="Let’s add your property."><b>＋</b><small>Post</small></button><a href="#listings">♡<small>Saved</small></a><a href="#">◉<small>Account</small></a></nav>
+    <footer><div class="wrap footer-grid"><div><a class="brand" href="#top"><span class="brand-mark">⌂</span><span>Ghar<span>Rent</span></span><small>Pakistan</small></a><p>Making it easier to find a place<br />that feels like home.</p></div><div><b>Explore</b><button type="button" data-action="scroll-browse">Browse homes</button><button type="button" data-action="scroll-listings">Featured homes</button><button type="button" data-action="open-cities">Popular cities</button><button type="button" data-action="open-post">Post a property</button></div><div><b>Support</b><button type="button" data-action="open-safety">Safety centre</button><button type="button" data-action="open-help">Help centre</button><button type="button" data-action="open-contact">Contact us</button><button type="button" data-action="open-report">Report a problem</button></div><div><b>Browse by province</b><button type="button" data-province="Punjab">Punjab</button><button type="button" data-province="Sindh">Sindh</button><button type="button" data-province="Khyber Pakhtunkhwa">Khyber Pakhtunkhwa</button><button type="button" data-province="Islamabad Capital Territory">Islamabad Capital Territory</button></div></div><div class="footer-bottom wrap"><span>© 2026 GharRent Pakistan.</span><span>Privacy &nbsp; Terms &nbsp; Cookies</span></div></footer>
+    <nav class="mobile-nav"><a class="active" href="#top">⌂<small>Home</small></a><a href="#browse">⌕<small>Search</small></a><button type="button" data-action="open-post"><b>＋</b><small>Post</small></button><button type="button" data-action="open-saved">♡<small>Saved</small></button><button type="button" data-action="open-account">◉<small>Account</small></button></nav>
+
+    <dialog id="postDialog" class="modal-dialog">
+      <form id="postForm" class="modal-card">
+        <div class="modal-header"><div><p class="eyebrow">LIST YOUR PROPERTY</p><h2>Post a rental ad</h2><p class="muted">Add the details renters need. Your draft stays on this device.</p></div><button type="button" class="icon-close" data-action="close-post" aria-label="Close">×</button></div>
+        <div class="form-grid">
+          <label>Property title<input name="title" required maxlength="80" placeholder="e.g. 5 Marla family house in Johar Town" /></label>
+          <label>Property type<select name="type" required><option>House</option><option>Apartment</option><option>Portion</option><option>Room</option><option>Hostel</option></select></label>
+          <label>City<select name="city" id="postCity" required></select></label>
+          <label>Tehsil<select name="tehsil" id="postTehsil" required disabled><option value="">Select city first</option></select></label>
+          <label>Area / locality<input name="area" required maxlength="70" placeholder="e.g. DHA Phase 6" /></label>
+          <label>Monthly rent (Rs.)<input name="price" required inputmode="numeric" pattern="[0-9,]+" placeholder="65000" /></label>
+          <label>Bedrooms<input name="beds" required type="number" min="0" max="20" value="3" /></label>
+          <label>Bathrooms<input name="baths" required type="number" min="0" max="20" value="2" /></label>
+          <label>Size<input name="size" required maxlength="30" placeholder="5 Marla / 1200 sq ft" /></label>
+          <label>Phone number<input name="phone" required type="tel" placeholder="03xx-xxxxxxx" /></label>
+          <label class="full">Description<textarea name="description" rows="4" required maxlength="500" placeholder="Tell renters about parking, furnished status, utilities, nearby landmarks, etc."></textarea></label>
+        </div>
+        <div class="modal-actions"><button type="button" class="outline-btn" data-action="close-post">Cancel</button><button type="submit" class="post-btn">Save property</button></div>
+      </form>
+    </dialog>
+
+    <dialog id="citiesDialog" class="modal-dialog"><div class="modal-card"><div class="modal-header"><div><p class="eyebrow">EXPLORE PAKISTAN</p><h2>All cities & tehsils</h2><p class="muted">Choose a city and its full tehsil list.</p></div><button type="button" class="icon-close" data-action="close-cities" aria-label="Close">×</button></div><div class="location-browser"><label>Search city<input id="cityFilter" placeholder="Type a city, e.g. Lahore" /></label><div id="cityList" class="city-list"></div></div></div></dialog>
+
+    <dialog id="infoDialog" class="modal-dialog"><div class="modal-card"><div class="modal-header"><div><p class="eyebrow" id="infoEyebrow">GHARRENT</p><h2 id="infoTitle">Information</h2><p class="muted" id="infoText"></p></div><button type="button" class="icon-close" data-action="close-info" aria-label="Close">×</button></div><div class="info-content" id="infoContent"></div></div></dialog>
     <div id="toast" role="status"></div>
     <script src="app.js"></script>
   </body>
 </html>
-
