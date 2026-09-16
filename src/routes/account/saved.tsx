@@ -1,6 +1,7 @@
-import { createFileRoute, Navigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { useCurrentUserState } from "@/lib/auth/use-current-user";
+import { SignInPanel } from "@/components/auth/sign-in-panel";
+import { useAuthGate } from "@/components/auth/use-auth-gate";
 import { listFavorites, toggleFavorite } from "@/lib/server/favorites";
 import { PropertyCard } from "@/components/property/property-card";
 import type { PublicProperty } from "@/lib/types";
@@ -16,15 +17,23 @@ export const Route = createFileRoute("/account/saved")({
 });
 
 function SavedPage() {
-  const { user, isPending } = useCurrentUserState();
+  const { user, isPending, showSignIn } = useAuthGate();
   const [items, setItems] = useState<PublicProperty[] | null>(null);
 
   useEffect(() => {
     if (user) void listFavorites().then(setItems);
   }, [user]);
 
-  if (isPending) return <div className="grid min-h-[40vh] place-items-center text-sm text-muted">Loading…</div>;
-  if (!user) return <Navigate to="/login" search={{ next: "/account/saved" }} />;
+  if (showSignIn || (!user && !isPending)) {
+    return (
+      <main className="grid min-h-[70vh] place-items-center px-4 py-16">
+        <SignInPanel callbackURL="/account/saved" />
+      </main>
+    );
+  }
+  if (isPending || !user) {
+    return <div className="grid min-h-[40vh] place-items-center text-sm text-muted">Loading…</div>;
+  }
 
   return (
     <main className="mx-auto w-[min(1120px,calc(100%-32px))] py-10">

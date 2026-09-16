@@ -11,7 +11,7 @@ import { toggleFavorite } from "@/lib/server/favorites";
 import { FURNISHED_LABEL, REPORT_REASONS, SIZE_UNIT_LABEL } from "@/lib/constants";
 import { formatPkr } from "@/lib/utils";
 import { telLink, whatsappLink } from "@/lib/phone";
-import { useCurrentUserState } from "@/lib/auth/use-current-user";
+import { useAuthGate } from "@/components/auth/use-auth-gate";
 import { Bath, BedDouble, Flag, Heart, MapPin, Phone, Share2 } from "lucide-react";
 import type { PublicProperty } from "@/lib/types";
 
@@ -50,7 +50,7 @@ export const Route = createFileRoute("/property/$slug")({
 
 function PropertyPage() {
   const property = Route.useLoaderData();
-  const { user, isPending } = useCurrentUserState();
+  const { user, isPending, showSignIn } = useAuthGate();
   const [saved, setSaved] = useState(Boolean(property.saved));
   const [reporting, setReporting] = useState(false);
   const [reason, setReason] = useState<string>(REPORT_REASONS[0].id);
@@ -67,10 +67,11 @@ function PropertyPage() {
       : null;
 
   async function onSave() {
-    if (!user) {
+    if (!user || showSignIn) {
       window.location.href = `/login?next=/property/${property.slug}`;
       return;
     }
+    if (isPending) return;
     const result = await toggleFavorite({ data: { propertyId: property.id } });
     if (result.ok) {
       setSaved(result.saved);
@@ -93,10 +94,11 @@ function PropertyPage() {
   }
 
   async function onReport() {
-    if (!user) {
+    if (!user || showSignIn) {
       window.location.href = `/login?next=/property/${property.slug}`;
       return;
     }
+    if (isPending) return;
     const result = await reportProperty({ data: { propertyId: property.id, reason, details } });
     if (result.ok) {
       toast("Thank you. We will review this listing.");

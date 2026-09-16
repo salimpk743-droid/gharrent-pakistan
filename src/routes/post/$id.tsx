@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PropertyWizard } from "@/components/listing/property-wizard";
 import { SignInPanel } from "@/components/auth/sign-in-panel";
-import { useCurrentUserState } from "@/lib/auth/use-current-user";
+import { useAuthGate } from "@/components/auth/use-auth-gate";
 import { getMyListing } from "@/lib/server/listings";
 import { useEffect, useState } from "react";
 import type { OwnerListing } from "@/lib/types";
@@ -18,7 +18,7 @@ export const Route = createFileRoute("/post/$id")({
 
 function EditListing() {
   const { id } = Route.useParams();
-  const { user, isPending } = useCurrentUserState();
+  const { user, isPending, showSignIn } = useAuthGate();
   const [listing, setListing] = useState<OwnerListing | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -30,14 +30,18 @@ function EditListing() {
     });
   }, [id, isPending, user]);
 
-  if (isPending) return <div className="grid min-h-[40vh] place-items-center text-sm text-muted">Loading…</div>;
-  if (!user) {
+  if (showSignIn || (!user && !isPending)) {
     return (
       <main className="grid min-h-[70vh] place-items-center px-4 py-16">
-        <SignInPanel title="Sign in to continue" callbackURL={`/post/${id}`} />
+        <SignInPanel
+          title="Welcome to GharRent Pakistan"
+          message="Sign in to post properties, save homes and manage your listings."
+          callbackURL={`/post/${id}`}
+        />
       </main>
     );
   }
+  if (isPending) return <div className="grid min-h-[40vh] place-items-center text-sm text-muted">Loading…</div>;
   if (error) {
     return (
       <main className="mx-auto max-w-lg py-20 text-center">

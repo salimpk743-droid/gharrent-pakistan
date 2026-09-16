@@ -245,13 +245,15 @@ export const ownerAction = createServerFn({ method: "POST" })
     const deletedAt = data.action === "delete" ? new Date().toISOString() : null;
     const publishedAt =
       next === "PUBLISHED" && !row.published_at ? new Date().toISOString() : row.published_at;
+    const ownerFilter =
+      profile.role === "ADMIN" || profile.role === "MODERATOR" ? String(row.owner_id) : context.userId;
     await sql`update properties set
       status = ${next},
       expires_at = ${expires},
       deleted_at = ${deletedAt},
       published_at = ${publishedAt},
       updated_at = ${new Date().toISOString()}
-      where id = ${data.id} and owner_id = ${String(row.owner_id)}`;
+      where id = ${data.id} and owner_id = ${ownerFilter}`;
     await sql`insert into audit_log (id, actor_id, action, entity_type, entity_id, meta)
       values (${newId()}, ${context.userId}, ${data.action}, ${"property"}, ${data.id}, ${next})`;
     return { ok: true as const, status: next };

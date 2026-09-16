@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { SignInPanel } from "@/components/auth/sign-in-panel";
-import { useCurrentUserState } from "@/lib/auth/use-current-user";
+import { useAuthGate } from "@/components/auth/use-auth-gate";
 import { createDraft } from "@/lib/server/listings";
 
 export const Route = createFileRoute("/post/")({
@@ -15,7 +15,7 @@ export const Route = createFileRoute("/post/")({
 });
 
 function PostStart() {
-  const { user, isPending } = useCurrentUserState();
+  const { user, isPending, showSignIn } = useAuthGate();
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
 
@@ -36,19 +36,19 @@ function PostStart() {
     };
   }, [isPending, user, navigate]);
 
-  if (isPending) {
-    return <div className="grid min-h-[50vh] place-items-center text-sm text-muted">Preparing your listing…</div>;
-  }
-  if (!user || error === "sign-in") {
+  if (showSignIn || error === "sign-in" || (!user && !isPending)) {
     return (
       <main className="grid min-h-[70vh] place-items-center px-4 py-16">
         <SignInPanel
-          title="Sign in to post your property"
-          message="Continue with Google to create an account and start the listing wizard."
+          title="Welcome to GharRent Pakistan"
+          message="Sign in to post properties, save homes and manage your listings."
           callbackURL="/post"
         />
       </main>
     );
+  }
+  if (isPending) {
+    return <div className="grid min-h-[50vh] place-items-center text-sm text-muted">Preparing your listing…</div>;
   }
   if (error) {
     return (

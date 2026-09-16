@@ -1,6 +1,7 @@
-import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { useCurrentUserState } from "@/lib/auth/use-current-user";
+import { SignInPanel } from "@/components/auth/sign-in-panel";
+import { useAuthGate } from "@/components/auth/use-auth-gate";
 import { listMyListings, ownerAction } from "@/lib/server/listings";
 import type { OwnerListing } from "@/lib/types";
 import { StatusBadge } from "@/components/ui/badge";
@@ -20,7 +21,7 @@ export const Route = createFileRoute("/account/listings")({
 });
 
 function MyListings() {
-  const { user, isPending } = useCurrentUserState();
+  const { user, isPending, showSignIn } = useAuthGate();
   const [items, setItems] = useState<OwnerListing[] | null>(null);
   const [pendingDelete, setPendingDelete] = useState<string | null>(null);
 
@@ -33,8 +34,16 @@ function MyListings() {
     if (user) void reload();
   }, [user]);
 
-  if (isPending) return <div className="grid min-h-[40vh] place-items-center text-sm text-muted">Loading…</div>;
-  if (!user) return <Navigate to="/login" search={{ next: "/account/listings" }} />;
+  if (showSignIn || (!user && !isPending)) {
+    return (
+      <main className="grid min-h-[70vh] place-items-center px-4 py-16">
+        <SignInPanel callbackURL="/account/listings" />
+      </main>
+    );
+  }
+  if (isPending || !user) {
+    return <div className="grid min-h-[40vh] place-items-center text-sm text-muted">Loading…</div>;
+  }
 
   async function act(id: string, action: OwnerAction) {
     const result = await ownerAction({ data: { id, action } });

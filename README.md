@@ -53,10 +53,14 @@ Covered by unit tests in `src/lib/authz.test.ts`. Two-account live OAuth is not 
 
 Sessions are **HttpOnly `__Host-` cookies** on a real deploy. The only browser storage is a **preview-iframe bearer in `sessionStorage`**, used only on `*.grok-sandbox.com` because partitioned cookies cannot be read there. That token is not used on a normal Vercel / custom-domain deploy.
 
+**Google is the primary sign-in method.** There is no email/password form and no phone number is required to create an account.
+
 Two Google sign-in modes:
 
-1. **Grok App Builder / live preview** — Continue with Google federates through the Grok auth broker. No Google Cloud project required in the sandbox.
-2. **Independent GitHub → Vercel (or any host)** — set your own Google OAuth client (below). The app then uses Better Auth `socialProviders.google`.
+1. **Grok App Builder / live preview** — Continue with Google federates through the Grok auth broker (popup). No Google Cloud project required in the sandbox.
+2. **Independent GitHub → Vercel (production)** — set your own Google OAuth client (below). The app then uses Better Auth `socialProviders.google`. Callback path:
+
+   `https://gharrent-pakistan.vercel.app/api/auth/callback/google`
 
 ## Local development
 
@@ -74,23 +78,24 @@ npm test
 npm run build
 ```
 
-`npm test` includes template-workspace tests that expect auth *off*. This app has auth on, so a few of those template assertions fail. GharRent domain tests (`authz`, listing lifecycle, validation, phone, search, image magic) pass.
+`npm test` includes template-workspace tests that expect auth *off*. This app has auth on, so a few of those template assertions fail. GharRent domain tests (`authz`, listing lifecycle, validation, phone, search, image magic, auth origin) pass.
 
 ## Environment variables
 
 **Never commit secrets.** Do not put a `.env` in git.
 
-| Variable | Required | Purpose |
+| Variable | Required on Vercel | Purpose |
 | --- | --- | --- |
-| `DATABASE_URL` | Production | Neon / Postgres connection string |
-| `BETTER_AUTH_SECRET` | Production | 32+ char secret for signing sessions |
-| `BETTER_AUTH_URL` | Production | Public origin, e.g. `https://your-domain.com` |
-| `GOOGLE_CLIENT_ID` | Independent deploy | Google OAuth client ID |
-| `GOOGLE_CLIENT_SECRET` | Independent deploy | Google OAuth client secret |
-| `VITE_GOOGLE_CLIENT_ID` | Independent deploy | Same public client ID (selects native Google in the UI) |
+| `DATABASE_URL` | Yes | Neon / Postgres connection string |
+| `BETTER_AUTH_SECRET` | Yes | 32+ character secret for signing sessions (must be stable across deploys) |
+| `BETTER_AUTH_URL` | Yes | Public origin: `https://gharrent-pakistan.vercel.app` |
+| `GOOGLE_CLIENT_ID` | Yes (production Google) | Google OAuth 2.0 client ID |
+| `GOOGLE_CLIENT_SECRET` | Yes (production Google) | Google OAuth 2.0 client secret (**server-only**, never `VITE_`) |
 | `ADMIN_EMAIL` | Strongly recommended | Google email that is always `ADMIN` |
 | `GROK_AUTH_ISSUER` / `GROK_AUTH_CLIENT_ID` / `GROK_AUTH_CLIENT_SECRET` | Grok platform only | Injected by App Builder. Leave unset on your own Vercel. |
 | `VITE_AUTH_ENABLED` | — | Must not be `"false"` |
+
+Do **not** add `VITE_GOOGLE_CLIENT_SECRET`. Do **not** put the Google client secret in GitHub.
 
 ## Database setup (Neon)
 
@@ -98,15 +103,31 @@ npm run build
 2. Set it on the host. `npm run build` runs `npm run db:migrate`, which applies `migrations/*.sql` in name order.
 3. Tables: Better Auth (`user`, `session`, `account`, …) plus `profiles`, `properties`, `property_images`, `favorites`, `reports`, location tables, `audit_log`.
 
-## Google Cloud OAuth setup (independent deploy)
+## Google Cloud OAuth setup (Vercel production)
 
-1. [Google Cloud Console](https://console.cloud.google.com/) → APIs & Services → Credentials → Create OAuth client ID → Web application.
-2. Authorized JavaScript origins: `https://your-domain.com`
-3. Authorized redirect URIs: `https://your-domain.com/api/auth/callback/google`
-4. Copy client ID and secret into `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and `VITE_GOOGLE_CLIENT_ID` (client ID only).
-5. OAuth consent screen: app name **GharRent Pakistan**, scopes `email`, `profile`, `openid`.
+1. Open [Google Cloud Console](https://console.cloud.google.com/) → APIs & Services → Credentials → Create OAuth client ID → **Web application**.
+2. Authorized JavaScript origins:
+   - `https://gharrent-pakistan.vercel.app`
+3. Authorized redirect URIs (must match Better Auth exactly):
+   - `https://gharrent-pakistan.vercel.app/api/auth/callback/google`
+4. OAuth consent screen: app name **GharRent Pakistan**, scopes `openid`, `email`, `profile`.
+5. In the Vercel project → Settings → Environment Variables, add for **Production** (and Preview if you use it):
 
-On the Grok App Builder deploy you can skip this — Google is brokered for you.
+| Name | Value |
+| --- | --- |
+| `GOOGLE_CLIENT_ID` | the client ID |
+| `GOOGLE_CLIENT_SECRET` | the client secret |
+| `BETTER_AUTH_URL` | `https://gharrent-pakistan.vercel.app` |
+| `BETTER_AUTH_SECRET` | a new random 32+ character string |
+| `DATABASE_URL` | your Neon URL (if not already set) |
+| `ADMIN_EMAIL` | your Google address |
+
+6. Redeploy after saving the variables (they are not picked up by an already-running deployment).
+
+The app derives `BETTER_AUTH_URL` from `VERCEL_PROJECT_PRODUCTION_URL` when the explicit var is missing, so OAuth will not point at localhost. The Google Cloud redirect URI must still be the production callback above.
+
+On the Grok App Builder deploy you can skip Google Cloud — Google is brokered for you.
+
 
 ## Image storage
 
