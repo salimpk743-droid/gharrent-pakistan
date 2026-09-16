@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #163b33;
+  --color-forest: #176b52;
+  --color-forest-2: #218565;
+  --color-lime: #d7f39a;
+  --color-sand: #f4f6f2;
+  --color-line: #e1e7e2;
+  --color-muted: #687770;
+  --color-bg: #f6f8f6;
+  --color-cream: #f5f2ea;
+  --color-danger: #b42318;
+  --color-background: #ffffff;
+  --color-foreground: #163b33;
+  --color-primary: #176b52;
+  --color-primary-foreground: #ffffff;
+  --color-card: #ffffff;
+  --color-border: #e1e7e2;
+  --color-ring: #176b52;
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Playfair Display", Georgia, "Times New Roman", serif;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    margin: 0;
+    background: #fff;
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+  :focus-visible {
+    outline: 2px solid color-mix(in oklab, var(--color-forest) 70%, white);
+    outline-offset: 2px;
+  }
+  input,
+  select,
+  textarea {
+    min-width: 0;
+    max-width: 100%;
+  }
+}
+
+@utility font-display {
+  font-family: var(--font-display);
+}
+
+.hero-photo {
+  background-image:
+    linear-gradient(100deg, rgba(10, 58, 46, 0.96), rgba(19, 91, 70, 0.82) 52%, rgba(19, 91, 70, 0.5)),
+    url("https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1800&q=85");
+  background-size: cover;
+  background-position: center;
+}
+
+.city-lahore {
+  background-image: url("https://images.unsplash.com/photo-1564501049412-61c2a3083791?auto=format&fit=crop&w=900&q=80");
+}
+.city-karachi {
+  background-image: url("https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=600&q=80");
+}
+.city-isb {
+  background-image: url("https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=600&q=80");
+}
+.city-pindi {
+  background-image: url("https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=600&q=80");
+}
+.city-peshawar {
+  background-image: url("https://images.unsplash.com/photo-1600585152915-d208bec867a1?auto=format&fit=crop&w=600&q=80");
+}
+.why-photo {
+  background-image: url("https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1000&q=80");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

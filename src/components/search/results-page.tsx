@@ -1,0 +1,108 @@
+import { Link } from "@tanstack/react-router";
+import { PropertyCard } from "@/components/property/property-card";
+import { SearchBox } from "@/components/search/search-box";
+import { PROPERTY_TYPE_META, PROPERTY_TYPES, typeFromSlug } from "@/lib/constants";
+import type { PublicProperty } from "@/lib/types";
+import { searchHeading } from "@/lib/search";
+
+export function ResultsPage({
+  items,
+  total,
+  page,
+  pageSize,
+  locationLabel,
+  provinceSlug,
+  districtSlug,
+  typeSlug,
+  title,
+  description,
+}: {
+  items: PublicProperty[];
+  total: number;
+  page: number;
+  pageSize: number;
+  locationLabel: string;
+  provinceSlug?: string;
+  districtSlug?: string;
+  typeSlug?: string;
+  title?: string;
+  description?: string;
+}) {
+  const heading = title || searchHeading({ type: typeFromSlug(typeSlug), typeSlug }, locationLabel);
+  const pages = Math.max(1, Math.ceil(total / pageSize));
+  return (
+    <div className="pb-12">
+      <section className="bg-ink px-4 py-8 text-white">
+        <div className="mx-auto w-[min(1120px,100%)] min-w-0">
+          <p className="text-[10px] font-extrabold tracking-[0.16em] text-lime">RENTAL SEARCH</p>
+          <h1 className="font-display mt-2 text-3xl tracking-tight sm:text-4xl">{heading}</h1>
+          <p className="mt-2 max-w-2xl text-sm text-[#d6e2dc]">
+            {description || `${total} listing${total === 1 ? "" : "s"} · ${locationLabel}`}
+          </p>
+          <div className="mt-5 min-w-0">
+            <SearchBox compact />
+          </div>
+        </div>
+      </section>
+      <div className="mx-auto w-[min(1120px,calc(100%-32px))] py-8">
+        <nav className="mb-5 flex flex-wrap gap-2 text-sm" aria-label="Breadcrumb">
+          <Link to="/" className="text-muted no-underline hover:text-forest">
+            Home
+          </Link>
+          <span className="text-line">/</span>
+          <Link to="/rent" className="text-muted no-underline hover:text-forest">
+            Rent
+          </Link>
+          {provinceSlug && (
+            <>
+              <span className="text-line">/</span>
+              <Link
+                to="/rent/$province"
+                params={{ province: provinceSlug }}
+                className="text-muted no-underline hover:text-forest"
+              >
+                {locationLabel.split(", ").at(-1)}
+              </Link>
+            </>
+          )}
+        </nav>
+        {districtSlug && provinceSlug && (
+          <div className="mb-6 flex flex-wrap gap-2">
+            {PROPERTY_TYPES.map((t) => {
+              const slug = PROPERTY_TYPE_META[t].slug;
+              const active = typeSlug === slug;
+              return (
+                <Link
+                  key={t}
+                  to="/rent/$province/$district/$type"
+                  params={{ province: provinceSlug, district: districtSlug, type: slug }}
+                  className={`rounded-full border px-3 py-1.5 text-xs font-semibold no-underline ${
+                    active ? "border-forest bg-forest text-white" : "border-line text-ink hover:border-forest"
+                  }`}
+                >
+                  {PROPERTY_TYPE_META[t].plural}
+                </Link>
+              );
+            })}
+          </div>
+        )}
+        {items.length === 0 ? (
+          <div className="rounded-xl border border-dashed border-line bg-white px-6 py-16 text-center text-muted">
+            No properties found. Try a broader location or budget.
+          </div>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {items.map((p) => (
+              <PropertyCard key={p.id} property={p} />
+            ))}
+          </div>
+        )}
+        {pages > 1 && (
+          <p className="mt-8 text-center text-sm text-muted">
+            Page {page} of {pages}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
