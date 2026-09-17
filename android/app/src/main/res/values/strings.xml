@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="appName">GharRent Pakistan</string>
+    <string name="launcherName">GharRent</string>
+    <string name="assetStatements">[{ \"relation\": [\"delegate_permission/common.handle_all_urls\"], \"target\": { \"namespace\": \"web\", \"site\": \"https://gharrent-pakistan.vercel.app\" } }]</string>
+</resources>

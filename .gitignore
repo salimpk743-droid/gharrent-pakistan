@@ -24,3 +24,10 @@ screenshots/
 .grok/references/
 pglite-debug.log
 *.tsbuildinfo
+android/.gradle/
+android/**/build/
+android/local.properties
+android/*.jks
+android/*.keystore
+android/*.apk
+android/*.aab

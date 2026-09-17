@@ -26,7 +26,7 @@ Stack: **TanStack Start** (React 19, TypeScript, SSR) — not Next.js. PostgreSQ
 | Schema | `migrations/0001_auth.sql`, `migrations/0002_schema.sql` |
 | Pakistan location tree | `src/data/pakistan-locations.ts` |
 | SEO sitemap / robots | `src/routes/sitemap[.]xml.ts`, `src/routes/robots[.]txt.ts` |
-| Legal / safety | `src/routes/privacy.tsx`, `terms.tsx`, `disclaimer.tsx`, `safety.tsx` |
+| Android TWA (Play Store shell) | `android/` |
 
 Listings, accounts, saves, reports and moderation live in **PostgreSQL**. There is **no `localStorage` listing store**. Authorization is enforced on the server using the verified session `userId` — never a client-supplied owner id.
 
@@ -186,3 +186,8 @@ With Google:
 - Report rate limit
 - Audit log for listing and moderation actions
 - No secrets in frontend code
+
+## Android app (Trusted Web Activity)
+
+The Play Store shell lives in [`android/`](android/). It is a Trusted Web Activity that opens `https://gharrent-pakistan.vercel.app/` — the same website, backend, and Google sign-in. It is **not** Capacitor and does not copy the marketplace UI. See [`android/README.md`](android/README.md).
+
