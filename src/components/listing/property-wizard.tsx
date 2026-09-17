@@ -3,7 +3,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Select, Textarea } from "@/components/ui/input";
-import { listAreasForCity, listLocationTree } from "@/lib/server/locations";
+import { listAreasForCity, listCitiesForProvince, listProvinces } from "@/lib/server/locations";
 import {
   addListingImage,
   deleteListingImage,
@@ -20,7 +20,7 @@ import {
   type ListingPurpose,
 } from "@/lib/constants";
 import { formatListingPrice, formatLocation } from "@/lib/utils";
-import type { AreaNode, OwnerListing, ProvinceNode } from "@/lib/types";
+import type { AreaNode, LocationNode, OwnerListing } from "@/lib/types";
 import { Star, Trash2, Upload } from "lucide-react";
 
 const STEPS = ["Location", "Property", "Photos", "Details", "Contact", "Publish"] as const;
@@ -39,20 +39,36 @@ const AMENITIES = [
 export function PropertyWizard({ initial }: { initial: OwnerListing }) {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
-  const [tree, setTree] = useState<ProvinceNode[]>([]);
+  const [provinces, setProvinces] = useState<LocationNode[]>([]);
+  const [cities, setCities] = useState<LocationNode[]>([]);
   const [areas, setAreas] = useState<AreaNode[]>([]);
   const [listing, setListing] = useState(initial);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    void listLocationTree()
-      .then(setTree)
-      .catch(() => setTree([]));
+    void listProvinces()
+      .then(setProvinces)
+      .catch(() => setProvinces([]));
   }, []);
 
-  const province = tree.find((p) => p.id === listing.provinceId);
-  const districts = province?.districts ?? [];
+  useEffect(() => {
+    if (!listing.provinceId) {
+      setCities([]);
+      return;
+    }
+    let cancelled = false;
+    void listCitiesForProvince({ data: { provinceId: listing.provinceId } })
+      .then((rows) => {
+        if (!cancelled) setCities(rows);
+      })
+      .catch(() => {
+        if (!cancelled) setCities([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [listing.provinceId]);
 
   useEffect(() => {
     if (!listing.districtId) {
@@ -233,7 +249,7 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
                 }
               >
                 <option value="">Select province</option>
-                {tree.map((p) => (
+                {provinces.map((p) => (
                   <option key={p.id} value={p.id}>
                     {p.name}
                   </option>
@@ -250,7 +266,7 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
                 }
               >
                 <option value="">Select city</option>
-                {districts.map((d) => (
+                {cities.map((d) => (
                   <option key={d.id} value={d.id}>
                     {d.name}
                   </option>

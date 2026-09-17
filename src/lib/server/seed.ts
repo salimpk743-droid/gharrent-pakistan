@@ -9,23 +9,71 @@ const globalRef = globalThis as typeof globalThis & {
   __gharrentSeed__?: Promise<void>;
 };
 
+const INSERT_CHUNK = 80;
+
+async function tableCount(sql: SeedSql, table: "provinces" | "districts" | "tehsils" | "areas"): Promise<number> {
+  const rows = await sql.query<{ n: number }>(`select count(*)::int as n from ${table}`);
+  return rows[0]?.n ?? 0;
+}
+
+async function insertRows(
+  sql: SeedSql,
+  table: "provinces" | "districts" | "tehsils" | "areas",
+  columns: string[],
+  rows: Record<string, unknown>[],
+) {
+  if (rows.length === 0) return;
+  for (let i = 0; i < rows.length; i += INSERT_CHUNK) {
+    const chunk = rows.slice(i, i + INSERT_CHUNK);
+    const placeholders = chunk
+      .map((_, rowIndex) => {
+        const base = rowIndex * columns.length;
+        return `(${columns.map((_, colIndex) => `$${base + colIndex + 1}`).join(",")})`;
+      })
+      .join(",");
+    const values: unknown[] = [];
+    for (const row of chunk) {
+      for (const column of columns) values.push(row[column]);
+    }
+    await sql.query(
+      `insert into ${table} (${columns.join(",")}) values ${placeholders} on conflict (id) do nothing`,
+      values,
+    );
+  }
+}
+
 async function seedLocations(sql: SeedSql) {
   const { provinces, districts, tehsils } = flattenLocations();
-  for (const p of provinces) {
-    await sql`insert into provinces (id, slug, name, sort_order)
-      values (${p.id}, ${p.slug}, ${p.name}, ${p.sortOrder})
-      on conflict (id) do nothing`;
+  const [provinceCount, districtCount, tehsilCount] = await Promise.all([
+    tableCount(sql, "provinces"),
+    tableCount(sql, "districts"),
+    tableCount(sql, "tehsils"),
+  ]);
+  if (
+    provinceCount >= provinces.length &&
+    districtCount >= districts.length &&
+    tehsilCount >= tehsils.length
+  ) {
+    return;
   }
-  for (const d of districts) {
-    await sql`insert into districts (id, province_id, slug, name)
-      values (${d.id}, ${d.provinceId}, ${d.slug}, ${d.name})
-      on conflict (id) do nothing`;
-  }
-  for (const t of tehsils) {
-    await sql`insert into tehsils (id, district_id, slug, name)
-      values (${t.id}, ${t.districtId}, ${t.slug}, ${t.name})
-      on conflict (id) do nothing`;
-  }
+  await insertRows(
+    sql,
+    "provinces",
+    ["id", "slug", "name", "sort_order"],
+    provinces.map((p) => ({ id: p.id, slug: p.slug, name: p.name, sort_order: p.sortOrder })),
+  );
+  await insertRows(
+    sql,
+    "districts",
+    ["id", "province_id", "slug", "name"],
+    districts.map((d) => ({ id: d.id, province_id: d.provinceId, slug: d.slug, name: d.name })),
+  );
+  await insertRows(
+    sql,
+    "tehsils",
+    ["id", "district_id", "slug", "name"],
+    tehsils.map((t) => ({ id: t.id, district_id: t.districtId, slug: t.slug, name: t.name })),
+  );
 }
 
 async function repairIslamabadIds(sql: SeedSql) {
@@ -43,15 +91,21 @@ async function repairIslamabadIds(sql: SeedSql) {
 }
 
 async function seedAreas(sql: SeedSql) {
-  const existing = await sql<{ id: string }>`select id from areas`;
-  const have = new Set(existing.map((row) => row.id));
   const areas = flattenAreas();
-  for (const a of areas) {
-    if (have.has(a.id)) continue;
-    await sql`insert into areas (id, district_id, slug, name, aliases)
-      values (${a.id}, ${a.districtId}, ${a.slug}, ${a.name}, ${a.aliases})
-      on conflict (id) do nothing`;
-  }
+  const existingCount = await tableCount(sql, "areas");
+  if (existingCount >= areas.length) return;
+  await insertRows(
+    sql,
+    "areas",
+    ["id", "district_id", "slug", "name", "aliases"],
+    areas.map((a) => ({
+      id: a.id,
+      district_id: a.districtId,
+      slug: a.slug,
+      name: a.name,
+      aliases: a.aliases,
+    })),
+  );
 }
 
 async function matchPropertyAreas(sql: SeedSql) {

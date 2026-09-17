@@ -1,6 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
-import { listAreasForCity, listLocationTree } from "@/lib/server/locations";
+import { useEffect, useState } from "react";
+import { listAreasForCity, listCitiesForProvince, listProvinces } from "@/lib/server/locations";
 import {
   PROPERTY_TYPE_META,
   PROPERTY_TYPES,
@@ -12,7 +12,7 @@ import type { MarketplaceSearch } from "@/lib/rent-search";
 import { Button } from "@/components/ui/button";
 import { Label, Select } from "@/components/ui/input";
 import { Search } from "lucide-react";
-import type { AreaNode, ProvinceNode } from "@/lib/types";
+import type { AreaNode, LocationNode } from "@/lib/types";
 
 export function SearchBox({
   compact = false,
@@ -22,7 +22,8 @@ export function SearchBox({
   purpose?: ListingPurpose;
 }) {
   const navigate = useNavigate();
-  const [tree, setTree] = useState<ProvinceNode[]>([]);
+  const [provinces, setProvinces] = useState<LocationNode[]>([]);
+  const [cities, setCities] = useState<LocationNode[]>([]);
   const [areas, setAreas] = useState<AreaNode[]>([]);
   const [purpose, setPurpose] = useState<ListingPurpose>(purposeProp);
   const [province, setProvince] = useState("");
@@ -36,16 +37,31 @@ export function SearchBox({
   }, [purposeProp]);
 
   useEffect(() => {
-    void listLocationTree()
-      .then(setTree)
-      .catch(() => setTree([]));
+    void listProvinces()
+      .then(setProvinces)
+      .catch(() => setProvinces([]));
   }, []);
 
-  const districts = useMemo(
-    () => tree.find((p) => p.slug === province)?.districts ?? [],
-    [tree, province],
-  );
-  const selectedCity = districts.find((d) => d.slug === district);
+  const selectedProvince = provinces.find((p) => p.slug === province);
+  const selectedCity = cities.find((d) => d.slug === district);
+
+  useEffect(() => {
+    if (!selectedProvince) {
+      setCities([]);
+      return;
+    }
+    let cancelled = false;
+    void listCitiesForProvince({ data: { provinceId: selectedProvince.id } })
+      .then((rows) => {
+        if (!cancelled) setCities(rows);
+      })
+      .catch(() => {
+        if (!cancelled) setCities([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedProvince?.id]);
 
   useEffect(() => {
     if (!selectedCity) {
@@ -173,7 +189,7 @@ export function SearchBox({
             }}
           >
             <option value="">All Pakistan</option>
-            {tree.map((p) => (
+            {provinces.map((p) => (
               <option key={p.id} value={p.slug}>
                 {p.name}
               </option>
@@ -191,7 +207,7 @@ export function SearchBox({
             }}
           >
             <option value="">All cities</option>
-            {districts.map((d) => (
+            {cities.map((d) => (
               <option key={d.id} value={d.slug}>
                 {d.name}
               </option>

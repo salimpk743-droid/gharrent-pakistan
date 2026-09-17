@@ -150,14 +150,11 @@ export const searchProperties = createServerFn({ method: "GET" })
   .handler(async ({ data }) => searchPropertiesInternal(data));
 
 export const getHomeData = createServerFn({ method: "GET" }).handler(async () => {
-  await ensureSeedData();
-  await expireOverdueListings();
   const latest = await searchPropertiesInternal({ page: 1, pageSize: 6, sort: "newest" });
-  const featured = await searchPropertiesInternal({ page: 1, pageSize: 4, sort: "newest" });
-  const featuredItems = featured.items.filter((p) => p.isFeatured);
+  const featuredItems = latest.items.filter((p) => p.isFeatured);
   return {
     latest: latest.items,
-    featured: featuredItems.length ? featuredItems : featured.items.slice(0, 4),
+    featured: featuredItems.length ? featuredItems : latest.items.slice(0, 4),
     totalPublished: latest.total,
   };
 });

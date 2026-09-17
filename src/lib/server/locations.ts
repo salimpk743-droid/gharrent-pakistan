@@ -12,6 +12,26 @@ function canonicalProvinceSlug(slug?: string) {
   return PROVINCE_SLUG_ALIASES[slug] ?? slug;
 }
 
+export const listProvinces = createServerFn({ method: "GET" }).handler(async () => {
+  await ensureSeedData();
+  const sql = await getSql();
+  return sql<{ id: string; slug: string; name: string }>`
+    select id, slug, name from provinces order by sort_order asc, name asc
+  `;
+});
+
+export const listCitiesForProvince = createServerFn({ method: "GET" })
+  .validator((data: unknown) => z.object({ provinceId: z.string().min(1) }).parse(data))
+  .handler(async ({ data }) => {
+    await ensureSeedData();
+    const sql = await getSql();
+    return sql<{ id: string; slug: string; name: string }>`
+      select id, slug, name from districts
+      where province_id = ${data.provinceId}
+      order by name asc
+    `;
+  });
+
 export const listLocationTree = createServerFn({ method: "GET" }).handler(async () => {
   await ensureSeedData();
   const sql = await getSql();
