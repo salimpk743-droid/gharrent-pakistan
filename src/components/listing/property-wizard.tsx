@@ -17,7 +17,7 @@ import { formatPkr } from "@/lib/utils";
 import type { OwnerListing, ProvinceNode } from "@/lib/types";
 import { Star, Trash2, Upload } from "lucide-react";
 
-const STEPS = ["Location", "Property", "Photos", "Details", "Publish"] as const;
+const STEPS = ["Location", "Property", "Photos", "Details", "Contact", "Publish"] as const;
 
 const AMENITIES = [
   ["parking", "Parking"],
@@ -110,6 +110,7 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
       if (!result.ok) {
         setError(result.error);
         toast.error(result.error);
+        if (/mobile number|WhatsApp/i.test(result.error)) setStep(4);
         return;
       }
       toast.success("Your property is now live.");
@@ -421,6 +422,11 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
             <p className="text-xs text-muted">
               Renters will use these numbers to call or message you. Do not add CNIC, email or payment details.
             </p>
+          </>
+        )}
+
+        {step === 5 && (
+          <>
             <div className="rounded-xl border border-line bg-sand p-5">
               <p className="text-[10px] font-extrabold tracking-[0.16em] text-forest">PREVIEW</p>
               <h2 className="font-display mt-2 text-2xl">{listing.title || "Untitled listing"}</h2>
@@ -433,6 +439,10 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
               </p>
               <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed">
                 {listing.description || "No description yet."}
+              </p>
+              <p className="mt-4 text-sm">
+                Phone: {listing.contactPhone || "Not set"}
+                {listing.contactWhatsapp ? ` · WhatsApp: ${listing.contactWhatsapp}` : ""}
               </p>
               <p className="mt-4 text-sm text-muted">This listing will go live immediately after you publish.</p>
             </div>
