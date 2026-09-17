@@ -4,6 +4,25 @@ plugins {
 
 def twaManifest = new groovy.json.JsonSlurper().parseText(file("../twa-manifest.json").text)
 
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) {
+    keystorePropertiesFile.withInputStream { stream ->
+        keystoreProperties.load(new InputStreamReader(stream, "UTF-8"))
+    }
+}
+
+def uploadStoreFilePath = keystoreProperties.getProperty("storeFile")?.trim()
+def uploadStorePassword = keystoreProperties.getProperty("storePassword")?.trim()
+def uploadKeyAlias = keystoreProperties.getProperty("keyAlias")?.trim()
+def uploadKeyPassword = keystoreProperties.getProperty("keyPassword")?.trim()
+def uploadStoreFile = uploadStoreFilePath ? file(uploadStoreFilePath) : null
+def hasReleaseSigning = uploadStoreFile != null &&
+    uploadStoreFile.isFile() &&
+    uploadStorePassword &&
+    uploadKeyAlias &&
+    uploadKeyPassword
+
 android {
     namespace twaManifest.packageId
     compileSdk 35
@@ -16,9 +35,23 @@ android {
         versionName twaManifest.appVersionName
     }
 
+    if (hasReleaseSigning) {
+        signingConfigs {
+            release {
+                storeFile uploadStoreFile
+                storePassword uploadStorePassword
+                keyAlias uploadKeyAlias
+                keyPassword uploadKeyPassword
+            }
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
+            if (hasReleaseSigning) {
+                signingConfig signingConfigs.release
+            }
         }
         debug {
             minifyEnabled false

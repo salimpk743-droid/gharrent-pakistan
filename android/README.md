@@ -31,10 +31,17 @@ cd android
 
 The debug APK is written to `app/build/outputs/apk/debug/`.
 
+## Release signing (local upload keystore)
+
+Play-installed users are signed by **Google Play App Signing**. That certificate is already in the website Digital Asset Links file. Do not put the upload-key fingerprint there.
+
+To sign the AAB you upload to Play Console, copy [`keystore.properties.example`](keystore.properties.example) to **`keystore.properties`** in this folder (gitignored) on the Windows PC that has the upload keystore. Fill in the local `.p12` path and passwords. Never commit `keystore.properties`, `*.p12`, or passwords.
+
+Without that file, debug builds still work. Release signing is applied only when the local keystore file exists.
+
 ## What this first step does not include
 
-- Website `/.well-known/assetlinks.json` (next step, after this project works)
-- Play Store listing, signing key, or closed testing
+- Play Store listing, closed testing, or generating a signed AAB in CI
 - Service worker / offline mode
 - Push notifications
 - Camera / HEIC changes

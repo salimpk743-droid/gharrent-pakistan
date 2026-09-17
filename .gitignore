@@ -27,7 +27,9 @@ pglite-debug.log
 android/.gradle/
 android/**/build/
 android/local.properties
+android/keystore.properties
 android/*.jks
 android/*.keystore
+android/*.p12
 android/*.apk
 android/*.aab
