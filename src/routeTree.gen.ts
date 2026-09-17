@@ -20,6 +20,7 @@ import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as SafetyRouteImport } from './routes/safety'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as DotwellKnownAssetlinksDotjsonRouteImport } from './routes/[.]well-known/assetlinks[.]json'
 import { Route as AccountIndexRouteImport } from './routes/account/index'
 import { Route as AccountListingsRouteImport } from './routes/account/listings'
 import { Route as AccountSavedRouteImport } from './routes/account/saved'
@@ -92,6 +93,12 @@ const TermsRoute = TermsRouteImport.update({
   path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DotwellKnownAssetlinksDotjsonRoute =
+  DotwellKnownAssetlinksDotjsonRouteImport.update({
+    id: '/.well-known/assetlinks.json',
+    path: '/.well-known/assetlinks.json',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AccountIndexRoute = AccountIndexRouteImport.update({
   id: '/account/',
   path: '/account/',
@@ -187,6 +194,7 @@ export interface FileRoutesByFullPath {
   '/safety': typeof SafetyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/.well-known/assetlinks.json': typeof DotwellKnownAssetlinksDotjsonRoute
   '/account/listings': typeof AccountListingsRoute
   '/account/saved': typeof AccountSavedRoute
   '/admin/listings': typeof AdminListingsRoute
@@ -216,6 +224,7 @@ export interface FileRoutesByTo {
   '/safety': typeof SafetyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/.well-known/assetlinks.json': typeof DotwellKnownAssetlinksDotjsonRoute
   '/account/listings': typeof AccountListingsRoute
   '/account/saved': typeof AccountSavedRoute
   '/admin/listings': typeof AdminListingsRoute
@@ -246,6 +255,7 @@ export interface FileRoutesById {
   '/safety': typeof SafetyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/.well-known/assetlinks.json': typeof DotwellKnownAssetlinksDotjsonRoute
   '/account/listings': typeof AccountListingsRoute
   '/account/saved': typeof AccountSavedRoute
   '/admin/listings': typeof AdminListingsRoute
@@ -277,6 +287,7 @@ export interface FileRouteTypes {
     | '/safety'
     | '/sitemap.xml'
     | '/terms'
+    | '/.well-known/assetlinks.json'
     | '/account/listings'
     | '/account/saved'
     | '/admin/listings'
@@ -306,6 +317,7 @@ export interface FileRouteTypes {
     | '/safety'
     | '/sitemap.xml'
     | '/terms'
+    | '/.well-known/assetlinks.json'
     | '/account/listings'
     | '/account/saved'
     | '/admin/listings'
@@ -335,6 +347,7 @@ export interface FileRouteTypes {
     | '/safety'
     | '/sitemap.xml'
     | '/terms'
+    | '/.well-known/assetlinks.json'
     | '/account/listings'
     | '/account/saved'
     | '/admin/listings'
@@ -365,6 +378,7 @@ export interface RootRouteChildren {
   SafetyRoute: typeof SafetyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
+  DotwellKnownAssetlinksDotjsonRoute: typeof DotwellKnownAssetlinksDotjsonRoute
   AccountListingsRoute: typeof AccountListingsRoute
   AccountSavedRoute: typeof AccountSavedRoute
   AdminListingsRoute: typeof AdminListingsRoute
@@ -460,6 +474,13 @@ declare module '@tanstack/react-router' {
       path: '/terms'
       fullPath: '/terms'
       preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.well-known/assetlinks.json': {
+      id: '/.well-known/assetlinks.json'
+      path: '/.well-known/assetlinks.json'
+      fullPath: '/.well-known/assetlinks.json'
+      preLoaderRoute: typeof DotwellKnownAssetlinksDotjsonRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/account/': {
@@ -589,6 +610,7 @@ const rootRouteChildren: RootRouteChildren = {
   SafetyRoute: SafetyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
+  DotwellKnownAssetlinksDotjsonRoute: DotwellKnownAssetlinksDotjsonRoute,
   AccountListingsRoute: AccountListingsRoute,
   AccountSavedRoute: AccountSavedRoute,
   AdminListingsRoute: AdminListingsRoute,
