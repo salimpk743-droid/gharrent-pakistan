@@ -1,6 +1,12 @@
-import { useState } from "react";
-import { authEnabled, signIn } from "@/lib/auth/client";
+import { useState, type FormEvent } from "react";
+import { authClient, authEnabled, signIn } from "@/lib/auth/client";
+import { emailAndPasswordEnabled } from "@/lib/auth/email-password";
 import { Button } from "@/components/ui/button";
+import { Input, Label } from "@/components/ui/input";
+
+const MIN_PASSWORD = 8;
+const MAX_PASSWORD = 128;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function GoogleMark() {
   return (
@@ -25,6 +31,34 @@ function GoogleMark() {
   );
 }
 
+function safeCallback(url: string): string {
+  if (!url.startsWith("/") || url.startsWith("//")) return "/";
+  return url;
+}
+
+function friendlyAuthError(message: string, code?: string): string {
+  const text = `${code ?? ""} ${message}`.toLowerCase();
+  if (/user_already_exists|already exists|already registered/.test(text)) {
+    return "An account with this email already exists. Sign in, or continue with Google.";
+  }
+  if (/invalid_email_or_password|invalid email or password|invalid credentials/.test(text)) {
+    return "That email or password is not correct.";
+  }
+  if (/password_too_short|too short/.test(text)) {
+    return `Use a password of at least ${MIN_PASSWORD} characters.`;
+  }
+  if (/password_too_long|too long/.test(text)) {
+    return `Password must be ${MAX_PASSWORD} characters or fewer.`;
+  }
+  if (/invalid_email|invalid email/.test(text)) {
+    return "Enter a valid email address.";
+  }
+  if (/invalid origin/.test(text)) {
+    return "Sign-in could not start from this page. Please refresh and try again.";
+  }
+  return message.trim() || "Something went wrong. Please try again.";
+}
+
 export function SignInPanel({
   title = "Welcome to GharRent Pakistan",
   message = "Sign in to post properties, save homes and manage your listings.",
@@ -34,12 +68,19 @@ export function SignInPanel({
   message?: string;
   callbackURL?: string;
 }) {
-  const [busy, setBusy] = useState(false);
+  const [mode, setMode] = useState<"register" | "signin">("register");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [googleBusy, setGoogleBusy] = useState(false);
+  const [formBusy, setFormBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const busy = googleBusy || formBusy;
+  const next = safeCallback(callbackURL);
 
   async function continueWithGoogle() {
     if (busy) return;
-    setBusy(true);
+    setGoogleBusy(true);
     setError(null);
     try {
       await signIn("grok-google", { callbackURL, errorCallbackURL: "/login" });
@@ -50,7 +91,63 @@ export function SignInPanel({
           ? "Google sign-in is not available yet. Please try again in a few minutes."
           : raw,
       );
-      setBusy(false);
+      setGoogleBusy(false);
+    }
+  }
+
+  function validate(): string | null {
+    if (mode === "register") {
+      const displayName = name.trim();
+      if (!displayName) return "Enter your name.";
+      if (displayName.length < 2) return "Name must be at least 2 characters.";
+      if (displayName.length > 80) return "Name must be 80 characters or fewer.";
+    }
+    const trimmedEmail = email.trim();
+    if (!trimmedEmail) return "Enter your email address.";
+    if (!EMAIL_RE.test(trimmedEmail)) return "Enter a valid email address.";
+    if (!password) return "Enter a password.";
+    if (password.length < MIN_PASSWORD) return `Use a password of at least ${MIN_PASSWORD} characters.`;
+    if (password.length > MAX_PASSWORD) return `Password must be ${MAX_PASSWORD} characters or fewer.`;
+    return null;
+  }
+
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (busy) return;
+    const problem = validate();
+    if (problem) {
+      setError(problem);
+      return;
+    }
+    setFormBusy(true);
+    setError(null);
+    try {
+      if (mode === "register") {
+        const { data, error: signUpError } = await authClient.signUp.email({
+          name: name.trim(),
+          email: email.trim().toLowerCase(),
+          password,
+          callbackURL: next,
+        });
+        if (signUpError) {
+          throw new Error(friendlyAuthError(signUpError.message ?? "", signUpError.code));
+        }
+        if (!data?.user) throw new Error("Could not create your account. Please try again.");
+      } else {
+        const { data, error: signInError } = await authClient.signIn.email({
+          email: email.trim().toLowerCase(),
+          password,
+          callbackURL: next,
+        });
+        if (signInError) {
+          throw new Error(friendlyAuthError(signInError.message ?? "", signInError.code));
+        }
+        if (!data?.user) throw new Error("Could not sign you in. Please try again.");
+      }
+      window.location.assign(next);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+      setFormBusy(false);
     }
   }
 
@@ -60,7 +157,106 @@ export function SignInPanel({
       <h1 className="font-display mt-2 text-3xl tracking-tight text-ink">{title}</h1>
       <p className="mt-2 text-sm text-muted">{message}</p>
       {authEnabled ? (
-        <div className="mt-6 flex flex-col gap-3">
+        <div className="mt-6 flex flex-col gap-4">
+          {emailAndPasswordEnabled ? (
+            <>
+              <form className="grid gap-3" onSubmit={(event) => void onSubmit(event)} noValidate>
+                <p className="text-[11px] font-extrabold tracking-[0.14em] text-forest">
+                  {mode === "register" ? "CREATE AN ACCOUNT" : "SIGN IN"}
+                </p>
+                {mode === "register" ? (
+                  <Label>
+                    Name
+                    <Input
+                      name="name"
+                      autoComplete="name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Your name"
+                      disabled={busy}
+                      required
+                    />
+                  </Label>
+                ) : null}
+                <Label>
+                  Email
+                  <Input
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    inputMode="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@email.com"
+                    disabled={busy}
+                    required
+                  />
+                </Label>
+                <Label>
+                  Password
+                  <Input
+                    name="password"
+                    type="password"
+                    autoComplete={mode === "register" ? "new-password" : "current-password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder={mode === "register" ? `At least ${MIN_PASSWORD} characters` : "Your password"}
+                    disabled={busy}
+                    minLength={MIN_PASSWORD}
+                    maxLength={MAX_PASSWORD}
+                    required
+                  />
+                </Label>
+                <Button type="submit" size="lg" className="w-full" disabled={busy}>
+                  {formBusy
+                    ? mode === "register"
+                      ? "Creating account…"
+                      : "Signing in…"
+                    : mode === "register"
+                      ? "Create account"
+                      : "Sign in"}
+                </Button>
+                <p className="text-center text-sm text-muted">
+                  {mode === "register" ? (
+                    <>
+                      Already have an account?{" "}
+                      <button
+                        type="button"
+                        className="font-semibold text-forest hover:underline"
+                        disabled={busy}
+                        onClick={() => {
+                          setMode("signin");
+                          setError(null);
+                        }}
+                      >
+                        Sign in
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      New to GharRent?{" "}
+                      <button
+                        type="button"
+                        className="font-semibold text-forest hover:underline"
+                        disabled={busy}
+                        onClick={() => {
+                          setMode("register");
+                          setError(null);
+                        }}
+                      >
+                        Create an account
+                      </button>
+                    </>
+                  )}
+                </p>
+              </form>
+              <div className="flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.14em] text-muted">
+                <span className="h-px flex-1 bg-line" />
+                or
+                <span className="h-px flex-1 bg-line" />
+              </div>
+            </>
+          ) : null}
           <Button
             type="button"
             variant="outline"
@@ -70,7 +266,7 @@ export function SignInPanel({
             onClick={() => void continueWithGoogle()}
           >
             <GoogleMark />
-            {busy ? "Continuing…" : "Continue with Google"}
+            {googleBusy ? "Continuing…" : "Continue with Google"}
           </Button>
           {error ? <p className="text-sm text-danger">{error}</p> : null}
         </div>
@@ -78,8 +274,8 @@ export function SignInPanel({
         <p className="mt-6 text-sm text-muted">Sign-in is disabled in this environment.</p>
       )}
       <p className="mt-5 text-xs leading-relaxed text-muted">
-        We only use your name, email and profile photo to create your GharRent account. No phone number is
-        required to sign in. We do not post on your behalf.
+        Create an account with your name, email and password, or continue with Google. No phone number is
+        required. We do not post on your behalf.
       </p>
     </div>
   );
