@@ -201,9 +201,7 @@ export const submitListing = createServerFn({ method: "POST" })
       furnishedStatus: listing.furnishedStatus,
     });
     if (errors.length) return { ok: false as const, error: errors[0], errors };
-    const settings = await sql<{ value: string }>`select value from platform_settings where key = 'auto_publish'`;
-    const autoPublish = settings[0]?.value === "true";
-    const next = ownerNextStatus(listing.status, "submit", { autoPublish });
+    const next = ownerNextStatus(listing.status, "submit");
     if (!next) return { ok: false as const, error: "This listing cannot be submitted in its current state." };
     const durationRows = await sql<{ value: string }>`select value from platform_settings where key = 'listing_duration_days'`;
     const days = Number(durationRows[0]?.value) || LISTING_DURATION_DAYS;

@@ -32,11 +32,12 @@ Listings, accounts, saves, reports and moderation live in **PostgreSQL**. There 
 
 ## Listing lifecycle
 
-`DRAFT → PENDING_REVIEW → PUBLISHED`, plus `PAUSED`, `REJECTED`, `RENTED`, `EXPIRED`, and soft-deleted `DELETED`.
+`DRAFT → PUBLISHED` as soon as the owner clicks **Publish listing**, plus `PAUSED`, `REJECTED`, `RENTED`, `EXPIRED`, and soft-deleted `DELETED`. Leftover `PENDING_REVIEW` rows (from before this change) can still be published by the owner or approved by staff.
 
 - Public search only returns `status = 'PUBLISHED' AND deleted_at IS NULL`.
 - Delete sets `status = DELETED` and `deleted_at` — the row is hidden, not physically destroyed.
 - Sample homes are stored with `is_sample = true` and labelled **Demo listing**.
+- New ads do **not** wait for admin approval. Staff can still suspend, archive, feature or remove a live listing.
 
 ## Authorization (server-side)
 
@@ -139,7 +140,7 @@ To attach object storage later: write the file to the bucket using `storage_key`
 
 1. Set `ADMIN_EMAIL` to your Google address **before** the first production sign-in, or sign in first on a fresh database (first profile becomes admin).
 2. Open **Account** after sign-in. Staff see Admin.
-3. Approve / reject listings, handle reports, suspend users.
+3. Moderate live listings (suspend, archive, feature), handle reports, and suspend users. Leftover pending ads can still be approved or rejected.
 
 There is no shared demo password. There are no mock users.
 
@@ -154,12 +155,13 @@ Without signing in:
 
 With Google:
 
-1. **Post a property** → Continue with Google → listing wizard.
-2. Submit → pending review or published (if `auto_publish` is on).
+1. **Post a property** → sign in → short form → **Publish listing**.
+2. The ad is **Published** immediately and appears in public search. There is no waiting-for-review step.
 3. My listings: Edit, Pause, Resume, Mark rented, Delete.
 4. Saved homes persist in Postgres for that account.
 5. `/admin` as a normal user → “Admin access required”.
-6. Delete a listing → it disappears from public search (soft-delete).
+6. Staff can still suspend, archive, feature or remove a live listing.
+7. Delete a listing → it disappears from public search (soft-delete).
 
 ## Known limitations
 

@@ -50,7 +50,7 @@ export type ListingStatus = (typeof LISTING_STATUSES)[number];
 
 export const STATUS_LABEL: Record<ListingStatus, string> = {
   DRAFT: "Draft",
-  PENDING_REVIEW: "Waiting for review",
+  PENDING_REVIEW: "Not published",
   PUBLISHED: "Published",
   PAUSED: "Paused",
   REJECTED: "Rejected",

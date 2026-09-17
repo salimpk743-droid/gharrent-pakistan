@@ -12,27 +12,22 @@ import {
   submitListing,
 } from "@/lib/server/listings";
 import { compressImageFile } from "@/lib/compress-image";
-import {
-  FURNISHED_LABEL,
-  FURNISHED_STATUSES,
-  PROPERTY_TYPES,
-  SIZE_UNIT_LABEL,
-  SIZE_UNITS,
-} from "@/lib/constants";
+import { FURNISHED_LABEL, FURNISHED_STATUSES, PROPERTY_TYPES } from "@/lib/constants";
 import { formatPkr } from "@/lib/utils";
-import type { OwnerListing } from "@/lib/types";
-import type { ProvinceNode } from "@/lib/types";
+import type { OwnerListing, ProvinceNode } from "@/lib/types";
 import { Star, Trash2, Upload } from "lucide-react";
 
-const STEPS = [
-  "Location",
-  "Property",
-  "Rent",
-  "Features",
-  "Photos",
-  "Description",
-  "Contact",
-  "Preview",
+const STEPS = ["Location", "Property", "Photos", "Details", "Publish"] as const;
+
+const AMENITIES = [
+  ["parking", "Parking"],
+  ["electricity", "Electricity"],
+  ["gas", "Gas"],
+  ["water", "Water"],
+  ["maintenance", "Maintenance included"],
+  ["familyAllowed", "Family allowed"],
+  ["bachelorAllowed", "Bachelor allowed"],
+  ["petsAllowed", "Pets allowed"],
 ] as const;
 
 export function PropertyWizard({ initial }: { initial: OwnerListing }) {
@@ -44,7 +39,9 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    void listLocationTree().then(setTree).catch(() => setTree([]));
+    void listLocationTree()
+      .then(setTree)
+      .catch(() => setTree([]));
   }, []);
 
   const province = tree.find((p) => p.id === listing.provinceId);
@@ -66,14 +63,8 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
         area: next.area,
         address: next.address,
         monthlyRent: next.monthlyRent,
-        securityDeposit: next.securityDeposit,
-        advanceRent: next.advanceRent,
         bedrooms: next.bedrooms,
         bathrooms: next.bathrooms,
-        propertySize: next.propertySize,
-        sizeUnit: next.sizeUnit,
-        floor: next.floor,
-        totalFloors: next.totalFloors,
         furnishedStatus: next.furnishedStatus,
         parking: next.parking,
         electricity: next.electricity,
@@ -83,7 +74,6 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
         familyAllowed: next.familyAllowed,
         bachelorAllowed: next.bachelorAllowed,
         petsAllowed: next.petsAllowed,
-        availableFrom: next.availableFrom,
         contactPhone: next.contactPhone,
         contactWhatsapp: next.contactWhatsapp,
       },
@@ -109,18 +99,20 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
     setBusy(true);
     setError(null);
     try {
-      await persist();
+      const saved = await persist();
+      const status = saved.ok && saved.listing ? saved.listing.status : listing.status;
+      if (status === "PUBLISHED" || status === "PAUSED") {
+        toast.success("Your listing has been updated.");
+        await navigate({ to: "/account/listings" });
+        return;
+      }
       const result = await submitListing({ data: { id: listing.id } });
       if (!result.ok) {
         setError(result.error);
         toast.error(result.error);
         return;
       }
-      toast.success(
-        result.status === "PUBLISHED"
-          ? "Your property is now live."
-          : "Your property has been submitted for review.",
-      );
+      toast.success("Your property is now live.");
       await navigate({ to: "/account/listings" });
     } catch {
       setError("Something went wrong. Please try again.");
@@ -171,7 +163,7 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
       <p className="text-[10px] font-extrabold tracking-[0.16em] text-forest">POST A PROPERTY</p>
       <h1 className="font-display mt-2 text-3xl tracking-tight">List your rental property</h1>
       <p className="mt-1 text-sm text-muted">
-        Step {step + 1} of {STEPS.length}: {STEPS[step]}
+        Step {step + 1} of {STEPS.length}: {STEPS[step]}. Your ad goes live as soon as you publish.
       </p>
       <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-sand" aria-hidden="true">
         <div className="h-full bg-forest transition-[width] duration-200" style={{ width: `${progress}%` }} />
@@ -248,15 +240,37 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
         {step === 1 && (
           <>
             <Label>
+              Listing title
+              <Input
+                value={listing.title === "Untitled listing" ? "" : listing.title}
+                maxLength={80}
+                placeholder="e.g. 5 Marla family house in Johar Town"
+                onChange={(e) => setListing((l) => ({ ...l, title: e.target.value }))}
+              />
+            </Label>
+            <Label>
               Property type
               <Select
                 value={listing.propertyType}
-                onChange={(e) => setListing((l) => ({ ...l, propertyType: e.target.value as OwnerListing["propertyType"] }))}
+                onChange={(e) =>
+                  setListing((l) => ({ ...l, propertyType: e.target.value as OwnerListing["propertyType"] }))
+                }
               >
                 {PROPERTY_TYPES.map((t) => (
                   <option key={t}>{t}</option>
                 ))}
               </Select>
+            </Label>
+            <Label>
+              Monthly rent (Rs.)
+              <Input
+                inputMode="numeric"
+                value={listing.monthlyRent || ""}
+                onChange={(e) =>
+                  setListing((l) => ({ ...l, monthlyRent: Number(e.target.value.replace(/[^\d]/g, "")) || 0 }))
+                }
+                placeholder="65000"
+              />
             </Label>
             <div className="grid grid-cols-2 gap-3">
               <Label>
@@ -279,48 +293,6 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
                   onChange={(e) => setListing((l) => ({ ...l, bathrooms: Number(e.target.value) }))}
                 />
               </Label>
-              <Label>
-                Size
-                <Input
-                  type="number"
-                  min={0}
-                  value={listing.propertySize ?? ""}
-                  onChange={(e) =>
-                    setListing((l) => ({ ...l, propertySize: e.target.value ? Number(e.target.value) : null }))
-                  }
-                />
-              </Label>
-              <Label>
-                Size unit
-                <Select
-                  value={listing.sizeUnit}
-                  onChange={(e) => setListing((l) => ({ ...l, sizeUnit: e.target.value as OwnerListing["sizeUnit"] }))}
-                >
-                  {SIZE_UNITS.map((u) => (
-                    <option key={u} value={u}>
-                      {SIZE_UNIT_LABEL[u]}
-                    </option>
-                  ))}
-                </Select>
-              </Label>
-              <Label>
-                Floor
-                <Input
-                  type="number"
-                  value={listing.floor ?? ""}
-                  onChange={(e) => setListing((l) => ({ ...l, floor: e.target.value ? Number(e.target.value) : null }))}
-                />
-              </Label>
-              <Label>
-                Total floors
-                <Input
-                  type="number"
-                  value={listing.totalFloors ?? ""}
-                  onChange={(e) =>
-                    setListing((l) => ({ ...l, totalFloors: e.target.value ? Number(e.target.value) : null }))
-                  }
-                />
-              </Label>
             </div>
             <Label>
               Furnished status
@@ -341,82 +313,6 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
         )}
 
         {step === 2 && (
-          <>
-            <Label>
-              Monthly rent (Rs.)
-              <Input
-                inputMode="numeric"
-                value={listing.monthlyRent || ""}
-                onChange={(e) => setListing((l) => ({ ...l, monthlyRent: Number(e.target.value.replace(/[^\d]/g, "")) || 0 }))}
-                placeholder="65000"
-              />
-            </Label>
-            <Label>
-              Security deposit (Rs.)
-              <Input
-                inputMode="numeric"
-                value={listing.securityDeposit ?? ""}
-                onChange={(e) =>
-                  setListing((l) => ({
-                    ...l,
-                    securityDeposit: e.target.value ? Number(e.target.value.replace(/[^\d]/g, "")) : null,
-                  }))
-                }
-              />
-            </Label>
-            <Label>
-              Advance rent (Rs.)
-              <Input
-                inputMode="numeric"
-                value={listing.advanceRent ?? ""}
-                onChange={(e) =>
-                  setListing((l) => ({
-                    ...l,
-                    advanceRent: e.target.value ? Number(e.target.value.replace(/[^\d]/g, "")) : null,
-                  }))
-                }
-              />
-            </Label>
-            <Label>
-              Available from
-              <Input
-                type="date"
-                value={listing.availableFrom ?? ""}
-                onChange={(e) => setListing((l) => ({ ...l, availableFrom: e.target.value || null }))}
-              />
-            </Label>
-          </>
-        )}
-
-        {step === 3 && (
-          <fieldset className="grid gap-3">
-            <legend className="mb-1 text-sm font-semibold text-ink">What does this home include?</legend>
-            {(
-              [
-                ["parking", "Parking"],
-                ["electricity", "Electricity"],
-                ["gas", "Gas"],
-                ["water", "Water"],
-                ["maintenance", "Maintenance included"],
-                ["familyAllowed", "Family allowed"],
-                ["bachelorAllowed", "Bachelor allowed"],
-                ["petsAllowed", "Pets allowed"],
-              ] as const
-            ).map(([key, label]) => (
-              <label key={key} className="flex min-h-11 items-center gap-3 rounded-md border border-line px-3 text-sm">
-                <input
-                  type="checkbox"
-                  className="size-4 accent-forest"
-                  checked={Boolean(listing[key])}
-                  onChange={(e) => setListing((l) => ({ ...l, [key]: e.target.checked }))}
-                />
-                {label}
-              </label>
-            ))}
-          </fieldset>
-        )}
-
-        {step === 4 && (
           <div>
             <p className="text-sm text-muted">Add at least one cover photo. JPEG, PNG or WebP, compressed automatically.</p>
             <label className="mt-3 flex min-h-28 cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-line bg-sand text-sm text-muted">
@@ -443,13 +339,15 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
                     <button
                       type="button"
                       className="flex min-h-10 flex-1 items-center justify-center gap-1 text-xs"
-                      onClick={() => void setCoverImage({ data: { propertyId: listing.id, imageId: img.id } }).then(() =>
-                        setListing((l) => ({
-                          ...l,
-                          images: l.images.map((i) => ({ ...i, isCover: i.id === img.id })),
-                          coverImage: img,
-                        })),
-                      )}
+                      onClick={() =>
+                        void setCoverImage({ data: { propertyId: listing.id, imageId: img.id } }).then(() =>
+                          setListing((l) => ({
+                            ...l,
+                            images: l.images.map((i) => ({ ...i, isCover: i.id === img.id })),
+                            coverImage: img,
+                          })),
+                        )
+                      }
                     >
                       <Star className="size-3.5" /> Cover
                     </button>
@@ -471,31 +369,36 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
           </div>
         )}
 
-        {step === 5 && (
+        {step === 3 && (
           <>
-            <Label>
-              Listing title
-              <Input
-                value={listing.title === "Untitled listing" ? "" : listing.title}
-                maxLength={80}
-                placeholder="e.g. 5 Marla family house in Johar Town"
-                onChange={(e) => setListing((l) => ({ ...l, title: e.target.value }))}
-              />
-            </Label>
             <Label>
               Description
               <Textarea
-                rows={7}
+                rows={6}
                 maxLength={4000}
                 value={listing.description}
                 placeholder="Mention parking, utilities, furnished status, nearby landmarks and who the home suits."
                 onChange={(e) => setListing((l) => ({ ...l, description: e.target.value }))}
               />
             </Label>
+            <fieldset className="grid gap-2">
+              <legend className="mb-1 text-sm font-semibold text-ink">What does this home include?</legend>
+              {AMENITIES.map(([key, label]) => (
+                <label key={key} className="flex min-h-11 items-center gap-3 rounded-md border border-line px-3 text-sm">
+                  <input
+                    type="checkbox"
+                    className="size-4 accent-forest"
+                    checked={Boolean(listing[key])}
+                    onChange={(e) => setListing((l) => ({ ...l, [key]: e.target.checked }))}
+                  />
+                  {label}
+                </label>
+              ))}
+            </fieldset>
           </>
         )}
 
-        {step === 6 && (
+        {step === 4 && (
           <>
             <Label>
               Contact phone
@@ -518,21 +421,22 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
             <p className="text-xs text-muted">
               Renters will use these numbers to call or message you. Do not add CNIC, email or payment details.
             </p>
+            <div className="rounded-xl border border-line bg-sand p-5">
+              <p className="text-[10px] font-extrabold tracking-[0.16em] text-forest">PREVIEW</p>
+              <h2 className="font-display mt-2 text-2xl">{listing.title || "Untitled listing"}</h2>
+              <p className="mt-1 text-lg font-extrabold">{formatPkr(listing.monthlyRent)} / month</p>
+              <p className="text-sm text-muted">
+                {locLabel || "Location not set"} · {listing.propertyType}
+              </p>
+              <p className="mt-3 text-sm">
+                {listing.bedrooms} beds · {listing.bathrooms} baths
+              </p>
+              <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed">
+                {listing.description || "No description yet."}
+              </p>
+              <p className="mt-4 text-sm text-muted">This listing will go live immediately after you publish.</p>
+            </div>
           </>
-        )}
-
-        {step === 7 && (
-          <div className="rounded-xl border border-line bg-sand p-5">
-            <p className="text-[10px] font-extrabold tracking-[0.16em] text-forest">PREVIEW</p>
-            <h2 className="font-display mt-2 text-2xl">{listing.title || "Untitled listing"}</h2>
-            <p className="mt-1 text-lg font-extrabold">{formatPkr(listing.monthlyRent)} / month</p>
-            <p className="text-sm text-muted">{locLabel || "Location not set"} · {listing.propertyType}</p>
-            <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed">{listing.description || "No description yet."}</p>
-            <p className="mt-3 text-sm">{listing.bedrooms} beds · {listing.bathrooms} baths</p>
-            <p className="mt-4 text-sm text-muted">
-              After you submit, the listing waits for review unless automatic publishing is enabled.
-            </p>
-          </div>
         )}
 
         {error && (
@@ -554,7 +458,13 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
           </Button>
         ) : (
           <Button type="button" className="ml-auto" onClick={() => void onSubmit()} disabled={busy}>
-            {busy ? "Submitting…" : "Submit for review"}
+            {busy
+              ? listing.status === "PUBLISHED" || listing.status === "PAUSED"
+                ? "Saving…"
+                : "Publishing…"
+              : listing.status === "PUBLISHED" || listing.status === "PAUSED"
+                ? "Save changes"
+                : "Publish listing"}
           </Button>
         )}
       </div>

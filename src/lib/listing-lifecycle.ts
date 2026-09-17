@@ -4,7 +4,7 @@ export type OwnerAction = "submit" | "pause" | "resume" | "markRented" | "renew"
 export type AdminAction = "approve" | "reject" | "suspend" | "archive" | "feature" | "unfeature";
 
 const OWNER_TRANSITIONS: Record<OwnerAction, { from: ListingStatus[]; to: ListingStatus }> = {
-  submit: { from: ["DRAFT", "REJECTED"], to: "PENDING_REVIEW" },
+  submit: { from: ["DRAFT", "REJECTED", "PENDING_REVIEW"], to: "PUBLISHED" },
   pause: { from: ["PUBLISHED"], to: "PAUSED" },
   resume: { from: ["PAUSED"], to: "PUBLISHED" },
   markRented: { from: ["PUBLISHED", "PAUSED"], to: "RENTED" },
@@ -36,9 +36,7 @@ export function ownerNextStatus(
   options?: { autoPublish?: boolean; expired?: boolean },
 ): ListingStatus | null {
   if (!canOwnerTransition(from, action)) return null;
-  if (action === "submit") {
-    return options?.autoPublish ? "PUBLISHED" : "PENDING_REVIEW";
-  }
+  if (action === "submit") return "PUBLISHED";
   if (action === "resume" && options?.expired) return "EXPIRED";
   return OWNER_TRANSITIONS[action].to;
 }

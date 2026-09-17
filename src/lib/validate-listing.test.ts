@@ -36,4 +36,16 @@ describe("listing submit validation", () => {
     assert.ok(errors.some((e) => /mobile/i.test(e)));
     assert.ok(errors.some((e) => /rent/i.test(e)));
   });
+
+  it("does not require floor, size, deposit, advance rent or available-from", () => {
+    assert.deepEqual(
+      validateForSubmit({
+        ...valid,
+        securityDeposit: undefined,
+        advanceRent: undefined,
+        propertySize: undefined,
+      }),
+      [],
+    );
+  });
 });

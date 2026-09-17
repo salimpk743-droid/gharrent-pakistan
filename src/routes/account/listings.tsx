@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { SignInPanel } from "@/components/auth/sign-in-panel";
 import { useAuthGate } from "@/components/auth/use-auth-gate";
-import { listMyListings, ownerAction } from "@/lib/server/listings";
+import { listMyListings, ownerAction, submitListing } from "@/lib/server/listings";
 import type { OwnerListing } from "@/lib/types";
 import { StatusBadge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -54,6 +54,15 @@ function MyListings() {
     }
   }
 
+  async function publish(id: string) {
+    const result = await submitListing({ data: { id } });
+    if (!result.ok) toast.error(result.error);
+    else {
+      toast.success("Your property is now live.");
+      await reload();
+    }
+  }
+
   return (
     <main className="mx-auto w-[min(1120px,calc(100%-32px))] py-10">
       <div className="flex flex-wrap items-end justify-between gap-3">
@@ -94,8 +103,8 @@ function MyListings() {
                     Your listing was rejected because {p.rejectionReason}
                   </p>
                 )}
-                {p.status === "PENDING_REVIEW" && (
-                  <p className="mt-2 text-sm text-muted">Your listing is waiting for review.</p>
+                {(p.status === "DRAFT" || p.status === "PENDING_REVIEW") && (
+                  <p className="mt-2 text-sm text-muted">This listing is not live yet. Publish it to appear in search.</p>
                 )}
                 <div className="mt-3 flex flex-wrap gap-2">
                   {p.status === "PUBLISHED" && (
@@ -110,6 +119,11 @@ function MyListings() {
                       Edit
                     </Link>
                   </Button>
+                  {(p.status === "DRAFT" || p.status === "PENDING_REVIEW" || p.status === "REJECTED") && (
+                    <Button size="sm" onClick={() => void publish(p.id)}>
+                      Publish listing
+                    </Button>
+                  )}
                   {p.status === "PUBLISHED" && (
                     <Button size="sm" variant="outline" onClick={() => void act(p.id, "pause")}>
                       Pause

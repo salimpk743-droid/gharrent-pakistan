@@ -9,10 +9,11 @@ import {
 } from "./listing-lifecycle.ts";
 
 describe("listing lifecycle", () => {
-  it("lets an owner submit a draft for review", () => {
+  it("lets an owner publish a draft immediately", () => {
     assert.equal(canOwnerTransition("DRAFT", "submit"), true);
-    assert.equal(ownerNextStatus("DRAFT", "submit"), "PENDING_REVIEW");
-    assert.equal(ownerNextStatus("DRAFT", "submit", { autoPublish: true }), "PUBLISHED");
+    assert.equal(ownerNextStatus("DRAFT", "submit"), "PUBLISHED");
+    assert.equal(ownerNextStatus("REJECTED", "submit"), "PUBLISHED");
+    assert.equal(ownerNextStatus("PENDING_REVIEW", "submit"), "PUBLISHED");
   });
 
   it("lets an owner pause, resume, mark rented, renew and soft-delete", () => {
@@ -30,9 +31,10 @@ describe("listing lifecycle", () => {
     assert.equal(canOwnerTransition("DRAFT", "pause"), false);
   });
 
-  it("lets staff approve, reject and archive", () => {
+  it("lets staff approve leftover pending listings, suspend and archive live ads", () => {
     assert.equal(adminNextStatus("PENDING_REVIEW", "approve"), "PUBLISHED");
     assert.equal(adminNextStatus("PENDING_REVIEW", "reject"), "REJECTED");
+    assert.equal(adminNextStatus("PUBLISHED", "suspend"), "PAUSED");
     assert.equal(canAdminTransition("PUBLISHED", "archive"), true);
     assert.equal(canAdminTransition("DRAFT", "approve"), false);
   });

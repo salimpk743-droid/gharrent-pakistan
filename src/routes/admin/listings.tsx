@@ -21,7 +21,7 @@ export const Route = createFileRoute("/admin/listings")({
 function AdminListings() {
   const { user, isPending } = useCurrentUserState();
   const [denied, setDenied] = useState(false);
-  const [status, setStatus] = useState("PENDING_REVIEW");
+  const [status, setStatus] = useState("PUBLISHED");
   const [q, setQ] = useState("");
   const [items, setItems] = useState<PublicProperty[]>([]);
   const [rejectId, setRejectId] = useState<string | null>(null);
