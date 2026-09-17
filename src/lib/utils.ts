@@ -25,6 +25,34 @@ export function formatPkr(amount: number | string | null | undefined): string {
   return `Rs. ${Math.round(n).toLocaleString("en-PK")}`;
 }
 
+export function formatListingPrice(
+  amount: number | string | null | undefined,
+  purpose: "RENT" | "SALE" = "RENT",
+): { amount: string; suffix: string } {
+  return {
+    amount: formatPkr(amount),
+    suffix: purpose === "SALE" ? "" : "/ month",
+  };
+}
+
+export function formatLocation(
+  parts: {
+    areaName?: string | null;
+    area?: string | null;
+    districtName?: string | null;
+    provinceName?: string | null;
+  },
+  options?: { includeProvince?: boolean },
+): string {
+  const area = parts.areaName || parts.area || "";
+  const items =
+    options?.includeProvince === false
+      ? [area, parts.districtName]
+      : [area, parts.districtName, parts.provinceName];
+  return items.filter(Boolean).join(", ");
+}
+
+
 export function formatDate(value: string | Date | null | undefined): string {
   if (!value) return "";
   const d = typeof value === "string" ? new Date(value) : value;

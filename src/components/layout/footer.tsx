@@ -8,20 +8,21 @@ export function Footer() {
         <div>
           <Brand />
           <p className="mt-3 max-w-xs text-xs leading-relaxed text-muted">
-            A rental marketplace that helps people discover homes across Pakistan. Listings are posted by
-            advertisers. Always inspect a property before you pay.
+            A property marketplace that helps people discover homes to rent or buy across Pakistan. Listings are
+            posted by advertisers. Always inspect a property before you pay.
           </p>
         </div>
         <div>
           <b className="mb-3 block text-[11px]">Explore</b>
-          <FooterLink to="/rent">Browse homes</FooterLink>
+          <FooterLink to="/rent">Rent</FooterLink>
+          <FooterLink to="/sale">Buy</FooterLink>
           <FooterLink to="/locations">Locations</FooterLink>
           <FooterLink to="/post">Post a property</FooterLink>
           <FooterLink to="/account/listings">My listings</FooterLink>
         </div>
         <div>
           <b className="mb-3 block text-[11px]">Help</b>
-          <FooterLink to="/safety">Safer renting</FooterLink>
+          <FooterLink to="/safety">Safer buying & renting</FooterLink>
           <FooterLink to="/contact">Contact us</FooterLink>
           <FooterLink to="/report">Report a problem</FooterLink>
         </div>
@@ -29,12 +30,12 @@ export function Footer() {
           <b className="mb-3 block text-[11px]">Legal</b>
           <FooterLink to="/privacy">Privacy policy</FooterLink>
           <FooterLink to="/terms">Terms of use</FooterLink>
-          <FooterLink to="/disclaimer">Rental disclaimer</FooterLink>
+          <FooterLink to="/disclaimer">Marketplace disclaimer</FooterLink>
         </div>
       </div>
       <div className="mx-auto mt-10 flex w-[min(1120px,calc(100%-32px))] flex-col justify-between gap-2 border-t border-line py-4 text-[11px] text-[#87938e] sm:flex-row">
-        <span>© 2026 GharRent Pakistan. All rights reserved.</span>
-        <span>A marketplace — not a landlord, estate agent or party to your rental contract.</span>
+        <span>© 2026 Apna Ghar Pakistan. All rights reserved.</span>
+        <span>A marketplace — not a landlord, estate agent or party to your contract.</span>
       </div>
     </footer>
   );

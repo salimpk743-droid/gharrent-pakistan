@@ -2,11 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ResultsPage } from "@/components/search/results-page";
 import { searchProperties } from "@/lib/server/properties";
 import { APP_NAME, PROPERTY_TYPE_META, typeFromSlug } from "@/lib/constants";
+import { parseMarketplaceSearch } from "@/lib/rent-search";
 
-import { parseRentSearch } from "@/lib/rent-search";
-
-export const Route = createFileRoute("/rent/$province/$district/$type")({
-  validateSearch: parseRentSearch,
+export const Route = createFileRoute("/sale/$province/$district/$type")({
+  validateSearch: parseMarketplaceSearch,
   loaderDeps: ({ search: s }) => s,
   loader: ({ params, deps }) =>
     searchProperties({
@@ -15,7 +14,7 @@ export const Route = createFileRoute("/rent/$province/$district/$type")({
         provinceSlug: params.province,
         districtSlug: params.district,
         typeSlug: params.type,
-        purpose: "RENT",
+        purpose: "SALE",
       },
     }),
   head: ({ loaderData, params }) => {
@@ -24,8 +23,8 @@ export const Route = createFileRoute("/rent/$province/$district/$type")({
     const place = loaderData?.locationLabel || params.district;
     return {
       meta: [
-        { title: `${label} for rent in ${place} — ${APP_NAME}` },
-        { name: "description", content: `Find ${label.toLowerCase()} for rent in ${place} on Apna Ghar.` },
+        { title: `${label} for sale in ${place} — ${APP_NAME}` },
+        { name: "description", content: `Find ${label.toLowerCase()} for sale in ${place} on Apna Ghar.` },
       ],
     };
   },
@@ -45,7 +44,7 @@ function Page() {
       provinceSlug={province}
       districtSlug={district}
       typeSlug={type}
-      purpose="RENT"
+      purpose="SALE"
     />
   );
 }

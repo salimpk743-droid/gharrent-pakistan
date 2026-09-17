@@ -9,7 +9,7 @@ import type { PublicProperty } from "@/lib/types";
 export const Route = createFileRoute("/account/saved")({
   head: () => ({
     meta: [
-      { title: "Saved homes — GharRent Pakistan" },
+      { title: "Saved homes — Apna Ghar" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),

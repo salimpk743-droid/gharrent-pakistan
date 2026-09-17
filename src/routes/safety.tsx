@@ -4,7 +4,7 @@ import { LegalPage } from "@/components/layout/legal-page";
 export const Route = createFileRoute("/safety")({
   head: () => ({
     meta: [
-      { title: "Safer renting — GharRent Pakistan" },
+      { title: "Safer renting — Apna Ghar" },
       { name: "description", content: "Practical checks before you pay rent or a deposit in Pakistan." },
     ],
   }),
@@ -37,7 +37,7 @@ function Page() {
         <li>Get a written record of rent, deposit, advance, who pays utilities, and when you can move in.</li>
         <li>Keep receipts. A marketplace listing is not a receipt or a contract.</li>
       </ul>
-      <h2>What GharRent does and does not do</h2>
+      <h2>What Apna Ghar does and does not do</h2>
       <p>
         We give advertisers a place to publish listings and renters a place to search. We review reports and can
         remove or pause listings. We do not inspect every home, we do not guarantee title, and a “Google account on

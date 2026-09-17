@@ -91,7 +91,7 @@ export const adminPropertyAction = createServerFn({ method: "POST" })
         updated_at = now()
         where id = ${data.id}`;
     } else if (data.action === "reject") {
-      const reason = (data.reason || "This listing does not meet GharRent’s publishing standards.").trim().slice(0, 500);
+      const reason = (data.reason || "This listing does not meet Apna Ghar’s publishing standards.").trim().slice(0, 500);
       await sql`update properties set status = 'REJECTED', rejection_reason = ${reason}, updated_at = now() where id = ${data.id}`;
     } else if (data.action === "suspend") {
       await sql`update properties set status = 'PAUSED', updated_at = now() where id = ${data.id}`;

@@ -9,7 +9,7 @@ import type { OwnerListing } from "@/lib/types";
 export const Route = createFileRoute("/post/$id")({
   head: () => ({
     meta: [
-      { title: "Edit listing — GharRent Pakistan" },
+      { title: "Edit listing — Apna Ghar" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
@@ -34,7 +34,7 @@ function EditListing() {
     return (
       <main className="grid min-h-[70vh] place-items-center px-4 py-16">
         <SignInPanel
-          title="Welcome to GharRent Pakistan"
+          title="Welcome to Apna Ghar"
           message="Sign in to post properties, save homes and manage your listings."
           callbackURL={`/post/${id}`}
         />

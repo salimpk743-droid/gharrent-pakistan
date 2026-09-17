@@ -9,7 +9,7 @@ import type { Profile } from "@/lib/types";
 export const Route = createFileRoute("/admin/")({
   head: () => ({
     meta: [
-      { title: "Admin — GharRent Pakistan" },
+      { title: "Admin — Apna Ghar" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
@@ -42,7 +42,7 @@ function AdminHome() {
     return (
       <main className="mx-auto max-w-lg py-20 text-center">
         <h1 className="font-display text-2xl">Admin access required</h1>
-        <p className="mt-2 text-sm text-muted">This area is only available to GharRent moderators.</p>
+        <p className="mt-2 text-sm text-muted">This area is only available to Apna Ghar moderators.</p>
       </main>
     );
   }

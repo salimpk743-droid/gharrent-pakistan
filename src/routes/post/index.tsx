@@ -7,7 +7,7 @@ import { createDraft } from "@/lib/server/listings";
 export const Route = createFileRoute("/post/")({
   head: () => ({
     meta: [
-      { title: "Post a property — GharRent Pakistan" },
+      { title: "Post a property — Apna Ghar" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
@@ -40,7 +40,7 @@ function PostStart() {
     return (
       <main className="grid min-h-[70vh] place-items-center px-4 py-16">
         <SignInPanel
-          title="Welcome to GharRent Pakistan"
+          title="Welcome to Apna Ghar"
           message="Sign in to post properties, save homes and manage your listings."
           callbackURL="/post"
         />

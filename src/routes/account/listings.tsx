@@ -6,14 +6,15 @@ import { listMyListings, ownerAction, submitListing } from "@/lib/server/listing
 import type { OwnerListing } from "@/lib/types";
 import { StatusBadge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { formatDate, formatPkr } from "@/lib/utils";
+import { PURPOSE_KICKER } from "@/lib/constants";
+import { formatDate, formatListingPrice, formatLocation } from "@/lib/utils";
 import { toast } from "sonner";
 import type { OwnerAction } from "@/lib/listing-lifecycle";
 
 export const Route = createFileRoute("/account/listings")({
   head: () => ({
     meta: [
-      { title: "My listings — GharRent Pakistan" },
+      { title: "My listings — Apna Ghar" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
@@ -90,13 +91,17 @@ function MyListings() {
               />
               <div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <StatusBadge status={p.status} />
+                  <StatusBadge status={p.status} purpose={p.listingPurpose} />
+                  <span className="text-[10px] font-extrabold tracking-[0.12em] text-forest">
+                    {PURPOSE_KICKER[p.listingPurpose]}
+                  </span>
                   <span className="text-xs text-muted">Created {formatDate(p.createdAt)}</span>
                   {p.expiresAt && <span className="text-xs text-muted">Expires {formatDate(p.expiresAt)}</span>}
                 </div>
                 <h2 className="font-display mt-1 text-xl">{p.title}</h2>
                 <p className="text-sm text-muted">
-                  {[p.area, p.districtName].filter(Boolean).join(", ")} · {formatPkr(p.monthlyRent)}
+                  {formatLocation(p, { includeProvince: false })} · {formatListingPrice(p.monthlyRent, p.listingPurpose).amount}
+                  {p.listingPurpose === "RENT" ? " / month" : ""}
                 </p>
                 {p.status === "REJECTED" && p.rejectionReason && (
                   <p className="mt-2 rounded-md bg-red-50 px-3 py-2 text-sm text-danger">
@@ -141,7 +146,7 @@ function MyListings() {
                   )}
                   {(p.status === "PUBLISHED" || p.status === "PAUSED") && (
                     <Button size="sm" variant="outline" onClick={() => void act(p.id, "markRented")}>
-                      Mark as rented
+                      {p.listingPurpose === "SALE" ? "Mark as sold" : "Mark as rented"}
                     </Button>
                   )}
                   {pendingDelete === p.id ? (

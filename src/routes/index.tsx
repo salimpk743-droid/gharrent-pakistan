@@ -2,18 +2,18 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { SearchBox } from "@/components/search/search-box";
 import { PropertyCard } from "@/components/property/property-card";
 import { getHomeData } from "@/lib/server/properties";
-import { APP_NAME, APP_TAGLINE, POPULAR_CITIES, PROPERTY_TYPE_META, PROPERTY_TYPES } from "@/lib/constants";
+import { APP_NAME, APP_TAGLINE, FEATURED_PROPERTY_TYPES, POPULAR_CITIES, PROPERTY_TYPE_META } from "@/lib/constants";
 import { Building2, DoorOpen, Home, Hotel, LayoutGrid } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   loader: () => getHomeData(),
   head: () => ({
     meta: [
-      { title: `${APP_NAME} — Rental Homes Across Pakistan` },
+      { title: `${APP_NAME} — Homes for Rent and Sale Across Pakistan` },
       {
         name: "description",
         content:
-          "Find a home. Rent with confidence. Search rental houses, flats, portions and rooms across Pakistan by location, type and budget.",
+          "Find a home to rent or buy across Pakistan. Search houses, flats, portions, plots and commercial properties by location, type and budget.",
       },
     ],
   }),
@@ -36,15 +36,14 @@ function HomePage() {
     <>
       <section className="hero-photo relative flex min-h-[500px] items-start overflow-hidden text-white">
         <div className="mx-auto w-[min(1050px,calc(100%-32px))] py-10 sm:py-14">
-          <p className="text-[10px] font-extrabold tracking-[0.16em] text-lime">FIND YOUR NEXT RENTAL</p>
+          <p className="text-[10px] font-extrabold tracking-[0.16em] text-lime">FIND YOUR NEXT HOME</p>
           <h1 className="font-display mt-2 text-[2.15rem] leading-[1.05] tracking-tight sm:text-5xl">
             Search homes by
             <br />
             <em className="not-italic text-lime">location.</em>
           </h1>
           <p className="mt-3 max-w-xl text-[15px] text-[#e5efea]">
-            {APP_TAGLINE} Pick a province, district and tehsil, then narrow it down by area, property type and
-            monthly rent.
+            {APP_TAGLINE} Pick a province, city and area, then narrow it down by property type and budget.
           </p>
           <div className="mt-6 min-w-0 max-w-[900px]">
             <SearchBox />
@@ -64,7 +63,7 @@ function HomePage() {
           </div>
         </div>
         <div className="absolute bottom-4 right-6 hidden text-[10px] text-[#d9e8e0] md:block">
-          Province → district → tehsil search
+          Province → city → area search
         </div>
       </section>
 
@@ -101,9 +100,9 @@ function HomePage() {
 
       <section className="bg-sand py-16" id="listings">
         <div className="mx-auto w-[min(1120px,calc(100%-32px))]">
-          <p className="text-[10px] font-extrabold tracking-[0.16em] text-forest">RENTAL HOMES</p>
+          <p className="text-[10px] font-extrabold tracking-[0.16em] text-forest">LATEST HOMES</p>
           <h2 className="font-display mt-1 text-3xl tracking-tight">Homes to explore</h2>
-          <p className="mt-1 text-xs text-muted">Latest published rentals from across Pakistan.</p>
+          <p className="mt-1 text-xs text-muted">Latest published rent and sale listings from across Pakistan.</p>
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {data.latest.map((p) => (
               <PropertyCard key={p.id} property={p} />
@@ -114,7 +113,7 @@ function HomePage() {
               to="/rent"
               className="inline-flex min-h-11 items-center rounded-md bg-forest px-4 text-sm font-bold text-white no-underline"
             >
-              Browse all rentals
+              Browse all homes
             </Link>
           </div>
         </div>
@@ -124,7 +123,7 @@ function HomePage() {
         <p className="text-[10px] font-extrabold tracking-[0.16em] text-forest">PROPERTY TYPE</p>
         <h2 className="font-display mt-1 text-3xl tracking-tight">What kind of home do you need?</h2>
         <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-5">
-          {PROPERTY_TYPES.map((t) => {
+          {FEATURED_PROPERTY_TYPES.map((t) => {
             const Icon = TYPE_ICONS[t];
             return (
               <Link
@@ -147,17 +146,17 @@ function HomePage() {
           <div className="why-photo relative h-[245px] rounded-xl bg-cover bg-center md:h-[410px]">
             <span className="absolute inset-0 rounded-xl bg-gradient-to-t from-[rgba(13,52,42,0.5)] to-transparent" />
             <div className="absolute bottom-4 left-4 rounded-lg bg-white px-4 py-3">
-              <b className="font-display block text-[15px]">Simple rental search</b>
+              <b className="font-display block text-[15px]">Simple property search</b>
               <span className="text-[10px] text-muted">from search to viewing</span>
             </div>
           </div>
           <div>
-            <p className="text-[10px] font-extrabold tracking-[0.16em] text-forest">HOW GHARRENT WORKS</p>
-            <h2 className="font-display mt-1 text-3xl tracking-tight">Keep the rental search simple.</h2>
+            <p className="text-[10px] font-extrabold tracking-[0.16em] text-forest">HOW APNA GHAR WORKS</p>
+            <h2 className="font-display mt-1 text-3xl tracking-tight">Keep the property search simple.</h2>
             <ol className="mt-6 grid gap-4">
               {[
-                ["01", "Select your location", "Province, district, tehsil and local area."],
-                ["02", "Compare homes", "Review rent, size, rooms and listing details."],
+                ["01", "Select your location", "Province, city and local area."],
+                ["02", "Compare homes", "Review price, size, rooms and listing details."],
                 ["03", "View and verify", "Contact the owner and verify the property before paying."],
               ].map(([n, t, d]) => (
                 <li key={n} className="flex gap-3">
@@ -176,14 +175,14 @@ function HomePage() {
       <section className="mx-auto w-[min(1120px,calc(100%-32px))] py-16" id="safety">
         <div className="grid gap-8 rounded-[14px] bg-ink px-6 py-10 text-white md:grid-cols-[1.2fr_1fr] md:px-12">
           <div>
-            <p className="text-[10px] font-extrabold tracking-[0.16em] text-lime">RENT WITH CARE</p>
+            <p className="text-[10px] font-extrabold tracking-[0.16em] text-lime">BUY AND RENT WITH CARE</p>
             <h2 className="font-display mt-2 text-3xl">Check first. Pay later.</h2>
             <p className="mt-3 max-w-md text-xs leading-relaxed text-[#d6e2dc]">
               Inspect the property, verify the owner or representative and keep clear records of payments and
-              rental terms. GharRent is a marketplace, not a party to your contract.
+              terms. Apna Ghar is a marketplace, not a party to your contract.
             </p>
             <Link to="/safety" className="mt-4 inline-block text-sm font-bold text-lime no-underline">
-              Read safer-renting tips →
+              Read safer-buying and renting tips →
             </Link>
           </div>
           <div className="border-t border-white/20 pt-5 md:border-l md:border-t-0 md:pl-8 md:pt-0">
@@ -201,14 +200,14 @@ function HomePage() {
       </section>
 
       <section className="bg-forest py-16 text-center text-white">
-        <p className="text-[10px] font-extrabold tracking-[0.16em] text-lime">HAVE A HOME TO RENT?</p>
+        <p className="text-[10px] font-extrabold tracking-[0.16em] text-lime">HAVE A HOME TO LIST?</p>
         <h2 className="font-display mt-2 text-3xl tracking-tight sm:text-4xl">
-          Post it where renters
+          Post it where people
           <br />
           <em className="not-italic text-lime">can find it.</em>
         </h2>
         <p className="mx-auto mt-3 max-w-md px-4 text-xs text-[#dbe9e3]">
-          Add the location and property details people need to decide.
+          Add the location and property details people need to decide — for rent or for sale.
         </p>
         <Link
           to="/post"

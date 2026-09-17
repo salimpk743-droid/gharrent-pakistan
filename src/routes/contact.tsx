@@ -9,8 +9,8 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact — GharRent Pakistan" },
-      { name: "description", content: "Contact GharRent Pakistan about listings, safety or the website." },
+      { title: "Contact — Apna Ghar" },
+      { name: "description", content: "Contact Apna Ghar about listings, safety or the website." },
     ],
   }),
   component: ContactPage,
@@ -27,7 +27,7 @@ function ContactPage() {
   return (
     <main className="mx-auto w-[min(640px,calc(100%-32px))] py-16">
       <p className="text-[10px] font-extrabold tracking-[0.16em] text-forest">CONTACT</p>
-      <h1 className="font-display mt-2 text-4xl">Contact GharRent</h1>
+      <h1 className="font-display mt-2 text-4xl">Contact Apna Ghar</h1>
       <p className="mt-2 text-sm text-muted">
         Use this form for product questions or to tell us about a problem with the website. To report a specific
         listing, open that listing and choose Report this listing.

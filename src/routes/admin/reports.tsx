@@ -9,7 +9,7 @@ import { formatDate } from "@/lib/utils";
 import { REPORT_REASONS } from "@/lib/constants";
 
 export const Route = createFileRoute("/admin/reports")({
-  head: () => ({ meta: [{ title: "Reports — GharRent admin" }, { name: "robots", content: "noindex, nofollow" }] }),
+  head: () => ({ meta: [{ title: "Reports — Apna Ghar admin" }, { name: "robots", content: "noindex, nofollow" }] }),
   component: AdminReports,
 });
 

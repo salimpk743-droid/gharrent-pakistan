@@ -3,7 +3,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Select, Textarea } from "@/components/ui/input";
-import { listLocationTree } from "@/lib/server/locations";
+import { listAreasForCity, listLocationTree } from "@/lib/server/locations";
 import {
   addListingImage,
   deleteListingImage,
@@ -12,9 +12,15 @@ import {
   submitListing,
 } from "@/lib/server/listings";
 import { compressImageFile } from "@/lib/compress-image";
-import { FURNISHED_LABEL, FURNISHED_STATUSES, PROPERTY_TYPES } from "@/lib/constants";
-import { formatPkr } from "@/lib/utils";
-import type { OwnerListing, ProvinceNode } from "@/lib/types";
+import {
+  FURNISHED_LABEL,
+  FURNISHED_STATUSES,
+  PURPOSE_KICKER,
+  PROPERTY_TYPES,
+  type ListingPurpose,
+} from "@/lib/constants";
+import { formatListingPrice, formatLocation } from "@/lib/utils";
+import type { AreaNode, OwnerListing, ProvinceNode } from "@/lib/types";
 import { Star, Trash2, Upload } from "lucide-react";
 
 const STEPS = ["Location", "Property", "Photos", "Details", "Contact", "Publish"] as const;
@@ -34,6 +40,7 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [tree, setTree] = useState<ProvinceNode[]>([]);
+  const [areas, setAreas] = useState<AreaNode[]>([]);
   const [listing, setListing] = useState(initial);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -46,7 +53,24 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
 
   const province = tree.find((p) => p.id === listing.provinceId);
   const districts = province?.districts ?? [];
-  const tehsils = districts.find((d) => d.id === listing.districtId)?.tehsils ?? [];
+
+  useEffect(() => {
+    if (!listing.districtId) {
+      setAreas([]);
+      return;
+    }
+    let cancelled = false;
+    void listAreasForCity({ data: { districtId: listing.districtId } })
+      .then((rows) => {
+        if (!cancelled) setAreas(rows);
+      })
+      .catch(() => {
+        if (!cancelled) setAreas([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [listing.districtId]);
 
   async function persist(patch: Partial<OwnerListing> = {}) {
     const next = { ...listing, ...patch };
@@ -57,9 +81,11 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
         title: next.title,
         description: next.description,
         propertyType: next.propertyType,
+        listingPurpose: next.listingPurpose,
         provinceId: next.provinceId,
         districtId: next.districtId,
         tehsilId: next.tehsilId,
+        areaId: next.areaId,
         area: next.area,
         address: next.address,
         monthlyRent: next.monthlyRent,
@@ -154,15 +180,13 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
   }
 
   const progress = ((step + 1) / STEPS.length) * 100;
-  const locLabel = useMemo(
-    () => [listing.area, listing.districtName, listing.provinceName].filter(Boolean).join(", "),
-    [listing],
-  );
+  const locLabel = useMemo(() => formatLocation(listing), [listing]);
+  const price = formatListingPrice(listing.monthlyRent, listing.listingPurpose);
 
   return (
     <div className="mx-auto w-[min(760px,calc(100%-24px))] py-8 pb-28">
       <p className="text-[10px] font-extrabold tracking-[0.16em] text-forest">POST A PROPERTY</p>
-      <h1 className="font-display mt-2 text-3xl tracking-tight">List your rental property</h1>
+      <h1 className="font-display mt-2 text-3xl tracking-tight">List your property</h1>
       <p className="mt-1 text-sm text-muted">
         Step {step + 1} of {STEPS.length}: {STEPS[step]}. Your ad goes live as soon as you publish.
       </p>
@@ -173,12 +197,39 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
       <div className="mt-8 grid gap-4">
         {step === 0 && (
           <>
+            <div className="flex h-11 min-w-0 items-end gap-6 overflow-hidden border-b border-line">
+              <button
+                type="button"
+                className={`h-11 shrink-0 px-1 text-sm font-bold ${
+                  listing.listingPurpose === "RENT" ? "border-b-2 border-forest text-forest" : "text-[#b7c2bd]"
+                }`}
+                onClick={() => setListing((l) => ({ ...l, listingPurpose: "RENT" }))}
+              >
+                For rent
+              </button>
+              <button
+                type="button"
+                className={`h-11 shrink-0 px-1 text-sm font-bold ${
+                  listing.listingPurpose === "SALE" ? "border-b-2 border-forest text-forest" : "text-[#b7c2bd]"
+                }`}
+                onClick={() => setListing((l) => ({ ...l, listingPurpose: "SALE" }))}
+              >
+                For sale
+              </button>
+            </div>
             <Label>
               Province / region
               <Select
                 value={listing.provinceId || ""}
                 onChange={(e) =>
-                  setListing((l) => ({ ...l, provinceId: e.target.value, districtId: null, tehsilId: null }))
+                  setListing((l) => ({
+                    ...l,
+                    provinceId: e.target.value,
+                    districtId: null,
+                    tehsilId: null,
+                    areaId: null,
+                    area: "",
+                  }))
                 }
               >
                 <option value="">Select province</option>
@@ -190,13 +241,15 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
               </Select>
             </Label>
             <Label>
-              District
+              City
               <Select
                 value={listing.districtId || ""}
                 disabled={!listing.provinceId}
-                onChange={(e) => setListing((l) => ({ ...l, districtId: e.target.value, tehsilId: null }))}
+                onChange={(e) =>
+                  setListing((l) => ({ ...l, districtId: e.target.value, tehsilId: null, areaId: null, area: "" }))
+                }
               >
-                <option value="">Select district</option>
+                <option value="">Select city</option>
                 {districts.map((d) => (
                   <option key={d.id} value={d.id}>
                     {d.name}
@@ -205,27 +258,29 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
               </Select>
             </Label>
             <Label>
-              Tehsil / taluka
+              Area
               <Select
-                value={listing.tehsilId || ""}
+                value={listing.areaId || ""}
                 disabled={!listing.districtId}
-                onChange={(e) => setListing((l) => ({ ...l, tehsilId: e.target.value }))}
+                onChange={(e) => {
+                  const selected = areas.find((a) => a.id === e.target.value);
+                  setListing((l) => ({
+                    ...l,
+                    areaId: e.target.value || null,
+                    area: selected?.name || "",
+                  }));
+                }}
               >
-                <option value="">Select tehsil</option>
-                {tehsils.map((t) => (
-                  <option key={t.id} value={t.id}>
-                    {t.name}
+                <option value="">Select area</option>
+                {areas.map((a) => (
+                  <option key={a.id} value={a.id}>
+                    {a.name}
                   </option>
                 ))}
+                {listing.area && !areas.some((a) => a.id === listing.areaId || a.name === listing.area) && (
+                  <option value={listing.areaId || ""}>{listing.area}</option>
+                )}
               </Select>
-            </Label>
-            <Label>
-              Area / locality
-              <Input
-                value={listing.area}
-                onChange={(e) => setListing((l) => ({ ...l, area: e.target.value }))}
-                placeholder="e.g. DHA Phase 6, Gulberg, F-11"
-              />
             </Label>
             <Label>
               Address (optional)
@@ -263,14 +318,14 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
               </Select>
             </Label>
             <Label>
-              Monthly rent (Rs.)
+              {listing.listingPurpose === "SALE" ? "Sale price (Rs.)" : "Monthly rent (Rs.)"}
               <Input
                 inputMode="numeric"
                 value={listing.monthlyRent || ""}
                 onChange={(e) =>
                   setListing((l) => ({ ...l, monthlyRent: Number(e.target.value.replace(/[^\d]/g, "")) || 0 }))
                 }
-                placeholder="65000"
+                placeholder={listing.listingPurpose === "SALE" ? "18500000" : "65000"}
               />
             </Label>
             <div className="grid grid-cols-2 gap-3">
@@ -420,7 +475,7 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
               />
             </Label>
             <p className="text-xs text-muted">
-              Renters will use these numbers to call or message you. Do not add CNIC, email or payment details.
+              People will use these numbers to call or message you. Do not add CNIC, email or payment details.
             </p>
           </>
         )}
@@ -429,8 +484,14 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
           <>
             <div className="rounded-xl border border-line bg-sand p-5">
               <p className="text-[10px] font-extrabold tracking-[0.16em] text-forest">PREVIEW</p>
-              <h2 className="font-display mt-2 text-2xl">{listing.title || "Untitled listing"}</h2>
-              <p className="mt-1 text-lg font-extrabold">{formatPkr(listing.monthlyRent)} / month</p>
+              <p className="mt-2 text-[10px] font-extrabold tracking-[0.14em] text-forest">
+                {PURPOSE_KICKER[listing.listingPurpose as ListingPurpose]}
+              </p>
+              <h2 className="font-display mt-1 text-2xl">{listing.title || "Untitled listing"}</h2>
+              <p className="mt-1 text-lg font-extrabold">
+                {price.amount}
+                {price.suffix ? <span className="text-sm font-normal text-muted"> {price.suffix}</span> : null}
+              </p>
               <p className="text-sm text-muted">
                 {locLabel || "Location not set"} · {listing.propertyType}
               </p>

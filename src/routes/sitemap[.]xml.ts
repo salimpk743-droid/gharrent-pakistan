@@ -23,6 +23,7 @@ export const Route = createFileRoute("/sitemap.xml")({
         const urls = [
           "",
           "/rent",
+          "/sale",
           "/locations",
           "/safety",
           "/privacy",
@@ -31,7 +32,9 @@ export const Route = createFileRoute("/sitemap.xml")({
           "/contact",
           "/report",
           ...provinces.map((p) => `/rent/${p.slug}`),
+          ...provinces.map((p) => `/sale/${p.slug}`),
           ...districts.map((d) => `/rent/${d.pslug}/${d.dslug}`),
+          ...districts.map((d) => `/sale/${d.pslug}/${d.dslug}`),
           ...properties.map((p) => `/property/${p.slug}`),
         ];
         const body = `<?xml version="1.0" encoding="UTF-8"?>

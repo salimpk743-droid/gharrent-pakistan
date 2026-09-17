@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
-import type { ListingStatus } from "@/lib/constants";
-import { STATUS_LABEL } from "@/lib/constants";
+import type { ListingPurpose, ListingStatus } from "@/lib/constants";
+import { statusLabel } from "@/lib/constants";
 
 export function Badge({
   className,
@@ -32,6 +32,6 @@ const STATUS_CLASS: Record<ListingStatus, string> = {
   DELETED: "bg-sand text-muted",
 };
 
-export function StatusBadge({ status }: { status: ListingStatus }) {
-  return <Badge className={STATUS_CLASS[status]}>{STATUS_LABEL[status]}</Badge>;
+export function StatusBadge({ status, purpose }: { status: ListingStatus; purpose?: ListingPurpose }) {
+  return <Badge className={STATUS_CLASS[status]}>{statusLabel(status, purpose)}</Badge>;
 }

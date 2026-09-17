@@ -1,4 +1,5 @@
-import type { FurnishedStatus, ListingStatus, PropertyType, SizeUnit } from "@/lib/constants";
+import type { FurnishedStatus, ListingPurpose, ListingStatus, PropertyType, SizeUnit } from "@/lib/constants";
+import { parseListingPurpose } from "@/lib/constants";
 import type { OwnerListing, PropertyImage, PublicProperty } from "@/lib/types";
 
 export type PropertyRow = {
@@ -8,16 +9,20 @@ export type PropertyRow = {
   slug: string;
   description: string;
   property_type: string;
+  listing_purpose: string | null;
   status: string;
   province_id: string | null;
   district_id: string | null;
   tehsil_id: string | null;
+  area_id: string | null;
   province_name: string | null;
   district_name: string | null;
   tehsil_name: string | null;
+  area_name: string | null;
   province_slug: string | null;
   district_slug: string | null;
   tehsil_slug: string | null;
+  area_slug: string | null;
   area: string;
   address: string;
   latitude: number | null;
@@ -57,17 +62,17 @@ export type PropertyRow = {
 };
 
 export const PROPERTY_SELECT = `
-  p.id, p.owner_id, p.title, p.slug, p.description, p.property_type, p.status,
-  p.province_id, p.district_id, p.tehsil_id,
-  pr.name as province_name, d.name as district_name, t.name as tehsil_name,
-  pr.slug as province_slug, d.slug as district_slug, t.slug as tehsil_slug,
+  p.id, p.owner_id, p.title, p.slug, p.description, p.property_type, p.listing_purpose, p.status,
+  p.province_id, p.district_id, p.tehsil_id, p.area_id,
+  pr.name as province_name, d.name as district_name, t.name as tehsil_name, ar.name as area_name,
+  pr.slug as province_slug, d.slug as district_slug, t.slug as tehsil_slug, ar.slug as area_slug,
   p.area, p.address, p.latitude, p.longitude, p.monthly_rent, p.security_deposit, p.advance_rent,
   p.bedrooms, p.bathrooms, p.property_size, p.size_unit, p.floor, p.total_floors,
   p.furnished_status, p.parking, p.electricity, p.gas, p.water, p.maintenance,
   p.family_allowed, p.bachelor_allowed, p.pets_allowed, p.available_from,
   p.is_featured, p.is_sample, p.rejection_reason, p.view_count, p.created_at,
   p.published_at, p.expires_at, p.contact_phone, p.contact_whatsapp,
-  coalesce(pf.display_name, case when p.is_sample then 'GharRent sample' else 'Advertiser' end) as advertiser_name,
+  coalesce(pf.display_name, case when p.is_sample then 'Apna Ghar sample' else 'Advertiser' end) as advertiser_name,
   pf.image_url as advertiser_image,
   coalesce(pf.google_verified, false) as advertiser_google,
   coalesce(pf.trusted_advertiser, false) as advertiser_trusted
@@ -78,6 +83,7 @@ export const PROPERTY_FROM = `
   left join provinces pr on pr.id = p.province_id
   left join districts d on d.id = p.district_id
   left join tehsils t on t.id = p.tehsil_id
+  left join areas ar on ar.id = p.area_id
   left join profiles pf on pf.user_id = p.owner_id
 `;
 
@@ -110,22 +116,27 @@ export function mapPublic(
   extras?: { saved?: boolean; includeContact?: boolean },
 ): PublicProperty {
   const cover = images.find((i) => i.isCover) || images[0] || null;
+  const listingPurpose: ListingPurpose = parseListingPurpose(row.listing_purpose);
   return {
     id: row.id,
     slug: row.slug,
     title: row.title,
     description: row.description,
     propertyType: row.property_type as PropertyType,
+    listingPurpose,
     status: row.status as ListingStatus,
     provinceId: row.province_id,
     districtId: row.district_id,
     tehsilId: row.tehsil_id,
+    areaId: row.area_id,
     provinceName: row.province_name,
     districtName: row.district_name,
     tehsilName: row.tehsil_name,
+    areaName: row.area_name,
     provinceSlug: row.province_slug,
     districtSlug: row.district_slug,
     tehsilSlug: row.tehsil_slug,
+    areaSlug: row.area_slug,
     area: row.area,
     address: row.address,
     latitude: row.latitude,

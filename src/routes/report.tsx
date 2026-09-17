@@ -3,8 +3,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 export const Route = createFileRoute("/report")({
   head: () => ({
     meta: [
-      { title: "Report a problem — GharRent Pakistan" },
-      { name: "description", content: "Report a suspicious listing or a problem with GharRent Pakistan." },
+      { title: "Report a problem — Apna Ghar" },
+      { name: "description", content: "Report a suspicious listing or a problem with Apna Ghar." },
     ],
   }),
   component: Page,
@@ -34,7 +34,7 @@ function Page() {
           to="/contact"
           className="inline-flex min-h-11 items-center rounded-md border border-line px-4 text-sm font-bold text-ink no-underline"
         >
-          Contact GharRent
+          Contact Apna Ghar
         </Link>
       </div>
     </main>

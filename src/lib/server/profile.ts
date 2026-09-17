@@ -29,7 +29,7 @@ export async function loadAuthUser(sql: Sql, userId: string) {
   const rows = await sql<{ id: string; name: string; email: string; image: string | null }>`
     select "id", "name", "email", "image" from "user" where "id" = ${userId} limit 1
   `;
-  return rows[0] ?? { id: userId, name: "GharRent user", email: "", image: null };
+  return rows[0] ?? { id: userId, name: "Apna Ghar user", email: "", image: null };
 }
 
 export async function ensureProfile(userId: string): Promise<Profile> {
@@ -50,14 +50,14 @@ export async function ensureProfile(userId: string): Promise<Profile> {
     await sql`insert into profiles (
       user_id, display_name, email, image_url, role, google_verified, last_login_at
     ) values (
-      ${userId}, ${authUser.name || "GharRent user"}, ${authUser.email || null},
+      ${userId}, ${authUser.name || "Apna Ghar user"}, ${authUser.email || null},
       ${authUser.image}, ${role}, ${Boolean(authUser.email)}, ${new Date().toISOString()}
     )`;
   } else {
     const nextRole =
       adminEmail && authUser.email.toLowerCase() === adminEmail ? "ADMIN" : (existing[0].role as string);
     await sql`update profiles set
-      display_name = coalesce(display_name, ${authUser.name || "GharRent user"}),
+      display_name = coalesce(display_name, ${authUser.name || "Apna Ghar user"}),
       email = coalesce(${authUser.email || null}, email),
       image_url = coalesce(${authUser.image}, image_url),
       role = ${nextRole},
@@ -73,7 +73,7 @@ export async function ensureProfile(userId: string): Promise<Profile> {
 export async function requireActiveProfile(userId: string): Promise<Profile> {
   const profile = await ensureProfile(userId);
   if (profile.status === "SUSPENDED") {
-    const err = new Error("This account has been suspended. Contact GharRent if you believe this is a mistake.");
+    const err = new Error("This account has been suspended. Contact Apna Ghar if you believe this is a mistake.");
     (err as Error & { status: number }).status = 403;
     throw err;
   }

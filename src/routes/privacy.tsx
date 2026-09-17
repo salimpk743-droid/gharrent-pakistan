@@ -4,8 +4,8 @@ import { LegalPage } from "@/components/layout/legal-page";
 export const Route = createFileRoute("/privacy")({
   head: () => ({
     meta: [
-      { title: "Privacy Policy — GharRent Pakistan" },
-      { name: "description", content: "How GharRent Pakistan collects, uses and protects information." },
+      { title: "Privacy Policy — Apna Ghar" },
+      { name: "description", content: "How Apna Ghar collects, uses and protects information." },
     ],
   }),
   component: Page,
@@ -15,13 +15,13 @@ function Page() {
   return (
     <LegalPage eyebrow="LEGAL & PRIVACY" title="Privacy Policy">
       <div className="rounded-lg border border-line bg-cream p-4 text-ink">
-        <strong>This is a draft policy, not legal advice.</strong> It explains how GharRent intends to handle
+        <strong>This is a draft policy, not legal advice.</strong> It explains how Apna Ghar intends to handle
         information as a rental marketplace. A Pakistani lawyer should review it before you rely on it as a
         formal privacy notice.
       </div>
       <h2>1. Who we are</h2>
       <p>
-        GharRent Pakistan is a marketplace where people can search rental homes and advertisers can post listings.
+        Apna Ghar is a marketplace where people can search rental homes and advertisers can post listings.
         We are not a landlord, estate agent or party to a rental contract unless a written agreement says otherwise.
       </p>
       <h2>2. Information we collect</h2>
@@ -30,7 +30,7 @@ function Page() {
         <li>Account information from Google sign-in: name, email address and profile photo.</li>
         <li>Optional phone number if you add it to your profile or a listing.</li>
         <li>Listing content you submit, including photos, location, rent and description.</li>
-        <li>Saved properties, reports and messages you send to GharRent.</li>
+        <li>Saved properties, reports and messages you send to Apna Ghar.</li>
         <li>Basic usage information such as pages viewed, listing views and contact-button clicks.</li>
       </ul>
       <p>We do not ask for CNIC numbers, payment-card details or copies of title documents for ordinary use of the site.</p>
@@ -72,11 +72,11 @@ function Page() {
         anonymise personal data that we no longer need.
       </p>
       <h2>9. Children</h2>
-      <p>GharRent is intended for adults who can lawfully use a rental marketplace. We do not knowingly collect information from children.</p>
+      <p>Apna Ghar is intended for adults who can lawfully use a rental marketplace. We do not knowingly collect information from children.</p>
       <h2>10. Changes</h2>
       <p>We may update this policy as the service develops. The date at the top of the page will change when we do.</p>
       <h2>11. Contact</h2>
-      <p>Privacy questions can be sent through the Contact page on GharRent Pakistan.</p>
+      <p>Privacy questions can be sent through the Contact page on Apna Ghar.</p>
     </LegalPage>
   );
 }

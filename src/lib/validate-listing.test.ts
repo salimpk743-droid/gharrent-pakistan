@@ -6,6 +6,7 @@ const valid = {
   title: "5 Marla family house in Johar Town",
   description: "A bright family house with parking, gas and nearby schools. Suitable for a family.",
   propertyType: "House",
+  listingPurpose: "RENT",
   provinceId: "punjab",
   districtId: "punjab-lahore",
   area: "Johar Town",
@@ -47,5 +48,28 @@ describe("listing submit validation", () => {
       }),
       [],
     );
+  });
+
+  it("accepts a sale listing with a sale price and no monthly wording", () => {
+    assert.deepEqual(
+      validateForSubmit({
+        ...valid,
+        listingPurpose: "SALE",
+        propertyType: "Plot",
+        monthlyRent: 18_500_000,
+        bedrooms: 0,
+        bathrooms: 0,
+      }),
+      [],
+    );
+  });
+
+  it("rejects a sale price that is too low", () => {
+    const errors = validateForSubmit({
+      ...valid,
+      listingPurpose: "SALE",
+      monthlyRent: 1000,
+    });
+    assert.ok(errors.some((e) => /sale price/i.test(e)));
   });
 });

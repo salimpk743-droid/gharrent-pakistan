@@ -12,7 +12,7 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/account/")({
   head: () => ({
     meta: [
-      { title: "Account — GharRent Pakistan" },
+      { title: "Account — Apna Ghar" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
@@ -46,14 +46,14 @@ function AccountPage() {
     return <div className="grid min-h-[40vh] place-items-center text-sm text-muted">Loading…</div>;
   }
 
-  const displayName = profile?.displayName || user.displayName || "GharRent user";
+  const displayName = profile?.displayName || user.displayName || "Apna Ghar user";
   const email = profile?.email || user.primaryEmail || "";
   const avatar = profile?.imageUrl || user.profileImageUrl;
 
   return (
     <main className="mx-auto w-[min(720px,calc(100%-32px))] py-10">
       <p className="text-[10px] font-extrabold tracking-[0.16em] text-forest">ACCOUNT</p>
-      <h1 className="font-display mt-2 text-3xl">Your GharRent profile</h1>
+      <h1 className="font-display mt-2 text-3xl">Your Apna Ghar profile</h1>
 
       <section className="mt-6 flex items-center gap-4 rounded-xl border border-line bg-white p-4">
         {avatar ? (

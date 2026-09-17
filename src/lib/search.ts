@@ -1,9 +1,11 @@
-import { typeFromSlug, type PropertyType } from "./constants.ts";
+import { parseListingPurpose, PROPERTY_TYPE_META, typeFromSlug, type ListingPurpose, type PropertyType } from "./constants.ts";
 
 export type SearchFilters = {
+  purpose?: ListingPurpose;
   provinceSlug?: string;
   districtSlug?: string;
   tehsilSlug?: string;
+  areaSlug?: string;
   type?: PropertyType;
   typeSlug?: string;
   area?: string;
@@ -30,8 +32,10 @@ export function normalizeSearchFilters(raw: SearchFilters): SearchFilters {
   const minRent = raw.minRent != null ? Math.max(0, Math.floor(Number(raw.minRent))) : undefined;
   const maxRent = raw.maxRent != null ? Math.max(0, Math.floor(Number(raw.maxRent))) : undefined;
   const sort = raw.sort === "rent_asc" || raw.sort === "rent_desc" ? raw.sort : "newest";
+  const purpose = raw.purpose ? parseListingPurpose(raw.purpose) : undefined;
   return {
     ...raw,
+    purpose,
     type,
     page,
     pageSize,
@@ -40,16 +44,22 @@ export function normalizeSearchFilters(raw: SearchFilters): SearchFilters {
     bedrooms: raw.bedrooms != null ? Math.max(0, Math.floor(Number(raw.bedrooms))) : undefined,
     bathrooms: raw.bathrooms != null ? Math.max(0, Math.floor(Number(raw.bathrooms))) : undefined,
     sort,
-    q: raw.q?.trim() || raw.area?.trim() || undefined,
+    q: raw.q?.trim() || undefined,
     area: raw.area?.trim() || undefined,
+    areaSlug: raw.areaSlug?.trim() || undefined,
   };
 }
 
 export function searchHeading(filters: SearchFilters, locationLabel?: string): string {
   const place = locationLabel || "Pakistan";
   const type = filters.type ?? typeFromSlug(filters.typeSlug);
-  if (type) return `${type}s for rent in ${place}`;
-  return `Rental homes in ${place}`;
+  const purpose = parseListingPurpose(filters.purpose);
+  const verb = purpose === "SALE" ? "for sale" : "for rent";
+  if (type) {
+    const plural = PROPERTY_TYPE_META[type]?.plural || `${type}s`;
+    return `${plural} ${verb} in ${place}`;
+  }
+  return purpose === "SALE" ? `Homes for sale in ${place}` : `Rental homes in ${place}`;
 }
 
 export const SORT_SQL: Record<NonNullable<SearchFilters["sort"]>, string> = {

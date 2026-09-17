@@ -1,13 +1,22 @@
-import { FURNISHED_STATUSES, PROPERTY_TYPES, SIZE_UNITS, type PropertyType } from "./constants.ts";
+import {
+  FURNISHED_STATUSES,
+  LISTING_PURPOSES,
+  PROPERTY_TYPES,
+  SIZE_UNITS,
+  type ListingPurpose,
+  type PropertyType,
+} from "./constants.ts";
 import { normalizePkPhone } from "./phone.ts";
 
 export type ListingInput = {
   title?: string;
   description?: string;
   propertyType?: string;
+  listingPurpose?: string;
   provinceId?: string | null;
   districtId?: string | null;
   tehsilId?: string | null;
+  areaId?: string | null;
   area?: string;
   address?: string;
   monthlyRent?: number;
@@ -29,14 +38,23 @@ export function validateForSubmit(input: ListingInput): string[] {
   if (title.length < 8) errors.push("Add a clear title of at least 8 characters.");
   if (title.length > 80) errors.push("Title must be 80 characters or fewer.");
   if (!input.provinceId) errors.push("Choose a province or region.");
-  if (!input.districtId) errors.push("Choose a district.");
-  if (!(input.area || "").trim()) errors.push("Add the area or locality.");
+  if (!input.districtId) errors.push("Choose a city.");
+  if (!(input.areaId || input.area || "").toString().trim()) errors.push("Choose the area or locality.");
   if (!PROPERTY_TYPES.includes((input.propertyType || "") as PropertyType)) {
     errors.push("Choose a valid property type.");
   }
-  const rent = Number(input.monthlyRent) || 0;
-  if (rent < 1000) errors.push("Monthly rent must be at least Rs. 1,000.");
-  if (rent > 50_000_000) errors.push("Monthly rent is unreasonably high. Please check the amount.");
+  const purpose = (input.listingPurpose || "RENT") as ListingPurpose;
+  if (input.listingPurpose && !LISTING_PURPOSES.includes(purpose)) {
+    errors.push("Choose whether this listing is for rent or for sale.");
+  }
+  const amount = Number(input.monthlyRent) || 0;
+  if (purpose === "SALE") {
+    if (amount < 50_000) errors.push("Sale price must be at least Rs. 50,000.");
+    if (amount > 2_000_000_000) errors.push("Sale price is unreasonably high. Please check the amount.");
+  } else {
+    if (amount < 1000) errors.push("Monthly rent must be at least Rs. 1,000.");
+    if (amount > 50_000_000) errors.push("Monthly rent is unreasonably high. Please check the amount.");
+  }
   const beds = Number(input.bedrooms);
   if (!Number.isFinite(beds) || beds < 0 || beds > 20) errors.push("Bedrooms must be between 0 and 20.");
   const baths = Number(input.bathrooms);

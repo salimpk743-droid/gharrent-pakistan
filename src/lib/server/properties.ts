@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { getSql } from "@/lib/db";
-import { PAGE_SIZE, typeFromSlug } from "@/lib/constants";
+import { PAGE_SIZE, parseListingPurpose, typeFromSlug } from "@/lib/constants";
 import { escapeLike } from "@/lib/utils";
 import { normalizeSearchFilters, SORT_SQL, type SearchFilters } from "@/lib/search";
 import { ensureSeedData } from "./seed";
@@ -10,9 +10,11 @@ import { mapImage, mapPublic, PROPERTY_FROM, PROPERTY_SELECT, type PropertyRow }
 import { resolveLocation } from "./locations";
 
 const SearchSchema = z.object({
+  purpose: z.enum(["RENT", "SALE"]).optional(),
   provinceSlug: z.string().optional(),
   districtSlug: z.string().optional(),
   tehsilSlug: z.string().optional(),
+  areaSlug: z.string().optional(),
   typeSlug: z.string().optional(),
   q: z.string().optional(),
   area: z.string().optional(),
@@ -67,8 +69,10 @@ export async function searchPropertiesInternal(raw: SearchFilters) {
     provinceSlug: filters.provinceSlug,
     districtSlug: filters.districtSlug,
     tehsilSlug: filters.tehsilSlug,
+    areaSlug: filters.areaSlug,
   });
   const type = filters.type ?? typeFromSlug(filters.typeSlug);
+  const purpose = filters.purpose ? parseListingPurpose(filters.purpose) : undefined;
 
   const conditions: string[] = ["p.deleted_at is null", "p.status = 'PUBLISHED'"];
   const params: unknown[] = [];
@@ -77,9 +81,18 @@ export async function searchPropertiesInternal(raw: SearchFilters) {
     conditions.push(sql.replace("?", `$${params.length}`));
   };
 
+  if (purpose) add("p.listing_purpose = ?", purpose);
   if (location.province) add("p.province_id = ?", location.province.id);
   if (location.district) add("p.district_id = ?", location.district.id);
   if (location.tehsil) add("p.tehsil_id = ?", location.tehsil.id);
+  if (location.area) {
+    params.push(location.area.id, location.area.name.toLowerCase());
+    const idIdx = params.length - 1;
+    const nameIdx = params.length;
+    conditions.push(
+      `(p.area_id = $${idIdx} or (p.area_id is null and lower(p.area) = $${nameIdx}))`,
+    );
+  }
   if (type) add("p.property_type = ?", type);
   if (filters.minRent != null) add("p.monthly_rent >= ?", filters.minRent);
   if (filters.maxRent != null) add("p.monthly_rent <= ?", filters.maxRent);
@@ -95,7 +108,7 @@ export async function searchPropertiesInternal(raw: SearchFilters) {
     params.push(`%${escapeLike(filters.q)}%`);
     const i = params.length;
     conditions.push(
-      `(p.title ilike $${i} escape '\\' or p.area ilike $${i} escape '\\' or p.description ilike $${i} escape '\\' or p.address ilike $${i} escape '\\')`,
+      `(p.title ilike $${i} escape '\\' or p.area ilike $${i} escape '\\' or p.description ilike $${i} escape '\\' or p.address ilike $${i} escape '\\' or coalesce(ar.name, '') ilike $${i} escape '\\')`,
     );
   }
 
@@ -126,7 +139,9 @@ export async function searchPropertiesInternal(raw: SearchFilters) {
     province: location.province,
     district: location.district,
     tehsil: location.tehsil,
+    area: location.area,
     type: type ?? null,
+    purpose: purpose ?? null,
   };
 }
 

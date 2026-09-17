@@ -1,4 +1,4 @@
-import { slugify } from "@/lib/utils";
+import { slugify } from "../lib/utils.ts";
 
 export type LocationTree = Record<string, Record<string, string[]>>;
 
@@ -162,7 +162,7 @@ export function flattenLocations(): {
         id: dId,
         provinceId: pId,
         slug: slugify(districtKey),
-        name: displayName(districtKey),
+        name: districtKey.replaceAll("_", " "),
       });
       for (const tehsilName of tehsilNames) {
         const tId = tehsilId(provinceKey, districtKey, tehsilName);

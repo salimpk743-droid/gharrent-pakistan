@@ -5,11 +5,11 @@ export const Route = createFileRoute("/locations")({
   loader: () => listLocationTree(),
   head: () => ({
     meta: [
-      { title: "Pakistan rental locations — GharRent" },
+      { title: "Pakistan property locations — Apna Ghar" },
       {
         name: "description",
         content:
-          "Browse GharRent’s Pakistan location directory by province, district and tehsil, then open rental homes in that area.",
+          "Browse Apna Ghar’s Pakistan location directory by province and city, then open homes for rent or sale in that area.",
       },
     ],
   }),
@@ -21,10 +21,10 @@ function LocationsPage() {
   return (
     <main className="mx-auto w-[min(1000px,calc(100%-32px))] py-16">
       <p className="text-[10px] font-extrabold tracking-[0.16em] text-forest">PAKISTAN LOCATION DIRECTORY</p>
-      <h1 className="font-display mt-2 text-4xl tracking-tight">Browse rental locations across Pakistan</h1>
+      <h1 className="font-display mt-2 text-4xl tracking-tight">Browse locations across Pakistan</h1>
       <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted">
-        GharRent is organised as Country → Province / Region → District → Tehsil → Area → Property. Choose a
-        province to open rental search for that region.
+        Apna Ghar is organised as Country → Province / Region → City → Area → Property. Choose a province to
+        open property search for that region.
       </p>
       <div className="mt-8 grid gap-4 md:grid-cols-2">
         {tree.map((p) => (

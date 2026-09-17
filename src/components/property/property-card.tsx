@@ -1,8 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { Bath, BedDouble, Heart, MapPin, Maximize2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { SIZE_UNIT_LABEL } from "@/lib/constants";
-import { formatPkr } from "@/lib/utils";
+import { PURPOSE_KICKER, SIZE_UNIT_LABEL } from "@/lib/constants";
+import { formatListingPrice, formatLocation } from "@/lib/utils";
 import type { PublicProperty } from "@/lib/types";
 
 export function PropertyCard({
@@ -12,7 +12,8 @@ export function PropertyCard({
   property: PublicProperty;
   onToggleSave?: (id: string) => void;
 }) {
-  const loc = [property.area, property.districtName].filter(Boolean).join(", ");
+  const loc = formatLocation(property, { includeProvince: false });
+  const price = formatListingPrice(property.monthlyRent, property.listingPurpose);
   const size =
     property.propertySize != null
       ? `${property.propertySize.toLocaleString("en-PK")} ${SIZE_UNIT_LABEL[property.sizeUnit]}`
@@ -46,9 +47,10 @@ export function PropertyCard({
           )}
         </div>
         <div className="p-3.5">
+          <p className="text-[10px] font-extrabold tracking-[0.14em] text-forest">{PURPOSE_KICKER[property.listingPurpose]}</p>
           <div className="text-base font-extrabold">
-            {formatPkr(property.monthlyRent)}{" "}
-            <small className="text-[10px] font-normal text-muted">/ month</small>
+            {price.amount}
+            {price.suffix ? <small className="text-[10px] font-normal text-muted"> {price.suffix}</small> : null}
           </div>
           <h3 className="font-display mt-1.5 text-base font-semibold leading-snug">{property.title}</h3>
           <p className="mt-0.5 flex items-center gap-1 text-[11px] text-muted">

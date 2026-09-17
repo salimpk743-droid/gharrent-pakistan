@@ -4,7 +4,8 @@ import { Brand } from "./brand";
 
 const NAV = [
   { to: "/locations" as const, label: "Browse" },
-  { to: "/rent" as const, label: "Rentals" },
+  { to: "/rent" as const, label: "Rent" },
+  { to: "/sale" as const, label: "Buy" },
   { to: "/safety" as const, label: "Safety" },
 ];
 

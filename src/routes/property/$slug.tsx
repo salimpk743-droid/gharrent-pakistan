@@ -8,8 +8,8 @@ import { Label, Select, Textarea } from "@/components/ui/input";
 import { getPropertyBySlug, recordContactClick } from "@/lib/server/properties";
 import { reportProperty } from "@/lib/server/reports";
 import { toggleFavorite } from "@/lib/server/favorites";
-import { FURNISHED_LABEL, REPORT_REASONS, SIZE_UNIT_LABEL } from "@/lib/constants";
-import { formatPkr } from "@/lib/utils";
+import { FURNISHED_LABEL, PURPOSE_KICKER, REPORT_REASONS, SIZE_UNIT_LABEL } from "@/lib/constants";
+import { formatListingPrice, formatLocation } from "@/lib/utils";
 import { telLink, whatsappLink } from "@/lib/phone";
 import { useAuthGate } from "@/components/auth/use-auth-gate";
 import { Bath, BedDouble, Flag, Heart, MapPin, Phone, Share2 } from "lucide-react";
@@ -23,15 +23,17 @@ export const Route = createFileRoute("/property/$slug")({
   },
   head: ({ loaderData }) => {
     const p = loaderData;
-    const loc = [p?.area, p?.districtName, p?.provinceName].filter(Boolean).join(", ");
+    const loc = [p?.areaName || p?.area, p?.districtName, p?.provinceName].filter(Boolean).join(", ");
+    const purpose = p?.listingPurpose === "SALE" ? "for sale" : "for rent";
+    const priceBit = p ? formatListingPrice(p.monthlyRent, p.listingPurpose) : null;
     return {
       meta: [
-        { title: p ? `${p.title} in ${loc} — GharRent` : "Property — GharRent" },
+        { title: p ? `${p.title} in ${loc} — Apna Ghar` : "Property — Apna Ghar" },
         {
           name: "description",
           content: p
-            ? `${p.propertyType} for rent in ${loc}. ${formatPkr(p.monthlyRent)} per month. ${p.bedrooms} beds, ${p.bathrooms} baths.`
-            : "Rental property on GharRent Pakistan.",
+            ? `${p.propertyType} ${purpose} in ${loc}. ${priceBit?.amount}${priceBit?.suffix ? ` ${priceBit.suffix}` : ""}. ${p.bedrooms} beds, ${p.bathrooms} baths.`
+            : "Property listing on Apna Ghar Pakistan.",
         },
       ],
     };
@@ -40,9 +42,9 @@ export const Route = createFileRoute("/property/$slug")({
   notFoundComponent: () => (
     <main className="mx-auto w-[min(720px,calc(100%-32px))] py-20 text-center">
       <h1 className="font-display text-3xl">This listing is not available</h1>
-      <p className="mt-2 text-sm text-muted">It may have been paused, rented or removed.</p>
+      <p className="mt-2 text-sm text-muted">It may have been paused, rented, sold or removed.</p>
       <Link to="/rent" className="mt-6 inline-block font-bold text-forest">
-        Browse rentals
+        Browse homes
       </Link>
     </main>
   ),
@@ -55,11 +57,12 @@ function PropertyPage() {
   const [reporting, setReporting] = useState(false);
   const [reason, setReason] = useState<string>(REPORT_REASONS[0].id);
   const [details, setDetails] = useState("");
-  const loc = [property.area, property.districtName, property.provinceName].filter(Boolean).join(", ");
+  const loc = formatLocation(property);
+  const price = formatListingPrice(property.monthlyRent, property.listingPurpose);
   const call = telLink(property.contactPhone);
   const wa = whatsappLink(
     property.contactWhatsapp || property.contactPhone,
-    `Assalamualaikum, I saw your GharRent listing: ${property.title}`,
+    `Assalamualaikum, I saw your Apna Ghar listing: ${property.title}`,
   );
   const size =
     property.propertySize != null
@@ -115,21 +118,37 @@ function PropertyPage() {
         {property.provinceSlug && (
           <>
             <span>/</span>
-            <Link to="/rent/$province" params={{ province: property.provinceSlug }} className="no-underline hover:text-forest">
-              {property.provinceName}
-            </Link>
+            {property.listingPurpose === "SALE" ? (
+              <Link to="/sale/$province" params={{ province: property.provinceSlug }} className="no-underline hover:text-forest">
+                {property.provinceName}
+              </Link>
+            ) : (
+              <Link to="/rent/$province" params={{ province: property.provinceSlug }} className="no-underline hover:text-forest">
+                {property.provinceName}
+              </Link>
+            )}
           </>
         )}
         {property.provinceSlug && property.districtSlug && (
           <>
             <span>/</span>
-            <Link
-              to="/rent/$province/$district"
-              params={{ province: property.provinceSlug, district: property.districtSlug }}
-              className="no-underline hover:text-forest"
-            >
-              {property.districtName}
-            </Link>
+            {property.listingPurpose === "SALE" ? (
+              <Link
+                to="/sale/$province/$district"
+                params={{ province: property.provinceSlug, district: property.districtSlug }}
+                className="no-underline hover:text-forest"
+              >
+                {property.districtName}
+              </Link>
+            ) : (
+              <Link
+                to="/rent/$province/$district"
+                params={{ province: property.provinceSlug, district: property.districtSlug }}
+                className="no-underline hover:text-forest"
+              >
+                {property.districtName}
+              </Link>
+            )}
           </>
         )}
       </nav>
@@ -139,12 +158,16 @@ function PropertyPage() {
       <div className="mt-6 grid gap-8 lg:grid-cols-[1.4fr_0.8fr]">
         <div>
           <div className="flex flex-wrap items-center gap-2">
+            <span className="text-[10px] font-extrabold tracking-[0.14em] text-forest">
+              {PURPOSE_KICKER[property.listingPurpose]}
+            </span>
             {property.isFeatured && <Badge>Featured</Badge>}
             {property.isSample && <Badge className="bg-ink text-white">Demo listing</Badge>}
-            <StatusBadge status={property.status} />
+            <StatusBadge status={property.status} purpose={property.listingPurpose} />
           </div>
           <p className="mt-3 text-2xl font-extrabold">
-            {formatPkr(property.monthlyRent)} <span className="text-sm font-normal text-muted">/ month</span>
+            {price.amount}
+            {price.suffix ? <span className="text-sm font-normal text-muted"> {price.suffix}</span> : null}
           </p>
           <h1 className="font-display mt-2 text-3xl tracking-tight">{property.title}</h1>
           <p className="mt-2 flex items-center gap-1 text-sm text-muted">

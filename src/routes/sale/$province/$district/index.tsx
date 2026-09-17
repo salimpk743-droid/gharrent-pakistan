@@ -2,36 +2,35 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ResultsPage } from "@/components/search/results-page";
 import { searchProperties } from "@/lib/server/properties";
 import { APP_NAME, typeFromSlug, typeToSlug } from "@/lib/constants";
+import { parseMarketplaceSearch } from "@/lib/rent-search";
 
-import { parseRentSearch } from "@/lib/rent-search";
-
-export const Route = createFileRoute("/rent/$province/$district/")({
-  validateSearch: parseRentSearch,
+export const Route = createFileRoute("/sale/$province/$district/")({
+  validateSearch: parseMarketplaceSearch,
   loaderDeps: ({ search: s }) => s,
   loader: async ({ params, deps }) => {
     const asType = typeFromSlug(params.district);
     if (asType) {
       return searchProperties({
-        data: { ...deps, provinceSlug: params.province, typeSlug: params.district, purpose: "RENT" },
+        data: { ...deps, provinceSlug: params.province, typeSlug: params.district, purpose: "SALE" },
       }).then(async (res) => {
         if (res.district) return res;
         return searchProperties({
-          data: { ...deps, provinceSlug: params.province, typeSlug: params.district, purpose: "RENT" },
+          data: { ...deps, provinceSlug: params.province, typeSlug: params.district, purpose: "SALE" },
         });
       });
     }
     return searchProperties({
-      data: { ...deps, provinceSlug: params.province, districtSlug: params.district, purpose: "RENT" },
+      data: { ...deps, provinceSlug: params.province, districtSlug: params.district, purpose: "SALE" },
     });
   },
   head: ({ loaderData, params }) => ({
     meta: [
       {
-        title: `Rentals in ${loaderData?.locationLabel || params.district} — ${APP_NAME}`,
+        title: `Properties for sale in ${loaderData?.locationLabel || params.district} — ${APP_NAME}`,
       },
       {
         name: "description",
-        content: `Browse rental homes in ${loaderData?.locationLabel || params.district} on Apna Ghar.`,
+        content: `Browse homes and plots for sale in ${loaderData?.locationLabel || params.district} on Apna Ghar.`,
       },
     ],
   }),
@@ -53,7 +52,7 @@ function Page() {
       provinceSlug={province}
       districtSlug={data.district?.slug}
       typeSlug={typeSlug}
-      purpose="RENT"
+      purpose="SALE"
     />
   );
 }

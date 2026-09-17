@@ -7,14 +7,14 @@ import { canModerate } from "@/lib/authz";
 import { StatusBadge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input, Select } from "@/components/ui/input";
-import { formatPkr } from "@/lib/utils";
+import { formatListingPrice, formatLocation } from "@/lib/utils";
 import { toast } from "sonner";
 import type { PublicProperty } from "@/lib/types";
 import type { AdminAction } from "@/lib/listing-lifecycle";
-import { LISTING_STATUSES } from "@/lib/constants";
+import { LISTING_STATUSES, PURPOSE_KICKER } from "@/lib/constants";
 
 export const Route = createFileRoute("/admin/listings")({
-  head: () => ({ meta: [{ title: "Moderate listings — GharRent" }, { name: "robots", content: "noindex, nofollow" }] }),
+  head: () => ({ meta: [{ title: "Moderate listings — Apna Ghar" }, { name: "robots", content: "noindex, nofollow" }] }),
   component: AdminListings,
 });
 
@@ -87,12 +87,15 @@ function AdminListings() {
         {items.map((p) => (
           <article key={p.id} className="rounded-xl border border-line p-4">
             <div className="flex flex-wrap items-center gap-2">
-              <StatusBadge status={p.status} />
+              <StatusBadge status={p.status} purpose={p.listingPurpose} />
+              <span className="text-[10px] font-extrabold tracking-[0.12em] text-forest">
+                {PURPOSE_KICKER[p.listingPurpose]}
+              </span>
               <b>{p.title}</b>
-              <span className="text-sm text-muted">{formatPkr(p.monthlyRent)}</span>
+              <span className="text-sm text-muted">{formatListingPrice(p.monthlyRent, p.listingPurpose).amount}</span>
             </div>
             <p className="text-xs text-muted">
-              {[p.area, p.districtName, p.provinceName].filter(Boolean).join(", ")} · {p.propertyType}
+              {formatLocation(p)} · {p.propertyType}
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
               {p.status === "PUBLISHED" && (

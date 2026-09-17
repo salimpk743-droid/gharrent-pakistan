@@ -1,5 +1,6 @@
 import type {
   FurnishedStatus,
+  ListingPurpose,
   ListingStatus,
   ProfileStatus,
   PropertyType,
@@ -13,8 +14,10 @@ export type LocationNode = {
   name: string;
 };
 
+export type AreaNode = LocationNode & { aliases: string };
+
 export type ProvinceNode = LocationNode & {
-  districts: Array<LocationNode & { tehsils: LocationNode[] }>;
+  districts: LocationNode[];
 };
 
 export type PropertyImage = {
@@ -32,16 +35,20 @@ export type PublicProperty = {
   title: string;
   description: string;
   propertyType: PropertyType;
+  listingPurpose: ListingPurpose;
   status: ListingStatus;
   provinceId: string | null;
   districtId: string | null;
   tehsilId: string | null;
+  areaId: string | null;
   provinceName: string | null;
   districtName: string | null;
   tehsilName: string | null;
+  areaName: string | null;
   provinceSlug: string | null;
   districtSlug: string | null;
   tehsilSlug: string | null;
+  areaSlug: string | null;
   area: string;
   address: string;
   latitude: number | null;

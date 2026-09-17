@@ -60,7 +60,7 @@ function friendlyAuthError(message: string, code?: string): string {
 }
 
 export function SignInPanel({
-  title = "Welcome to GharRent Pakistan",
+  title = "Welcome to Apna Ghar",
   message = "Sign in to post properties, save homes and manage your listings.",
   callbackURL = "/",
 }: {
@@ -234,7 +234,7 @@ export function SignInPanel({
                     </>
                   ) : (
                     <>
-                      New to GharRent?{" "}
+                      New to Apna Ghar?{" "}
                       <button
                         type="button"
                         className="font-semibold text-forest hover:underline"

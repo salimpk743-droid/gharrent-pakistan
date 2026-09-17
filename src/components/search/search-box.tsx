@@ -1,45 +1,109 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { listLocationTree } from "@/lib/server/locations";
-import { PROPERTY_TYPE_META, PROPERTY_TYPES, RENT_PRESETS } from "@/lib/constants";
-import type { RentSearch } from "@/lib/rent-search";
+import { listAreasForCity, listLocationTree } from "@/lib/server/locations";
+import {
+  PROPERTY_TYPE_META,
+  PROPERTY_TYPES,
+  RENT_PRESETS,
+  SALE_PRESETS,
+  type ListingPurpose,
+} from "@/lib/constants";
+import type { MarketplaceSearch } from "@/lib/rent-search";
 import { Button } from "@/components/ui/button";
-import { Input, Label, Select } from "@/components/ui/input";
+import { Label, Select } from "@/components/ui/input";
 import { Search } from "lucide-react";
-import type { ProvinceNode } from "@/lib/types";
+import type { AreaNode, ProvinceNode } from "@/lib/types";
 
-export function SearchBox({ compact = false }: { compact?: boolean }) {
+export function SearchBox({
+  compact = false,
+  purpose: purposeProp = "RENT",
+}: {
+  compact?: boolean;
+  purpose?: ListingPurpose;
+}) {
   const navigate = useNavigate();
   const [tree, setTree] = useState<ProvinceNode[]>([]);
+  const [areas, setAreas] = useState<AreaNode[]>([]);
+  const [purpose, setPurpose] = useState<ListingPurpose>(purposeProp);
   const [province, setProvince] = useState("");
   const [district, setDistrict] = useState("");
-  const [tehsil, setTehsil] = useState("");
   const [area, setArea] = useState("");
   const [type, setType] = useState("All homes");
-  const [rent, setRent] = useState("any");
+  const [budget, setBudget] = useState("any");
 
   useEffect(() => {
-    void listLocationTree().then(setTree).catch(() => setTree([]));
+    setPurpose(purposeProp);
+  }, [purposeProp]);
+
+  useEffect(() => {
+    void listLocationTree()
+      .then(setTree)
+      .catch(() => setTree([]));
   }, []);
 
   const districts = useMemo(
     () => tree.find((p) => p.slug === province)?.districts ?? [],
     [tree, province],
   );
-  const tehsils = useMemo(
-    () => districts.find((d) => d.slug === district)?.tehsils ?? [],
-    [districts, district],
-  );
+  const selectedCity = districts.find((d) => d.slug === district);
+
+  useEffect(() => {
+    if (!selectedCity) {
+      setAreas([]);
+      return;
+    }
+    let cancelled = false;
+    void listAreasForCity({ data: { districtId: selectedCity.id } })
+      .then((rows) => {
+        if (!cancelled) setAreas(rows);
+      })
+      .catch(() => {
+        if (!cancelled) setAreas([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedCity?.id]);
+
+  const presets = purpose === "SALE" ? SALE_PRESETS : RENT_PRESETS;
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
-    const preset = RENT_PRESETS.find((p) => p.id === rent);
+    const preset = presets.find((p) => p.id === budget);
     const typeSlug = type === "All homes" ? undefined : PROPERTY_TYPE_META[type as keyof typeof PROPERTY_TYPE_META]?.slug;
-    const search: RentSearch = {
-      q: area || undefined,
+    const search: MarketplaceSearch = {
       minRent: preset?.min,
       maxRent: preset?.max,
+      areaSlug: area || undefined,
     };
+    if (purpose === "SALE") {
+      if (province && district && typeSlug) {
+        void navigate({
+          to: "/sale/$province/$district/$type",
+          params: { province, district, type: typeSlug },
+          search,
+        });
+        return;
+      }
+      if (province && district) {
+        void navigate({
+          to: "/sale/$province/$district",
+          params: { province, district },
+          search: { ...search, typeSlug },
+        });
+        return;
+      }
+      if (province) {
+        void navigate({
+          to: "/sale/$province",
+          params: { province },
+          search: { ...search, typeSlug },
+        });
+        return;
+      }
+      void navigate({ to: "/sale", search: { ...search, typeSlug } });
+      return;
+    }
     if (province && district && typeSlug) {
       void navigate({
         to: "/rent/$province/$district/$type",
@@ -49,11 +113,19 @@ export function SearchBox({ compact = false }: { compact?: boolean }) {
       return;
     }
     if (province && district) {
-      void navigate({ to: "/rent/$province/$district", params: { province, district }, search: { ...search, typeSlug, tehsilSlug: tehsil || undefined } });
+      void navigate({
+        to: "/rent/$province/$district",
+        params: { province, district },
+        search: { ...search, typeSlug },
+      });
       return;
     }
     if (province) {
-      void navigate({ to: "/rent/$province", params: { province }, search: { ...search, typeSlug, tehsilSlug: tehsil || undefined } });
+      void navigate({
+        to: "/rent/$province",
+        params: { province },
+        search: { ...search, typeSlug },
+      });
       return;
     }
     void navigate({ to: "/rent", search: { ...search, typeSlug } });
@@ -63,12 +135,30 @@ export function SearchBox({ compact = false }: { compact?: boolean }) {
     <div className={`min-w-0 overflow-hidden rounded-xl bg-white text-ink shadow-[0_18px_45px_rgba(0,0,0,0.22)] ${compact ? "p-3" : "px-3 pb-3"}`}>
       {!compact && (
         <div className="flex h-11 min-w-0 items-end gap-6 overflow-hidden border-b border-line">
-          <button type="button" className="h-11 shrink-0 border-b-2 border-forest px-1 text-sm font-bold text-forest">
+          <button
+            type="button"
+            className={`h-11 shrink-0 px-1 text-sm font-bold ${
+              purpose === "RENT" ? "border-b-2 border-forest text-forest" : "text-[#b7c2bd]"
+            }`}
+            onClick={() => {
+              setPurpose("RENT");
+              setBudget("any");
+            }}
+          >
             For rent
           </button>
-          <span className="h-11 shrink-0 px-1 text-sm font-bold text-[#b7c2bd]" title="Commercial listings are not available yet">
-            Commercial <small className="font-semibold">(later)</small>
-          </span>
+          <button
+            type="button"
+            className={`h-11 shrink-0 px-1 text-sm font-bold ${
+              purpose === "SALE" ? "border-b-2 border-forest text-forest" : "text-[#b7c2bd]"
+            }`}
+            onClick={() => {
+              setPurpose("SALE");
+              setBudget("any");
+            }}
+          >
+            For sale
+          </button>
         </div>
       )}
       <form onSubmit={submit} className="grid min-w-0 gap-2 pt-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -79,7 +169,7 @@ export function SearchBox({ compact = false }: { compact?: boolean }) {
             onChange={(e) => {
               setProvince(e.target.value);
               setDistrict("");
-              setTehsil("");
+              setArea("");
             }}
           >
             <option value="">All Pakistan</option>
@@ -91,16 +181,16 @@ export function SearchBox({ compact = false }: { compact?: boolean }) {
           </Select>
         </Label>
         <Label>
-          District
+          City
           <Select
             value={district}
             disabled={!province}
             onChange={(e) => {
               setDistrict(e.target.value);
-              setTehsil("");
+              setArea("");
             }}
           >
-            <option value="">All districts</option>
+            <option value="">All cities</option>
             {districts.map((d) => (
               <option key={d.id} value={d.slug}>
                 {d.name}
@@ -109,19 +199,15 @@ export function SearchBox({ compact = false }: { compact?: boolean }) {
           </Select>
         </Label>
         <Label>
-          Tehsil
-          <Select value={tehsil} disabled={!district} onChange={(e) => setTehsil(e.target.value)}>
-            <option value="">All tehsils</option>
-            {tehsils.map((t) => (
-              <option key={t.id} value={t.slug}>
-                {t.name}
+          Area
+          <Select value={area} disabled={!district} onChange={(e) => setArea(e.target.value)}>
+            <option value="">All areas</option>
+            {areas.map((a) => (
+              <option key={a.id} value={a.slug}>
+                {a.name}
               </option>
             ))}
           </Select>
-        </Label>
-        <Label>
-          Area
-          <Input value={area} onChange={(e) => setArea(e.target.value)} placeholder="Neighbourhood or area" />
         </Label>
         <Label>
           Type
@@ -133,16 +219,16 @@ export function SearchBox({ compact = false }: { compact?: boolean }) {
           </Select>
         </Label>
         <Label>
-          Rent
-          <Select value={rent} onChange={(e) => setRent(e.target.value)}>
-            {RENT_PRESETS.map((p) => (
+          {purpose === "SALE" ? "Price" : "Rent"}
+          <Select value={budget} onChange={(e) => setBudget(e.target.value)}>
+            {presets.map((p) => (
               <option key={p.id} value={p.id}>
                 {p.label}
               </option>
             ))}
           </Select>
         </Label>
-        <div className="flex min-w-0 items-end sm:col-span-2">
+        <div className="flex min-w-0 items-end sm:col-span-2 lg:col-span-3">
           <Button type="submit" className="w-full">
             <Search className="size-4" aria-hidden="true" />
             Search

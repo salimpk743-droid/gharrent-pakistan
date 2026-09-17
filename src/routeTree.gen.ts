@@ -32,11 +32,15 @@ import { Route as PostIndexRouteImport } from './routes/post/index'
 import { Route as PostIdRouteImport } from './routes/post/$id'
 import { Route as PropertySlugRouteImport } from './routes/property/$slug'
 import { Route as RentIndexRouteImport } from './routes/rent/index'
+import { Route as SaleIndexRouteImport } from './routes/sale/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiImagesIdRouteImport } from './routes/api/images/$id'
 import { Route as RentProvinceIndexRouteImport } from './routes/rent/$province/index'
+import { Route as SaleProvinceIndexRouteImport } from './routes/sale/$province/index'
 import { Route as RentProvinceDistrictIndexRouteImport } from './routes/rent/$province/$district/index'
 import { Route as RentProvinceDistrictTypeRouteImport } from './routes/rent/$province/$district/$type'
+import { Route as SaleProvinceDistrictIndexRouteImport } from './routes/sale/$province/$district/index'
+import { Route as SaleProvinceDistrictTypeRouteImport } from './routes/sale/$province/$district/$type'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -154,6 +158,11 @@ const RentIndexRoute = RentIndexRouteImport.update({
   path: '/rent/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SaleIndexRoute = SaleIndexRouteImport.update({
+  id: '/sale/',
+  path: '/sale/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -169,6 +178,11 @@ const RentProvinceIndexRoute = RentProvinceIndexRouteImport.update({
   path: '/rent/$province/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SaleProvinceIndexRoute = SaleProvinceIndexRouteImport.update({
+  id: '/sale/$province/',
+  path: '/sale/$province/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RentProvinceDistrictIndexRoute =
   RentProvinceDistrictIndexRouteImport.update({
     id: '/rent/$province/$district/',
@@ -179,6 +193,18 @@ const RentProvinceDistrictTypeRoute =
   RentProvinceDistrictTypeRouteImport.update({
     id: '/rent/$province/$district/$type',
     path: '/rent/$province/$district/$type',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const SaleProvinceDistrictIndexRoute =
+  SaleProvinceDistrictIndexRouteImport.update({
+    id: '/sale/$province/$district/',
+    path: '/sale/$province/$district/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const SaleProvinceDistrictTypeRoute =
+  SaleProvinceDistrictTypeRouteImport.update({
+    id: '/sale/$province/$district/$type',
+    path: '/sale/$province/$district/$type',
     getParentRoute: () => rootRouteImport,
   } as any)
 
@@ -206,11 +232,15 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/post/': typeof PostIndexRoute
   '/rent/': typeof RentIndexRoute
+  '/sale/': typeof SaleIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/images/$id': typeof ApiImagesIdRoute
   '/rent/$province/': typeof RentProvinceIndexRoute
+  '/sale/$province/': typeof SaleProvinceIndexRoute
   '/rent/$province/$district/$type': typeof RentProvinceDistrictTypeRoute
+  '/sale/$province/$district/$type': typeof SaleProvinceDistrictTypeRoute
   '/rent/$province/$district/': typeof RentProvinceDistrictIndexRoute
+  '/sale/$province/$district/': typeof SaleProvinceDistrictIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -236,11 +266,15 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/post': typeof PostIndexRoute
   '/rent': typeof RentIndexRoute
+  '/sale': typeof SaleIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/images/$id': typeof ApiImagesIdRoute
   '/rent/$province': typeof RentProvinceIndexRoute
+  '/sale/$province': typeof SaleProvinceIndexRoute
   '/rent/$province/$district/$type': typeof RentProvinceDistrictTypeRoute
+  '/sale/$province/$district/$type': typeof SaleProvinceDistrictTypeRoute
   '/rent/$province/$district': typeof RentProvinceDistrictIndexRoute
+  '/sale/$province/$district': typeof SaleProvinceDistrictIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -267,11 +301,15 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/post/': typeof PostIndexRoute
   '/rent/': typeof RentIndexRoute
+  '/sale/': typeof SaleIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/images/$id': typeof ApiImagesIdRoute
   '/rent/$province/': typeof RentProvinceIndexRoute
+  '/sale/$province/': typeof SaleProvinceIndexRoute
   '/rent/$province/$district/$type': typeof RentProvinceDistrictTypeRoute
+  '/sale/$province/$district/$type': typeof SaleProvinceDistrictTypeRoute
   '/rent/$province/$district/': typeof RentProvinceDistrictIndexRoute
+  '/sale/$province/$district/': typeof SaleProvinceDistrictIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -299,11 +337,15 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/post/'
     | '/rent/'
+    | '/sale/'
     | '/api/auth/$'
     | '/api/images/$id'
     | '/rent/$province/'
+    | '/sale/$province/'
     | '/rent/$province/$district/$type'
+    | '/sale/$province/$district/$type'
     | '/rent/$province/$district/'
+    | '/sale/$province/$district/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -329,11 +371,15 @@ export interface FileRouteTypes {
     | '/admin'
     | '/post'
     | '/rent'
+    | '/sale'
     | '/api/auth/$'
     | '/api/images/$id'
     | '/rent/$province'
+    | '/sale/$province'
     | '/rent/$province/$district/$type'
+    | '/sale/$province/$district/$type'
     | '/rent/$province/$district'
+    | '/sale/$province/$district'
   id:
     | '__root__'
     | '/'
@@ -359,11 +405,15 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/post/'
     | '/rent/'
+    | '/sale/'
     | '/api/auth/$'
     | '/api/images/$id'
     | '/rent/$province/'
+    | '/sale/$province/'
     | '/rent/$province/$district/$type'
+    | '/sale/$province/$district/$type'
     | '/rent/$province/$district/'
+    | '/sale/$province/$district/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -390,11 +440,15 @@ export interface RootRouteChildren {
   AdminIndexRoute: typeof AdminIndexRoute
   PostIndexRoute: typeof PostIndexRoute
   RentIndexRoute: typeof RentIndexRoute
+  SaleIndexRoute: typeof SaleIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiImagesIdRoute: typeof ApiImagesIdRoute
   RentProvinceIndexRoute: typeof RentProvinceIndexRoute
+  SaleProvinceIndexRoute: typeof SaleProvinceIndexRoute
   RentProvinceDistrictTypeRoute: typeof RentProvinceDistrictTypeRoute
+  SaleProvinceDistrictTypeRoute: typeof SaleProvinceDistrictTypeRoute
   RentProvinceDistrictIndexRoute: typeof RentProvinceDistrictIndexRoute
+  SaleProvinceDistrictIndexRoute: typeof SaleProvinceDistrictIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -560,6 +614,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RentIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sale/': {
+      id: '/sale/'
+      path: '/sale'
+      fullPath: '/sale/'
+      preLoaderRoute: typeof SaleIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -581,6 +642,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RentProvinceIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sale/$province/': {
+      id: '/sale/$province/'
+      path: '/sale/$province'
+      fullPath: '/sale/$province/'
+      preLoaderRoute: typeof SaleProvinceIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/rent/$province/$district/': {
       id: '/rent/$province/$district/'
       path: '/rent/$province/$district'
@@ -593,6 +661,20 @@ declare module '@tanstack/react-router' {
       path: '/rent/$province/$district/$type'
       fullPath: '/rent/$province/$district/$type'
       preLoaderRoute: typeof RentProvinceDistrictTypeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sale/$province/$district/': {
+      id: '/sale/$province/$district/'
+      path: '/sale/$province/$district'
+      fullPath: '/sale/$province/$district/'
+      preLoaderRoute: typeof SaleProvinceDistrictIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sale/$province/$district/$type': {
+      id: '/sale/$province/$district/$type'
+      path: '/sale/$province/$district/$type'
+      fullPath: '/sale/$province/$district/$type'
+      preLoaderRoute: typeof SaleProvinceDistrictTypeRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -622,11 +704,15 @@ const rootRouteChildren: RootRouteChildren = {
   AdminIndexRoute: AdminIndexRoute,
   PostIndexRoute: PostIndexRoute,
   RentIndexRoute: RentIndexRoute,
+  SaleIndexRoute: SaleIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiImagesIdRoute: ApiImagesIdRoute,
   RentProvinceIndexRoute: RentProvinceIndexRoute,
+  SaleProvinceIndexRoute: SaleProvinceIndexRoute,
   RentProvinceDistrictTypeRoute: RentProvinceDistrictTypeRoute,
+  SaleProvinceDistrictTypeRoute: SaleProvinceDistrictTypeRoute,
   RentProvinceDistrictIndexRoute: RentProvinceDistrictIndexRoute,
+  SaleProvinceDistrictIndexRoute: SaleProvinceDistrictIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

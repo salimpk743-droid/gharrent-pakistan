@@ -4,8 +4,8 @@ import { LegalPage } from "@/components/layout/legal-page";
 export const Route = createFileRoute("/disclaimer")({
   head: () => ({
     meta: [
-      { title: "Rental Disclaimer — GharRent Pakistan" },
-      { name: "description", content: "GharRent is a marketplace, not a landlord or party to a rental contract." },
+      { title: "Rental Disclaimer — Apna Ghar" },
+      { name: "description", content: "Apna Ghar is a marketplace, not a landlord or party to a rental contract." },
     ],
   }),
   component: Page,
@@ -15,12 +15,12 @@ function Page() {
   return (
     <LegalPage eyebrow="IMPORTANT INFORMATION" title="Rental Disclaimer">
       <div className="rounded-lg border border-line bg-cream p-4 text-ink">
-        GharRent is a marketplace, not a property owner, estate agent or party to a rental contract.
+        Apna Ghar is a marketplace, not a property owner, estate agent or party to a rental contract.
       </div>
       <h2>Listings</h2>
       <p>
         Property listings are submitted by users or shown as clearly labelled samples. Information may change,
-        become unavailable or contain errors. A listing appearing on GharRent does not by itself mean that we have
+        become unavailable or contain errors. A listing appearing on Apna Ghar does not by itself mean that we have
         verified ownership, identity, price, availability, condition, legality or suitability.
       </p>
       <h2>Before you pay or sign</h2>
@@ -38,7 +38,7 @@ function Page() {
       </p>
       <h2>No guarantee</h2>
       <p>
-        To the extent permitted by law, GharRent does not guarantee that the website or any listing will always be
+        To the extent permitted by law, Apna Ghar does not guarantee that the website or any listing will always be
         accurate, available, complete or suitable for a particular purpose. Users make rental decisions at their
         own discretion.
       </p>

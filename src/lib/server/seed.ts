@@ -1,4 +1,5 @@
 import { flattenLocations } from "@/data/pakistan-locations";
+import { flattenAreas } from "@/data/pakistan-areas";
 import { slugify } from "@/lib/utils";
 import { getSql } from "@/lib/db";
 
@@ -29,9 +30,66 @@ async function seedLocations(sql: SeedSql) {
   }
 }
 
+async function repairIslamabadIds(sql: SeedSql) {
+  await sql`
+    update properties
+    set province_id = 'islamabad-capital-territory',
+        district_id = 'islamabad-capital-territory-islamabad'
+    where province_id = 'islamabad' or district_id = 'islamabad-islamabad'
+  `;
+  await sql`
+    update districts
+    set name = 'Islamabad'
+    where id = 'islamabad-capital-territory-islamabad' and name <> 'Islamabad'
+  `;
+}
+
+async function seedAreas(sql: SeedSql) {
+  const existing = await sql<{ id: string }>`select id from areas`;
+  const have = new Set(existing.map((row) => row.id));
+  const areas = flattenAreas();
+  for (const a of areas) {
+    if (have.has(a.id)) continue;
+    await sql`insert into areas (id, district_id, slug, name, aliases)
+      values (${a.id}, ${a.districtId}, ${a.slug}, ${a.name}, ${a.aliases})
+      on conflict (id) do nothing`;
+  }
+}
+
+async function matchPropertyAreas(sql: SeedSql) {
+  const unmatched = await sql<{ id: string; district_id: string | null; area: string }>`
+    select id, district_id, area from properties
+    where area_id is null and area <> ''
+  `;
+  if (unmatched.length === 0) return;
+  const areas = await sql<{ id: string; district_id: string; name: string; aliases: string }>`
+    select id, district_id, name, aliases from areas
+  `;
+  const byDistrict = new Map<string, typeof areas>();
+  for (const a of areas) {
+    const list = byDistrict.get(a.district_id) ?? [];
+    list.push(a);
+    byDistrict.set(a.district_id, list);
+  }
+  for (const p of unmatched) {
+    if (!p.district_id) continue;
+    const list = byDistrict.get(p.district_id) ?? [];
+    const needle = p.area.toLowerCase().trim();
+    const match = list.find((a) => {
+      if (a.name.toLowerCase() === needle) return true;
+      const aliases = a.aliases ? a.aliases.split("|").map((s) => s.toLowerCase().trim()) : [];
+      return aliases.includes(needle);
+    });
+    if (match) {
+      await sql`update properties set area_id = ${match.id} where id = ${p.id}`;
+    }
+  }
+}
+
 type Demo = {
   title: string;
   type: string;
+  purpose?: "RENT" | "SALE";
   provinceId: string;
   districtId: string;
   tehsilId: string;
@@ -76,9 +134,9 @@ const DEMOS: Demo[] = [
   {
     title: "Bright apartment near F-11 Markaz",
     type: "Apartment",
-    provinceId: "islamabad",
-    districtId: "islamabad-islamabad",
-    tehsilId: "islamabad-islamabad-islamabad",
+    provinceId: "islamabad-capital-territory",
+    districtId: "islamabad-capital-territory-islamabad",
+    tehsilId: "islamabad-capital-territory-islamabad-islamabad",
     area: "F-11",
     address: "F-11/2, Islamabad",
     rent: 95000,
@@ -238,9 +296,9 @@ const DEMOS: Demo[] = [
   {
     title: "F-7 house with a quiet lawn",
     type: "House",
-    provinceId: "islamabad",
-    districtId: "islamabad-islamabad",
-    tehsilId: "islamabad-islamabad-islamabad",
+    provinceId: "islamabad-capital-territory",
+    districtId: "islamabad-capital-territory-islamabad",
+    tehsilId: "islamabad-capital-territory-islamabad-islamabad",
     area: "F-7",
     address: "F-7/3, Islamabad",
     rent: 180000,
@@ -295,26 +353,108 @@ const DEMOS: Demo[] = [
     parking: true,
     family: true,
   },
+  {
+    title: "10 Marla plot in DHA Phase 5",
+    type: "Plot",
+    purpose: "SALE",
+    provinceId: "punjab",
+    districtId: "punjab-lahore",
+    tehsilId: "punjab-lahore-cantonment",
+    area: "DHA Phase 5",
+    address: "DHA Phase 5, Lahore",
+    rent: 35000000,
+    beds: 0,
+    baths: 0,
+    size: 10,
+    sizeUnit: "MARLA",
+    furnished: "UNFURNISHED",
+    image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1400&q=80",
+    description:
+      "A regular 10 marla residential plot in DHA Phase 5, Lahore. Corner-adjacent street, possession available. Sample listing for demonstration only.",
+    featured: true,
+    family: true,
+  },
+  {
+    title: "F-10 family house for sale",
+    type: "House",
+    purpose: "SALE",
+    provinceId: "islamabad-capital-territory",
+    districtId: "islamabad-capital-territory-islamabad",
+    tehsilId: "islamabad-capital-territory-islamabad-islamabad",
+    area: "F-10",
+    address: "F-10/3, Islamabad",
+    rent: 85000000,
+    beds: 5,
+    baths: 5,
+    size: 1,
+    sizeUnit: "KANAL",
+    furnished: "SEMI_FURNISHED",
+    image: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1400&q=80",
+    description:
+      "A one-kanal family house in F-10 with a lawn, drawing and dining, and covered parking. Sample listing for demonstration only.",
+    featured: true,
+    parking: true,
+    family: true,
+  },
+  {
+    title: "Clifton shop on a busy street",
+    type: "Shop",
+    purpose: "SALE",
+    provinceId: "sindh",
+    districtId: "sindh-karachi",
+    tehsilId: "sindh-karachi-karachi-south",
+    area: "Clifton",
+    address: "Block 2, Clifton",
+    rent: 28000000,
+    beds: 0,
+    baths: 1,
+    size: 900,
+    sizeUnit: "SQFT",
+    furnished: "UNFURNISHED",
+    image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1400&q=80",
+    description:
+      "A ground-floor shop in Clifton suitable for retail. Frontage on a busy street with nearby parking. Sample listing for demonstration only.",
+    parking: true,
+  },
 ];
 
 async function seedDemoProperties(sql: SeedSql) {
   const [{ n }] = await sql<{ n: number }>`select count(*)::int as n from properties`;
-  if (n > 0) return;
+  if (n === 0) {
+    await insertDemos(sql, DEMOS);
+    return;
+  }
+  const [{ sales }] = await sql<{ sales: number }>`
+    select count(*)::int as sales from properties where listing_purpose = 'SALE' and deleted_at is null
+  `;
+  if (sales === 0) {
+    const [{ real }] = await sql<{ real: number }>`
+      select count(*)::int as real from properties where is_sample = false and deleted_at is null
+    `;
+    if (real === 0) {
+      await insertDemos(sql, DEMOS.filter((d) => d.purpose === "SALE"));
+    }
+  }
+}
+
+async function insertDemos(sql: SeedSql, demos: Demo[]) {
   const expires = new Date();
   expires.setUTCDate(expires.getUTCDate() + 60);
-  for (const d of DEMOS) {
+  for (const d of demos) {
     const id = crypto.randomUUID();
     const slug = `${slugify(d.title)}-${slugify(d.area)}-${id.slice(0, 6)}`;
+    const areaId = `${d.districtId}-${slugify(d.area)}`;
+    const purpose = d.purpose ?? "RENT";
     await sql`insert into properties (
-      id, owner_id, title, slug, description, property_type, status,
-      province_id, district_id, tehsil_id, area, address,
+      id, owner_id, title, slug, description, property_type, listing_purpose, status,
+      province_id, district_id, tehsil_id, area_id, area, address,
       monthly_rent, bedrooms, bathrooms, property_size, size_unit, furnished_status,
       parking, electricity, gas, water, family_allowed, bachelor_allowed,
       contact_phone, contact_whatsapp, is_featured, is_sample,
       published_at, expires_at, available_from
     ) values (
-      ${id}, ${"system-demo"}, ${d.title}, ${slug}, ${d.description}, ${d.type}, ${"PUBLISHED"},
-      ${d.provinceId}, ${d.districtId}, ${d.tehsilId}, ${d.area}, ${d.address},
+      ${id}, ${"system-demo"}, ${d.title}, ${slug}, ${d.description}, ${d.type}, ${purpose}, ${"PUBLISHED"},
+      ${d.provinceId}, ${d.districtId}, ${d.tehsilId}, ${areaId}, ${d.area}, ${d.address},
       ${d.rent}, ${d.beds}, ${d.baths}, ${d.size}, ${d.sizeUnit}, ${d.furnished},
       ${Boolean(d.parking)}, ${true}, ${true}, ${true}, ${d.family !== false}, ${Boolean(d.bachelor)},
       ${"03001234567"}, ${"03001234567"}, ${Boolean(d.featured)}, ${true},
@@ -332,6 +472,9 @@ async function seedDemoProperties(sql: SeedSql) {
 async function runSeed() {
   const sql = await getSql();
   await seedLocations(sql);
+  await repairIslamabadIds(sql);
+  await seedAreas(sql);
+  await matchPropertyAreas(sql);
   await seedDemoProperties(sql);
 }
 

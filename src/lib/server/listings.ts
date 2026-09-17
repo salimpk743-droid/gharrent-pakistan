@@ -18,9 +18,11 @@ const DraftSchema = z.object({
   title: z.string().optional(),
   description: z.string().optional(),
   propertyType: z.string().optional(),
+  listingPurpose: z.enum(["RENT", "SALE"]).optional(),
   provinceId: z.string().nullable().optional(),
   districtId: z.string().nullable().optional(),
   tehsilId: z.string().nullable().optional(),
+  areaId: z.string().nullable().optional(),
   area: z.string().optional(),
   address: z.string().optional(),
   latitude: z.number().nullable().optional(),
@@ -129,21 +131,29 @@ export const saveDraft = createServerFn({ method: "POST" })
         : String(row.contact_whatsapp || "");
     const title = (data.title ?? String(row.title)).trim().slice(0, 80) || "Untitled listing";
     let slug = String(row.slug);
-    if (title !== row.title || data.area) {
+    let areaName = data.area ?? String(row.area || "");
+    let areaId = data.areaId === undefined ? (row.area_id as string | null) : data.areaId;
+    if (areaId) {
+      const areaRows = await sql<{ name: string }>`select name from areas where id = ${areaId} limit 1`;
+      if (areaRows[0]) areaName = areaRows[0].name;
+    }
+    if (title !== row.title || areaName) {
       const districtRows = data.districtId
         ? await sql<{ name: string }>`select name from districts where id = ${data.districtId} limit 1`
         : [];
-      slug = await uniqueSlug(title, data.area || String(row.area || ""), districtRows[0]?.name || "", data.id);
+      slug = await uniqueSlug(title, areaName, districtRows[0]?.name || "", data.id);
     }
     await sql`update properties set
       title = ${title},
       slug = ${slug},
       description = ${data.description ?? row.description},
       property_type = ${data.propertyType ?? row.property_type},
+      listing_purpose = ${data.listingPurpose ?? row.listing_purpose ?? "RENT"},
       province_id = ${data.provinceId === undefined ? row.province_id : data.provinceId},
       district_id = ${data.districtId === undefined ? row.district_id : data.districtId},
       tehsil_id = ${data.tehsilId === undefined ? row.tehsil_id : data.tehsilId},
-      area = ${data.area ?? row.area},
+      area_id = ${areaId},
+      area = ${areaName},
       address = ${data.address ?? row.address},
       latitude = ${data.latitude === undefined ? row.latitude : data.latitude},
       longitude = ${data.longitude === undefined ? row.longitude : data.longitude},
@@ -187,9 +197,11 @@ export const submitListing = createServerFn({ method: "POST" })
       title: listing.title,
       description: listing.description,
       propertyType: listing.propertyType,
+      listingPurpose: listing.listingPurpose,
       provinceId: listing.provinceId,
       districtId: listing.districtId,
       tehsilId: listing.tehsilId,
+      areaId: listing.areaId,
       area: listing.area,
       monthlyRent: listing.monthlyRent,
       bedrooms: listing.bedrooms,

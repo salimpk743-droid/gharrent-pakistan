@@ -19,7 +19,7 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: `${APP_NAME} — Rental Homes Across Pakistan` },
+      { title: `${APP_NAME} — Homes for Rent and Sale Across Pakistan` },
       { name: "description", content: APP_DESCRIPTION },
       { name: "theme-color", content: "#176b52" },
       { name: "robots", content: "index, follow" },

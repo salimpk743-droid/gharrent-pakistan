@@ -4,8 +4,8 @@ import { LegalPage } from "@/components/layout/legal-page";
 export const Route = createFileRoute("/terms")({
   head: () => ({
     meta: [
-      { title: "Terms of Use — GharRent Pakistan" },
-      { name: "description", content: "Terms of use for the GharRent Pakistan rental marketplace." },
+      { title: "Terms of Use — Apna Ghar" },
+      { name: "description", content: "Terms of use for the Apna Ghar rental marketplace." },
     ],
   }),
   component: Page,
@@ -18,7 +18,7 @@ function Page() {
         <strong>Please read carefully.</strong> This is a draft for a marketplace, not legal advice and not a
         guarantee that every listing is accurate.
       </div>
-      <h2>1. Using GharRent</h2>
+      <h2>1. Using Apna Ghar</h2>
       <p>
         You agree to use the website lawfully and honestly. You must not use it for fraud, harassment, spam,
         impersonation, misleading advertising, scraping that harms the service, or anything that violates
@@ -32,12 +32,12 @@ function Page() {
       <h2>3. Property listings</h2>
       <p>
         People who submit listings are responsible for the accuracy, legality and completeness of what they
-        publish. A listing on GharRent is not verification, endorsement or confirmation of ownership unless we
+        publish. A listing on Apna Ghar is not verification, endorsement or confirmation of ownership unless we
         clearly mark that a specific check has been done.
       </p>
       <h2>4. Rental transactions</h2>
       <p>
-        GharRent does not become a party to a rental agreement merely because users find each other here. You are
+        Apna Ghar does not become a party to a rental agreement merely because users find each other here. You are
         responsible for verifying identity, authority to rent, property condition, rent, deposits, utilities and
         all contractual terms before paying or signing.
       </p>
@@ -60,12 +60,12 @@ function Page() {
       </p>
       <h2>8. Intellectual property</h2>
       <p>
-        GharRent branding and original website content are protected by applicable law. By posting a listing you
-        grant GharRent the rights reasonably needed to display that content on the marketplace.
+        Apna Ghar branding and original website content are protected by applicable law. By posting a listing you
+        grant Apna Ghar the rights reasonably needed to display that content on the marketplace.
       </p>
       <h2>9. Limitation</h2>
       <p>
-        To the extent permitted by applicable law, GharRent is provided on an as-available basis. Users are
+        To the extent permitted by applicable law, Apna Ghar is provided on an as-available basis. Users are
         responsible for decisions they make based on listings or conversations found through the platform.
       </p>
       <h2>10. Changes</h2>

@@ -1,6 +1,16 @@
 import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
 import { getSql } from "@/lib/db";
 import { ensureSeedData } from "./seed";
+
+const PROVINCE_SLUG_ALIASES: Record<string, string> = {
+  islamabad: "islamabad-capital-territory",
+};
+
+function canonicalProvinceSlug(slug?: string) {
+  if (!slug) return slug;
+  return PROVINCE_SLUG_ALIASES[slug] ?? slug;
+}
 
 export const listLocationTree = createServerFn({ method: "GET" }).handler(async () => {
   await ensureSeedData();
@@ -10,9 +20,6 @@ export const listLocationTree = createServerFn({ method: "GET" }).handler(async 
   `;
   const districts = await sql<{ id: string; province_id: string; slug: string; name: string }>`
     select id, province_id, slug, name from districts order by name asc
-  `;
-  const tehsils = await sql<{ id: string; district_id: string; slug: string; name: string }>`
-    select id, district_id, slug, name from tehsils order by name asc
   `;
   return provinces.map((p) => ({
     id: p.id,
@@ -24,26 +31,38 @@ export const listLocationTree = createServerFn({ method: "GET" }).handler(async 
         id: d.id,
         slug: d.slug,
         name: d.name,
-        tehsils: tehsils
-          .filter((t) => t.district_id === d.id)
-          .map((t) => ({ id: t.id, slug: t.slug, name: t.name })),
       })),
   }));
 });
+
+export const listAreasForCity = createServerFn({ method: "GET" })
+  .validator((data: unknown) => z.object({ districtId: z.string().min(1) }).parse(data))
+  .handler(async ({ data }) => {
+    await ensureSeedData();
+    const sql = await getSql();
+    return sql<{ id: string; slug: string; name: string; aliases: string }>`
+      select id, slug, name, aliases from areas
+      where district_id = ${data.districtId}
+      order by name asc
+    `;
+  });
 
 export async function resolveLocation(slugs: {
   provinceSlug?: string;
   districtSlug?: string;
   tehsilSlug?: string;
+  areaSlug?: string;
 }) {
   await ensureSeedData();
   const sql = await getSql();
   let province: { id: string; slug: string; name: string } | null = null;
   let district: { id: string; slug: string; name: string; province_id: string } | null = null;
   let tehsil: { id: string; slug: string; name: string } | null = null;
-  if (slugs.provinceSlug) {
+  let area: { id: string; slug: string; name: string } | null = null;
+  const provinceSlug = canonicalProvinceSlug(slugs.provinceSlug);
+  if (provinceSlug) {
     const rows = await sql<{ id: string; slug: string; name: string }>`
-      select id, slug, name from provinces where slug = ${slugs.provinceSlug} limit 1
+      select id, slug, name from provinces where slug = ${provinceSlug} limit 1
     `;
     province = rows[0] ?? null;
   }
@@ -61,6 +80,13 @@ export async function resolveLocation(slugs: {
     `;
     tehsil = rows[0] ?? null;
   }
-  const label = [tehsil?.name, district?.name, province?.name].filter(Boolean).join(", ");
-  return { province, district, tehsil, label: label || "Pakistan" };
+  if (district && slugs.areaSlug) {
+    const rows = await sql<{ id: string; slug: string; name: string }>`
+      select id, slug, name from areas
+      where district_id = ${district.id} and slug = ${slugs.areaSlug} limit 1
+    `;
+    area = rows[0] ?? null;
+  }
+  const label = [area?.name, district?.name, province?.name].filter(Boolean).join(", ");
+  return { province, district, tehsil, area, label: label || "Pakistan" };
 }

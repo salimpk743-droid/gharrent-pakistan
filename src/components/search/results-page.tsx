@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { PropertyCard } from "@/components/property/property-card";
 import { SearchBox } from "@/components/search/search-box";
-import { PROPERTY_TYPE_META, PROPERTY_TYPES, typeFromSlug } from "@/lib/constants";
+import { PROPERTY_TYPE_META, PROPERTY_TYPES, type ListingPurpose, typeFromSlug } from "@/lib/constants";
 import type { PublicProperty } from "@/lib/types";
 import { searchHeading } from "@/lib/search";
 
@@ -14,6 +14,7 @@ export function ResultsPage({
   provinceSlug,
   districtSlug,
   typeSlug,
+  purpose = "RENT",
   title,
   description,
 }: {
@@ -25,22 +26,26 @@ export function ResultsPage({
   provinceSlug?: string;
   districtSlug?: string;
   typeSlug?: string;
+  purpose?: ListingPurpose;
   title?: string;
   description?: string;
 }) {
-  const heading = title || searchHeading({ type: typeFromSlug(typeSlug), typeSlug }, locationLabel);
+  const heading = title || searchHeading({ type: typeFromSlug(typeSlug), typeSlug, purpose }, locationLabel);
   const pages = Math.max(1, Math.ceil(total / pageSize));
+  const rootLabel = purpose === "SALE" ? "Buy" : "Rent";
   return (
     <div className="pb-12">
       <section className="bg-ink px-4 py-8 text-white">
         <div className="mx-auto w-[min(1120px,100%)] min-w-0">
-          <p className="text-[10px] font-extrabold tracking-[0.16em] text-lime">RENTAL SEARCH</p>
+          <p className="text-[10px] font-extrabold tracking-[0.16em] text-lime">
+            {purpose === "SALE" ? "HOMES FOR SALE" : "RENTAL SEARCH"}
+          </p>
           <h1 className="font-display mt-2 text-3xl tracking-tight sm:text-4xl">{heading}</h1>
           <p className="mt-2 max-w-2xl text-sm text-[#d6e2dc]">
             {description || `${total} listing${total === 1 ? "" : "s"} · ${locationLabel}`}
           </p>
           <div className="mt-5 min-w-0">
-            <SearchBox compact />
+            <SearchBox compact purpose={purpose} />
           </div>
         </div>
       </section>
@@ -50,19 +55,35 @@ export function ResultsPage({
             Home
           </Link>
           <span className="text-line">/</span>
-          <Link to="/rent" className="text-muted no-underline hover:text-forest">
-            Rent
-          </Link>
+          {purpose === "SALE" ? (
+            <Link to="/sale" className="text-muted no-underline hover:text-forest">
+              {rootLabel}
+            </Link>
+          ) : (
+            <Link to="/rent" className="text-muted no-underline hover:text-forest">
+              {rootLabel}
+            </Link>
+          )}
           {provinceSlug && (
             <>
               <span className="text-line">/</span>
-              <Link
-                to="/rent/$province"
-                params={{ province: provinceSlug }}
-                className="text-muted no-underline hover:text-forest"
-              >
-                {locationLabel.split(", ").at(-1)}
-              </Link>
+              {purpose === "SALE" ? (
+                <Link
+                  to="/sale/$province"
+                  params={{ province: provinceSlug }}
+                  className="text-muted no-underline hover:text-forest"
+                >
+                  {locationLabel.split(", ").at(-1)}
+                </Link>
+              ) : (
+                <Link
+                  to="/rent/$province"
+                  params={{ province: provinceSlug }}
+                  className="text-muted no-underline hover:text-forest"
+                >
+                  {locationLabel.split(", ").at(-1)}
+                </Link>
+              )}
             </>
           )}
         </nav>
@@ -71,14 +92,24 @@ export function ResultsPage({
             {PROPERTY_TYPES.map((t) => {
               const slug = PROPERTY_TYPE_META[t].slug;
               const active = typeSlug === slug;
-              return (
+              const chipClass = `rounded-full border px-3 py-1.5 text-xs font-semibold no-underline ${
+                active ? "border-forest bg-forest text-white" : "border-line text-ink hover:border-forest"
+              }`;
+              return purpose === "SALE" ? (
+                <Link
+                  key={t}
+                  to="/sale/$province/$district/$type"
+                  params={{ province: provinceSlug, district: districtSlug, type: slug }}
+                  className={chipClass}
+                >
+                  {PROPERTY_TYPE_META[t].plural}
+                </Link>
+              ) : (
                 <Link
                   key={t}
                   to="/rent/$province/$district/$type"
                   params={{ province: provinceSlug, district: districtSlug, type: slug }}
-                  className={`rounded-full border px-3 py-1.5 text-xs font-semibold no-underline ${
-                    active ? "border-forest bg-forest text-white" : "border-line text-ink hover:border-forest"
-                  }`}
+                  className={chipClass}
                 >
                   {PROPERTY_TYPE_META[t].plural}
                 </Link>
