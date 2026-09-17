@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AccountDeletionRouteImport } from './routes/account-deletion'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as DisclaimerRouteImport } from './routes/disclaimer'
 import { Route as LocationsRouteImport } from './routes/locations'
@@ -45,6 +46,11 @@ import { Route as SaleProvinceDistrictTypeRouteImport } from './routes/sale/$pro
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountDeletionRoute = AccountDeletionRouteImport.update({
+  id: '/account-deletion',
+  path: '/account-deletion',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -210,6 +216,7 @@ const SaleProvinceDistrictTypeRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/account-deletion': typeof AccountDeletionRoute
   '/contact': typeof ContactRoute
   '/disclaimer': typeof DisclaimerRoute
   '/locations': typeof LocationsRoute
@@ -244,6 +251,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/account-deletion': typeof AccountDeletionRoute
   '/contact': typeof ContactRoute
   '/disclaimer': typeof DisclaimerRoute
   '/locations': typeof LocationsRoute
@@ -279,6 +287,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/account-deletion': typeof AccountDeletionRoute
   '/contact': typeof ContactRoute
   '/disclaimer': typeof DisclaimerRoute
   '/locations': typeof LocationsRoute
@@ -315,6 +324,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/account-deletion'
     | '/contact'
     | '/disclaimer'
     | '/locations'
@@ -349,6 +359,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/account-deletion'
     | '/contact'
     | '/disclaimer'
     | '/locations'
@@ -383,6 +394,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/account-deletion'
     | '/contact'
     | '/disclaimer'
     | '/locations'
@@ -418,6 +430,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AccountDeletionRoute: typeof AccountDeletionRoute
   ContactRoute: typeof ContactRoute
   DisclaimerRoute: typeof DisclaimerRoute
   LocationsRoute: typeof LocationsRoute
@@ -458,6 +471,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account-deletion': {
+      id: '/account-deletion'
+      path: '/account-deletion'
+      fullPath: '/account-deletion'
+      preLoaderRoute: typeof AccountDeletionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -682,6 +702,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AccountDeletionRoute: AccountDeletionRoute,
   ContactRoute: ContactRoute,
   DisclaimerRoute: DisclaimerRoute,
   LocationsRoute: LocationsRoute,

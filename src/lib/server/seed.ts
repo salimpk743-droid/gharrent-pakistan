@@ -10,8 +10,6 @@ const globalRef = globalThis as typeof globalThis & {
 };
 
 async function seedLocations(sql: SeedSql) {
-  const [{ n }] = await sql<{ n: number }>`select count(*)::int as n from provinces`;
-  if (n > 0) return;
   const { provinces, districts, tehsils } = flattenLocations();
   for (const p of provinces) {
     await sql`insert into provinces (id, slug, name, sort_order)
