@@ -74,7 +74,7 @@ export async function searchPropertiesInternal(raw: SearchFilters) {
   const type = filters.type ?? typeFromSlug(filters.typeSlug);
   const purpose = filters.purpose ? parseListingPurpose(filters.purpose) : undefined;
 
-  const conditions: string[] = ["p.deleted_at is null", "p.status = 'PUBLISHED'"];
+  const conditions: string[] = ["p.deleted_at is null", "p.status = 'PUBLISHED'", "p.is_sample = false"];
   const params: unknown[] = [];
   const add = (sql: string, value: unknown) => {
     params.push(value);
