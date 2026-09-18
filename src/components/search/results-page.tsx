@@ -69,7 +69,12 @@ export function ResultsPage({
           </p>
           <h1 className="font-display mt-2 text-3xl tracking-tight sm:text-4xl">{heading}</h1>
           <p className="mt-2 max-w-2xl text-sm text-[#d6e2dc]">
-            {description || `${total} listing${total === 1 ? "" : "s"} · ${locationLabel}`}
+            {description ||
+              (!provinceSlug && !districtSlug && !typeSlug
+                ? purpose === "SALE"
+                  ? "Browse houses, flats, plots and commercial properties for sale in Pakistan. Compare price, size and location, then contact the advertiser."
+                  : "Browse houses, flats, portions and other properties for rent in Pakistan. Compare monthly rent, size and location, then contact the advertiser."
+                : `${total} listing${total === 1 ? "" : "s"} · ${locationLabel}`)}
           </p>
           {copy?.intro ? <p className="mt-2 max-w-2xl text-sm text-[#d6e2dc]">{copy.intro}</p> : null}
           <div className="mt-5 min-w-0">
@@ -182,10 +187,24 @@ export function ResultsPage({
           </div>
         )}
         {items.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-line bg-white px-6 py-16 text-center text-muted">
-            No properties found. Try a broader location or budget.
+          <div className="rounded-xl border border-dashed border-line bg-white px-6 py-10 text-center text-muted">
+            {provinceSlug || districtSlug || typeSlug ? (
+              <>
+                <p className="font-semibold text-ink">No matching properties are currently available.</p>
+                <p className="mt-2">Try a broader location, property type or budget.</p>
+              </>
+            ) : (
+              <>
+                <p className="font-semibold text-ink">
+                  New {purpose === "SALE" ? "sale" : "rental"} listings are added as advertisers publish properties.
+                </p>
+                <p className="mt-2">
+                  Use the search above to explore locations and property types, or read our guide before making a rental decision.
+                </p>
+              </>
+            )}
           </div>
-        ) : (
+        ) : (        ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {items.map((p) => (
               <PropertyCard key={p.id} property={p} />
