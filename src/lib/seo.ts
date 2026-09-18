@@ -54,6 +54,7 @@ export type ListingSeoInput = {
   address?: string | null;
   coverImage?: { url: string } | null;
   images?: { url: string }[];
+  isSample?: boolean;
 };
 
 export type SearchSeoData = {
@@ -402,7 +403,7 @@ export function listingSeo(p: ListingSeoInput | null | undefined): HeadSnippet {
       index: false,
     });
   }
-  const publicListing = p.status === "PUBLISHED";
+  const publicListing = p.status === "PUBLISHED" && !p.isSample;
   return publicSeo({
     title: listingSeoTitle(p),
     description: listingSeoDescription(p),
