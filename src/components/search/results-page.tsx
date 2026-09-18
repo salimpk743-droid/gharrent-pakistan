@@ -197,6 +197,24 @@ export function ResultsPage({
             Page {page} of {pages}
           </p>
         )}
+        {!provinceSlug && !districtSlug && !typeSlug && (
+          <section className="mt-10 max-w-3xl rounded-xl border border-line bg-white p-6">
+            <h2 className="font-display text-2xl text-ink">
+              {purpose === "SALE" ? "Find property for sale in Pakistan" : "Find property for rent in Pakistan"}
+            </h2>
+            <p className="mt-3 text-sm leading-6 text-muted">
+              {purpose === "SALE"
+                ? "Use Apna Ghar to browse houses, flats, plots and commercial properties for sale in Pakistan. Compare asking price, property size and location, then contact the advertiser for the listing details."
+                : "Use Apna Ghar to browse houses, flats, portions and other properties for rent in Pakistan. Compare monthly rent, property size and location, then contact the advertiser for the listing details."}
+            </p>
+            <p className="mt-3 text-sm leading-6 text-muted">
+              Search by location and property type, then narrow the results using budget and other available filters. For practical guidance before renting, read our{" "}
+              <Link to="/how-to-rent-a-house-in-pakistan" className="font-semibold text-forest underline">
+                guide to renting a house in Pakistan
+              </Link>.
+            </p>
+          </section>
+        )}
       </div>
     </div>
   );
