@@ -23,6 +23,7 @@ import {
   searchRouteSeo,
   toIsoDateTime,
   toSitemapDate,
+  assertCanonicalMarketplacePath,
 } from "./seo.ts";
 
 describe("canonical URLs", () => {
@@ -43,6 +44,58 @@ describe("canonical URLs", () => {
     assert.equal(canonicalPath("/rent/islamabad"), "/rent/islamabad-capital-territory");
     assert.equal(canonicalPath("/sale/islamabad/islamabad"), "/sale/islamabad-capital-territory/islamabad");
     assert.equal(searchPath({ purpose: "RENT", province: "islamabad" }), "/rent/islamabad-capital-territory");
+  });
+
+  it("canonicalizes type aliases to the official plural slug", () => {
+    assert.equal(
+      searchPath({ purpose: "RENT", province: "punjab", district: "lahore", type: "house" }),
+      "/rent/punjab/lahore/houses",
+    );
+    assert.equal(
+      searchPath({ purpose: "SALE", province: "punjab", district: "lahore", type: "apartment" }),
+      "/sale/punjab/lahore/apartments",
+    );
+    assert.equal(
+      searchPath({ purpose: "RENT", province: "punjab", district: "lahore", type: "houses" }),
+      "/rent/punjab/lahore/houses",
+    );
+    assert.equal(canonicalPath("/rent/punjab/lahore/house"), "/rent/punjab/lahore/houses");
+    assert.equal(canonicalPath("/sale/sindh/karachi/shop"), "/sale/sindh/karachi/shops");
+    assert.equal(
+      searchPath({ purpose: "RENT", province: "punjab", district: "lahore", type: "not-a-type" }),
+      "/rent/punjab/lahore",
+    );
+  });
+
+  it("308s alias paths and 404s unknown type segments", () => {
+    assert.throws(() =>
+      assertCanonicalMarketplacePath({
+        purpose: "RENT",
+        province: "punjab",
+        district: "lahore",
+        type: "not-a-type",
+      }),
+    );
+    assert.throws(() =>
+      assertCanonicalMarketplacePath({
+        purpose: "RENT",
+        province: "punjab",
+        district: "lahore",
+        type: "house",
+      }),
+    );
+    assert.throws(() => assertCanonicalMarketplacePath({ purpose: "RENT", province: "islamabad" }));
+    assert.doesNotThrow(() =>
+      assertCanonicalMarketplacePath({
+        purpose: "RENT",
+        province: "punjab",
+        district: "lahore",
+        type: "houses",
+      }),
+    );
+    assert.doesNotThrow(() =>
+      assertCanonicalMarketplacePath({ purpose: "RENT", province: "islamabad-capital-territory" }),
+    );
   });
 });
 
@@ -124,6 +177,23 @@ describe("index / noindex", () => {
     });
     assert.ok(liveCity.meta.some((m) => m.name === "robots" && m.content === "index, follow"));
     assert.ok(liveCity.links?.some((l) => l.rel === "canonical" && l.href === "https://apnaaghar.pk/sale/punjab/lahore"));
+  });
+
+  it("canonicalizes type aliases and does not index unknown type segments", () => {
+    const alias = searchRouteSeo({
+      purpose: "RENT",
+      params: { province: "punjab", district: "lahore", type: "house" },
+      data: { total: 4, district: { slug: "lahore", name: "Lahore" }, type: "House" },
+    });
+    assert.ok(alias.links?.some((l) => l.rel === "canonical" && l.href === "https://apnaaghar.pk/rent/punjab/lahore/houses"));
+    assert.ok(alias.meta.some((m) => m.name === "robots" && m.content === "index, follow"));
+    const unknown = searchRouteSeo({
+      purpose: "RENT",
+      params: { province: "punjab", district: "lahore", type: "not-a-type" },
+      data: { total: 4, district: { slug: "lahore", name: "Lahore" } },
+    });
+    assert.ok(unknown.meta.some((m) => m.name === "robots" && m.content === "noindex, follow"));
+    assert.ok(unknown.links?.some((l) => l.rel === "canonical" && l.href === "https://apnaaghar.pk/rent/punjab/lahore"));
   });
 
   it("does not index unpublished listings", () => {

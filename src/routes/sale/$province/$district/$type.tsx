@@ -1,15 +1,23 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import { ResultsPage } from "@/components/search/results-page";
 import { searchProperties } from "@/lib/server/properties";
 import { typeFromSlug } from "@/lib/constants";
 import { parseMarketplaceSearch } from "@/lib/rent-search";
-import { searchRouteSeo } from "@/lib/seo";
+import { assertCanonicalMarketplacePath, searchRouteSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/sale/$province/$district/$type")({
   validateSearch: parseMarketplaceSearch,
   loaderDeps: ({ search: s }) => s,
-  loader: ({ params, deps }) =>
-    searchProperties({
+  beforeLoad: ({ params }) => {
+    assertCanonicalMarketplacePath({
+      purpose: "SALE",
+      province: params.province,
+      district: params.district,
+      type: params.type,
+    });
+  },
+  loader: async ({ params, deps }) => {
+    const data = await searchProperties({
       data: {
         ...deps,
         provinceSlug: params.province,
@@ -17,7 +25,10 @@ export const Route = createFileRoute("/sale/$province/$district/$type")({
         typeSlug: params.type,
         purpose: "SALE",
       },
-    }),
+    });
+    if (!data.province || !data.district) throw notFound();
+    return data;
+  },
   head: ({ loaderData, params }) =>
     searchRouteSeo({
       purpose: "SALE",

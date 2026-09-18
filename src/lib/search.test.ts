@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { normalizeSearchFilters, searchHeading } from "./search.ts";
-import { typeFromSlug } from "./constants.ts";
+import { canonicalTypeSlug, typeFromSlug } from "./constants.ts";
 
 describe("search filters", () => {
   it("maps type slugs and clamps pagination", () => {
@@ -12,6 +12,10 @@ describe("search filters", () => {
     assert.equal(f.minRent, 50000);
     assert.equal(typeFromSlug("apartments"), "Apartment");
     assert.equal(typeFromSlug("plots"), "Plot");
+    assert.equal(typeFromSlug("house"), "House");
+    assert.equal(canonicalTypeSlug("house"), "houses");
+    assert.equal(canonicalTypeSlug("houses"), "houses");
+    assert.equal(canonicalTypeSlug("not-a-type"), undefined);
   });
 
   it("builds a useful heading for rent and sale", () => {

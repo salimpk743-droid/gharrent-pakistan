@@ -153,6 +153,12 @@ export function typeFromSlug(slug: string | undefined): PropertyType | undefined
   return PROPERTY_TYPES.find((t) => PROPERTY_TYPE_META[t].slug === s || t.toLowerCase() === s);
 }
 
+/** Official URL slug, or undefined when the segment is not a known property type. */
+export function canonicalTypeSlug(slug: string | undefined): string | undefined {
+  const type = typeFromSlug(slug);
+  return type ? typeToSlug(type) : undefined;
+}
+
 export function typeToSlug(type: PropertyType): string {
   return PROPERTY_TYPE_META[type].slug;
 }

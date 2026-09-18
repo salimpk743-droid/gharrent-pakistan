@@ -1,8 +1,10 @@
+import { notFound, redirect } from "@tanstack/react-router";
 import {
   APP_DESCRIPTION,
   APP_NAME,
   PROPERTY_TYPE_META,
   PUBLIC_SITE_ORIGIN,
+  canonicalTypeSlug,
   type ListingPurpose,
   type PropertyType,
 } from "./constants.ts";
@@ -79,6 +81,13 @@ export function canonicalPath(input: string): string {
     const aliased = canonicalProvinceSlug(parts[2]);
     if (aliased && aliased !== parts[2]) {
       parts[2] = aliased;
+      next = parts.join("/");
+    }
+  }
+  if ((parts[1] === "rent" || parts[1] === "sale") && parts[4]) {
+    const aliased = canonicalTypeSlug(parts[4]);
+    if (aliased && aliased !== parts[4]) {
+      parts[4] = aliased;
       next = parts.join("/");
     }
   }
@@ -293,8 +302,25 @@ export function searchPath(opts: {
   const province = canonicalProvinceSlug(opts.province);
   if (province) segs.push(province);
   if (opts.district) segs.push(opts.district);
-  if (opts.type) segs.push(opts.type);
+  const type = canonicalTypeSlug(opts.type);
+  if (type) segs.push(type);
   return `/${segs.join("/")}`;
+}
+
+/** 308 alias URLs onto the official path; 404 unknown property-type segments. */
+export function assertCanonicalMarketplacePath(opts: {
+  purpose: ListingPurpose;
+  province?: string;
+  district?: string;
+  type?: string;
+}): void {
+  if (opts.type && !canonicalTypeSlug(opts.type)) throw notFound();
+  const canonicalHref = searchPath(opts);
+  const purposeSeg = opts.purpose === "SALE" ? "sale" : "rent";
+  const requestedHref = `/${[purposeSeg, opts.province, opts.district, opts.type].filter(Boolean).join("/")}`;
+  if (canonicalHref !== requestedHref) {
+    throw redirect({ href: canonicalHref, statusCode: 308 });
+  }
 }
 
 export function searchRouteSeo(opts: {
@@ -303,11 +329,13 @@ export function searchRouteSeo(opts: {
   data?: SearchSeoData | null;
 }): HeadSnippet {
   const params = opts.params ?? {};
+  const typeSlug = params.type ? canonicalTypeSlug(params.type) : undefined;
+  const unknownType = Boolean(params.type && !typeSlug);
   const path = searchPath({
     purpose: opts.purpose,
     province: params.province,
     district: params.district,
-    type: params.type,
+    type: typeSlug,
   });
   const type = opts.data?.type ?? null;
   const place = locationPlaceName(opts.data);
@@ -317,7 +345,7 @@ export function searchRouteSeo(opts: {
     title: locationSeoTitle({ purpose: opts.purpose, place, type }),
     description: locationSeoDescription({ purpose: opts.purpose, place, type }),
     path,
-    index: hub || total > 0,
+    index: !unknownType && (hub || total > 0),
   });
 }
 

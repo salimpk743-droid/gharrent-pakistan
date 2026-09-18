@@ -1,28 +1,26 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import { ResultsPage } from "@/components/search/results-page";
 import { searchProperties } from "@/lib/server/properties";
-import { typeFromSlug, typeToSlug } from "@/lib/constants";
+import { typeToSlug } from "@/lib/constants";
 import { parseMarketplaceSearch } from "@/lib/rent-search";
-import { searchRouteSeo } from "@/lib/seo";
+import { assertCanonicalMarketplacePath, searchRouteSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/sale/$province/$district/")({
   validateSearch: parseMarketplaceSearch,
   loaderDeps: ({ search: s }) => s,
+  beforeLoad: ({ params }) => {
+    assertCanonicalMarketplacePath({
+      purpose: "SALE",
+      province: params.province,
+      district: params.district,
+    });
+  },
   loader: async ({ params, deps }) => {
-    const asType = typeFromSlug(params.district);
-    if (asType) {
-      return searchProperties({
-        data: { ...deps, provinceSlug: params.province, typeSlug: params.district, purpose: "SALE" },
-      }).then(async (res) => {
-        if (res.district) return res;
-        return searchProperties({
-          data: { ...deps, provinceSlug: params.province, typeSlug: params.district, purpose: "SALE" },
-        });
-      });
-    }
-    return searchProperties({
+    const data = await searchProperties({
       data: { ...deps, provinceSlug: params.province, districtSlug: params.district, purpose: "SALE" },
     });
+    if (!data.province || !data.district) throw notFound();
+    return data;
   },
   head: ({ loaderData, params }) =>
     searchRouteSeo({
@@ -35,9 +33,7 @@ export const Route = createFileRoute("/sale/$province/$district/")({
 
 function Page() {
   const data = Route.useLoaderData();
-  const { province, district } = Route.useParams();
-  const typeFromParam = typeFromSlug(district) && !data.district ? district : undefined;
-  const typeSlug = typeFromParam || (data.type ? typeToSlug(data.type) : undefined);
+  const { province } = Route.useParams();
   return (
     <ResultsPage
       items={data.items}
@@ -47,7 +43,7 @@ function Page() {
       locationLabel={data.locationLabel}
       provinceSlug={province}
       districtSlug={data.district?.slug}
-      typeSlug={typeSlug}
+      typeSlug={data.type ? typeToSlug(data.type) : undefined}
       purpose="SALE"
     />
   );
