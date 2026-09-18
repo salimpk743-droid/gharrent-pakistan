@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
+  GUIDE_HOW_TO_RENT_DESCRIPTION,
+  GUIDE_HOW_TO_RENT_PATH,
+  GUIDE_HOW_TO_RENT_TITLE,
   HOME_SEO_TITLE,
   LISTING_SITEMAP_CHUNK,
   canonicalPath,
@@ -102,6 +105,13 @@ describe("canonical URLs", () => {
 describe("titles", () => {
   it("uses the approved homepage title", () => {
     assert.equal(HOME_SEO_TITLE, "Apna Ghar | Rent, Buy & Sell Properties in Pakistan");
+  });
+
+  it("uses a clear title for the renting guide", () => {
+    assert.equal(GUIDE_HOW_TO_RENT_TITLE, "How to Rent a House in Pakistan | Apna Ghar");
+    assert.equal(GUIDE_HOW_TO_RENT_PATH, "/how-to-rent-a-house-in-pakistan");
+    assert.match(GUIDE_HOW_TO_RENT_DESCRIPTION, /renting a house in Pakistan/i);
+    assert.doesNotMatch(GUIDE_HOW_TO_RENT_TITLE, /Pakistan Punjab/);
   });
 
   it("builds location titles without stuffing the province onto the city", () => {
@@ -507,6 +517,18 @@ describe("structured data", () => {
     assert.ok(head.links?.some((l) => l.rel === "canonical" && l.href === "https://apnaaghar.pk/"));
     assert.ok(head.meta.some((m) => m.property === "og:url" && m.content === "https://apnaaghar.pk/"));
     assert.ok(head.meta.some((m) => m.property === "og:image" && m.content === "https://apnaaghar.pk/og.jpg"));
+    const guide = publicSeo({
+      title: GUIDE_HOW_TO_RENT_TITLE,
+      description: GUIDE_HOW_TO_RENT_DESCRIPTION,
+      path: GUIDE_HOW_TO_RENT_PATH,
+    });
+    assert.ok(
+      guide.links?.some(
+        (l) => l.rel === "canonical" && l.href === "https://apnaaghar.pk/how-to-rent-a-house-in-pakistan",
+      ),
+    );
+    assert.ok(guide.meta.some((m) => m.name === "robots" && m.content === "index, follow"));
+    assert.ok(guide.meta.some((m) => m.name === "description" && m.content === GUIDE_HOW_TO_RENT_DESCRIPTION));
   });
 
   it("matches breadcrumb URLs to canonical location paths", () => {

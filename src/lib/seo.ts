@@ -20,6 +20,11 @@ export const HOME_SEO_TITLE = `${APP_NAME} | Rent, Buy & Sell Properties in Paki
 export const HOME_SEO_DESCRIPTION =
   "Find houses, flats, plots and commercial properties for rent, buy and sale across Pakistan. Search by province, city, area, type and budget on Apna Ghar.";
 
+export const GUIDE_HOW_TO_RENT_PATH = "/how-to-rent-a-house-in-pakistan";
+export const GUIDE_HOW_TO_RENT_TITLE = "How to Rent a House in Pakistan | Apna Ghar";
+export const GUIDE_HOW_TO_RENT_DESCRIPTION =
+  "A practical guide to renting a house in Pakistan: how to search, inspect the property, agree rent and a deposit, and what to put in writing before you move in.";
+
 const SHARE_IMAGE = `${PUBLIC_SITE_ORIGIN}/og.jpg`;
 
 export type HeadSnippet = {

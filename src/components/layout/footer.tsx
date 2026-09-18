@@ -23,6 +23,7 @@ export function Footer() {
         <div>
           <b className="mb-3 block text-[11px]">Help</b>
           <FooterLink to="/safety">Safer buying & renting</FooterLink>
+          <FooterLink to="/how-to-rent-a-house-in-pakistan">How to rent a house</FooterLink>
           <FooterLink to="/contact">Contact us</FooterLink>
           <FooterLink to="/report">Report a problem</FooterLink>
         </div>

@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AccountDeletionRouteImport } from './routes/account-deletion'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as DisclaimerRouteImport } from './routes/disclaimer'
+import { Route as HowToRentAHouseInPakistanRouteImport } from './routes/how-to-rent-a-house-in-pakistan'
 import { Route as LocationsRouteImport } from './routes/locations'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as PrivacyRouteImport } from './routes/privacy'
@@ -66,6 +67,12 @@ const DisclaimerRoute = DisclaimerRouteImport.update({
   path: '/disclaimer',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HowToRentAHouseInPakistanRoute =
+  HowToRentAHouseInPakistanRouteImport.update({
+    id: '/how-to-rent-a-house-in-pakistan',
+    path: '/how-to-rent-a-house-in-pakistan',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const LocationsRoute = LocationsRouteImport.update({
   id: '/locations',
   path: '/locations',
@@ -237,6 +244,7 @@ export interface FileRoutesByFullPath {
   '/account-deletion': typeof AccountDeletionRoute
   '/contact': typeof ContactRoute
   '/disclaimer': typeof DisclaimerRoute
+  '/how-to-rent-a-house-in-pakistan': typeof HowToRentAHouseInPakistanRoute
   '/locations': typeof LocationsRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
@@ -275,6 +283,7 @@ export interface FileRoutesByTo {
   '/account-deletion': typeof AccountDeletionRoute
   '/contact': typeof ContactRoute
   '/disclaimer': typeof DisclaimerRoute
+  '/how-to-rent-a-house-in-pakistan': typeof HowToRentAHouseInPakistanRoute
   '/locations': typeof LocationsRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
@@ -314,6 +323,7 @@ export interface FileRoutesById {
   '/account-deletion': typeof AccountDeletionRoute
   '/contact': typeof ContactRoute
   '/disclaimer': typeof DisclaimerRoute
+  '/how-to-rent-a-house-in-pakistan': typeof HowToRentAHouseInPakistanRoute
   '/locations': typeof LocationsRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
@@ -354,6 +364,7 @@ export interface FileRouteTypes {
     | '/account-deletion'
     | '/contact'
     | '/disclaimer'
+    | '/how-to-rent-a-house-in-pakistan'
     | '/locations'
     | '/login'
     | '/privacy'
@@ -392,6 +403,7 @@ export interface FileRouteTypes {
     | '/account-deletion'
     | '/contact'
     | '/disclaimer'
+    | '/how-to-rent-a-house-in-pakistan'
     | '/locations'
     | '/login'
     | '/privacy'
@@ -430,6 +442,7 @@ export interface FileRouteTypes {
     | '/account-deletion'
     | '/contact'
     | '/disclaimer'
+    | '/how-to-rent-a-house-in-pakistan'
     | '/locations'
     | '/login'
     | '/privacy'
@@ -469,6 +482,7 @@ export interface RootRouteChildren {
   AccountDeletionRoute: typeof AccountDeletionRoute
   ContactRoute: typeof ContactRoute
   DisclaimerRoute: typeof DisclaimerRoute
+  HowToRentAHouseInPakistanRoute: typeof HowToRentAHouseInPakistanRoute
   LocationsRoute: typeof LocationsRoute
   LoginRoute: typeof LoginRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -531,6 +545,13 @@ declare module '@tanstack/react-router' {
       path: '/disclaimer'
       fullPath: '/disclaimer'
       preLoaderRoute: typeof DisclaimerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/how-to-rent-a-house-in-pakistan': {
+      id: '/how-to-rent-a-house-in-pakistan'
+      path: '/how-to-rent-a-house-in-pakistan'
+      fullPath: '/how-to-rent-a-house-in-pakistan'
+      preLoaderRoute: typeof HowToRentAHouseInPakistanRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/locations': {
@@ -765,6 +786,7 @@ const rootRouteChildren: RootRouteChildren = {
   AccountDeletionRoute: AccountDeletionRoute,
   ContactRoute: ContactRoute,
   DisclaimerRoute: DisclaimerRoute,
+  HowToRentAHouseInPakistanRoute: HowToRentAHouseInPakistanRoute,
   LocationsRoute: LocationsRoute,
   LoginRoute: LoginRoute,
   PrivacyRoute: PrivacyRoute,
