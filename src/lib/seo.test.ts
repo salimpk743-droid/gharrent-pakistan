@@ -256,6 +256,29 @@ describe("structured data", () => {
     assert.equal(sale.address.addressRegion, "Punjab");
   });
 
+  it("maps listing about types without treating shops as Accommodation", () => {
+    const base = {
+      slug: "x",
+      title: "T",
+      description: "D",
+      listingPurpose: "SALE" as const,
+      status: "PUBLISHED",
+      monthlyRent: 1,
+      bedrooms: 0,
+      bathrooms: 0,
+    };
+    assert.equal(listingJsonLd({ ...base, propertyType: "House" }).about["@type"], "House");
+    assert.equal(listingJsonLd({ ...base, propertyType: "Apartment" }).about["@type"], "Apartment");
+    assert.equal(listingJsonLd({ ...base, propertyType: "Portion" }).about["@type"], "Accommodation");
+    assert.equal(listingJsonLd({ ...base, propertyType: "Hostel" }).about["@type"], "Accommodation");
+    assert.equal(listingJsonLd({ ...base, propertyType: "Room" }).about["@type"], "Room");
+    assert.equal(listingJsonLd({ ...base, propertyType: "Shop" }).about["@type"], "Place");
+    assert.equal(listingJsonLd({ ...base, propertyType: "Office" }).about["@type"], "Place");
+    assert.equal(listingJsonLd({ ...base, propertyType: "Commercial" }).about["@type"], "Place");
+    assert.equal(listingJsonLd({ ...base, propertyType: "Plot" }).about["@type"], "Place");
+    assert.equal(listingJsonLd({ ...base, propertyType: "Farm" }).about["@type"], "Place");
+  });
+
   it("puts a canonical and Open Graph url on public pages", () => {
     const head = publicSeo({
       title: HOME_SEO_TITLE,

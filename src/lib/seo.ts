@@ -473,9 +473,23 @@ export function resultsItemListJsonLd(items: { slug: string; title: string }[]) 
 }
 
 function offeredType(type: PropertyType): string {
-  if (type === "House") return "House";
-  if (type === "Apartment") return "Apartment";
-  return "Accommodation";
+  switch (type) {
+    case "House":
+      return "House";
+    case "Apartment":
+      return "Apartment";
+    case "Portion":
+    case "Hostel":
+      return "Accommodation";
+    case "Room":
+      return "Room";
+    case "Shop":
+    case "Office":
+    case "Commercial":
+    case "Plot":
+    case "Farm":
+      return "Place";
+  }
 }
 
 function isResidential(type: PropertyType): boolean {

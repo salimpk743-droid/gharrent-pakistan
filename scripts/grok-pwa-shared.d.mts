@@ -40,6 +40,7 @@ export type GrokHeadContext = {
   host?: string | null;
   cwd?: string;
   site?: OgSite;
+  path?: string;
 };
 
 export declare function readOgSite(cwd?: string): OgSite;
@@ -56,12 +57,16 @@ export declare function resolveOgTitle(
   documentTitle?: string,
 ): string;
 export declare function siteHasCustomCard(site?: OgSite): boolean;
+export declare const PUBLIC_OG_ORIGIN: string;
+export declare function apexOgUrl(pathOrUrl: string | null | undefined): string;
 export declare function grokOgHeadTags(ctx?: {
   host?: string;
   appName?: string;
   site?: OgSite;
   documentTitle?: string;
   cwd?: string;
+  path?: string;
+  canonicalHref?: string;
 }): string[];
 export declare function stripShareMetaTags(html: string): string;
 export declare function normalizeHeadContext(ctx?: GrokHeadContext): {
@@ -72,6 +77,7 @@ export declare function normalizeHeadContext(ctx?: GrokHeadContext): {
   host: string;
   cwd: string;
   site: OgSite;
+  path: string;
 };
 export declare function injectGrokPwaHead(html: string, ctx?: GrokHeadContext): string;
 export declare function createHeadInjector(ctx?: GrokHeadContext): {

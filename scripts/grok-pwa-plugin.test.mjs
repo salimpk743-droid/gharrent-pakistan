@@ -504,3 +504,60 @@ test("vite plugin bakes og identity as a virtual module", () => {
   assert.match(plugin, /snapshotOgIdentity/);
 });
 
+test("re-injects a single apex og:url matching rel=canonical", () => {
+  const html =
+    '<html><head><title>Houses for Rent in Punjab | Apna Ghar</title>' +
+    '<meta property="og:url" content="https://www.apnaaghar.pk/rent/punjab?page=2">' +
+    '<link rel="canonical" href="https://apnaaghar.pk/rent/punjab">' +
+    "</head></html>";
+  const out = injectGrokPwaHead(html, {
+    path: "/rent/punjab?page=2",
+    host: "www.apnaaghar.pk",
+  });
+  assert.equal(out.split('property="og:url"').length - 1, 1);
+  assert.match(out, /property="og:url" content="https:\/\/apnaaghar\.pk\/rent\/punjab"/);
+  assert.match(out, /rel="canonical" href="https:\/\/apnaaghar\.pk\/rent\/punjab"/);
+  assert.doesNotMatch(out, /property="og:url" content="[^"]*www\.apnaaghar\.pk/);
+  assert.doesNotMatch(out, /property="og:url" content="[^"]*vercel\.app/);
+  assert.doesNotMatch(out, /og:url" content="[^"]*\?/);
+});
+
+test("forces og:url onto the apex origin from the request path", () => {
+  const cases = [
+    ["/", "https://apnaaghar.pk/"],
+    ["/rent", "https://apnaaghar.pk/rent"],
+    ["/sale", "https://apnaaghar.pk/sale"],
+    ["/rent/punjab", "https://apnaaghar.pk/rent/punjab"],
+    ["/rent/punjab/lahore", "https://apnaaghar.pk/rent/punjab/lahore"],
+    [
+      "/property/clifton-shop-on-a-busy-street-clifton-d5c30e",
+      "https://apnaaghar.pk/property/clifton-shop-on-a-busy-street-clifton-d5c30e",
+    ],
+  ];
+  for (const [path, url] of cases) {
+    const out = injectGrokPwaHead(
+      `<html><head><link rel="canonical" href="${url}"></head></html>`,
+      { path, host: "gharrent-pakistan.vercel.app" },
+    );
+    assert.equal(out.split('property="og:url"').length - 1, 1, path);
+    assert.match(out, new RegExp(`property="og:url" content="${url.replaceAll("/", "\\/")}"`));
+    assert.doesNotMatch(out, /vercel\.app/);
+  }
+});
+
+test("does not invent og:url when path and canonical are absent", () => {
+  const out = injectGrokPwaHead("<html><head><title>x</title></head></html>");
+  assert.doesNotMatch(out, /property="og:url"/);
+});
+
+test("streaming injector re-injects apex og:url from the request path", () => {
+  const injector = createHeadInjector({ path: "/rent/punjab" });
+  const out = Buffer.concat(
+    injector.push(
+      '<html><head><title>Punjab</title><link rel="canonical" href="https://apnaaghar.pk/rent/punjab"></head><body></body></html>',
+    ),
+  ).toString("utf8");
+  assert.equal(out.split('property="og:url"').length - 1, 1);
+  assert.match(out, /property="og:url" content="https:\/\/apnaaghar\.pk\/rent\/punjab"/);
+});
+

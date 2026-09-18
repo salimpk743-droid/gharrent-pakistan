@@ -333,12 +333,46 @@ function applyCustomCardFromFs(site, cwd) {
   return { ...site, card: "custom", image: disk };
 }
 
+/** Public canonical origin for re-injected og:url. Always apex. */
+export const PUBLIC_OG_ORIGIN = "https://apnaaghar.pk";
+
+function canonicalPathFromInput(input) {
+  let path = String(input || "/").trim() || "/";
+  try {
+    if (/^https?:\/\//i.test(path)) path = new URL(path).pathname;
+  } catch {
+    /* keep as path */
+  }
+  path = path.split(/[?#]/, 1)[0] || "/";
+  path = path.startsWith("/") ? path : `/${path}`;
+  path = path.replace(/\/{2,}/g, "/");
+  if (path.length > 1) path = path.replace(/\/+$/, "");
+  return path || "/";
+}
+
+export function apexOgUrl(pathOrUrl) {
+  const path = canonicalPathFromInput(pathOrUrl);
+  return path === "/" ? `${PUBLIC_OG_ORIGIN}/` : `${PUBLIC_OG_ORIGIN}${path}`;
+}
+
+function canonicalHrefFromDocument(html) {
+  const tags = String(html).match(/<link\b[^>]*>/gi) || [];
+  for (const tag of tags) {
+    if (!/\brel\s*=\s*["']canonical["']/i.test(tag)) continue;
+    const href = tag.match(/\bhref\s*=\s*["']([^"']*)["']/i);
+    if (href?.[1]) return href[1].trim();
+  }
+  return "";
+}
+
 export function grokOgHeadTags({
   host = "",
   appName = DEFAULT_APP_NAME,
   site = {},
   documentTitle = "",
   cwd = process.cwd(),
+  path = "",
+  canonicalHref = "",
 } = {}) {
   const title = resolveOgTitle(site, appName, host, documentTitle);
   const publicHost = resolvePublicHost(host);
@@ -349,6 +383,10 @@ export function grokOgHeadTags({
   const description = String(site.description ?? "").trim();
   if (description) {
     tags.push(`<meta property="og:description" content="${escapeHtml(description)}">`);
+  }
+  const ogUrlSource = canonicalHref || path;
+  if (ogUrlSource) {
+    tags.push(`<meta property="og:url" content="${escapeHtml(apexOgUrl(ogUrlSource))}">`);
   }
   if (String(site.type ?? "").toLowerCase() === "x:game") {
     tags.push(`<meta property="og:type" content="x:game">`);
@@ -419,13 +457,15 @@ export function normalizeHeadContext(ctx = {}) {
     host: ctx.host ?? "",
     cwd,
     site,
+    path: typeof ctx.path === "string" ? ctx.path : "",
   };
 }
 
 export function injectGrokPwaHead(html, ctx = {}) {
   if (typeof html !== "string") return html;
-  const { site, projectId, creator, creatorId, host, cwd } = normalizeHeadContext(ctx);
+  const { site, projectId, creator, creatorId, host, cwd, path } = normalizeHeadContext(ctx);
   const documentTitle = titleFromDocument(html);
+  const canonicalHref = canonicalHrefFromDocument(html);
   const appName = resolveOgTitle(
     site,
     ctx.appName ?? DEFAULT_APP_NAME,
@@ -444,7 +484,7 @@ export function injectGrokPwaHead(html, ctx = {}) {
 
   next = insertAfterHeadOpen(
     next,
-    grokOgHeadTags({ host, appName, site, documentTitle, cwd }).join(""),
+    grokOgHeadTags({ host, appName, site, documentTitle, cwd, path, canonicalHref }).join(""),
   );
 
   if (!next.includes("/grok-app-builder/extensions.js")) {
@@ -498,6 +538,7 @@ export function createHeadInjector(ctx = {}) {
       host: normalized.host,
       cwd: normalized.cwd,
       site: normalized.site,
+      path: normalized.path,
     });
 
   return {
