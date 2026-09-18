@@ -6,13 +6,15 @@ import { sendContactMessage } from "@/lib/server/admin";
 import { useCurrentUser } from "@/lib/auth/use-current-user";
 import { toast } from "sonner";
 
+import { publicSeo } from "@/lib/seo";
+
 export const Route = createFileRoute("/contact")({
-  head: () => ({
-    meta: [
-      { title: "Contact — Apna Ghar" },
-      { name: "description", content: "Contact Apna Ghar about listings, safety or the website." },
-    ],
-  }),
+  head: () =>
+    publicSeo({
+      title: "Contact Apna Ghar | Pakistan Property Marketplace",
+      description: "Contact Apna Ghar about listings, safety or the website.",
+      path: "/contact",
+    }),
   component: ContactPage,
 });
 

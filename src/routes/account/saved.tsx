@@ -6,13 +6,10 @@ import { listFavorites, toggleFavorite } from "@/lib/server/favorites";
 import { PropertyCard } from "@/components/property/property-card";
 import type { PublicProperty } from "@/lib/types";
 
+import { privateSeo } from "@/lib/seo";
+
 export const Route = createFileRoute("/account/saved")({
-  head: () => ({
-    meta: [
-      { title: "Saved homes — Apna Ghar" },
-      { name: "robots", content: "noindex, nofollow" },
-    ],
-  }),
+  head: () => privateSeo({ title: "Saved homes — Apna Ghar" }),
   component: SavedPage,
 });
 

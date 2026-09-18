@@ -11,13 +11,10 @@ import { formatDate, formatListingPrice, formatLocation } from "@/lib/utils";
 import { toast } from "sonner";
 import type { OwnerAction } from "@/lib/listing-lifecycle";
 
+import { privateSeo } from "@/lib/seo";
+
 export const Route = createFileRoute("/account/listings")({
-  head: () => ({
-    meta: [
-      { title: "My listings — Apna Ghar" },
-      { name: "robots", content: "noindex, nofollow" },
-    ],
-  }),
+  head: () => privateSeo({ title: "My listings — Apna Ghar" }),
   component: MyListings,
 });
 

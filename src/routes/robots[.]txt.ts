@@ -1,22 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { robotsTxt } from "@/lib/seo";
 
 export const Route = createFileRoute("/robots.txt")({
   server: {
     handlers: {
-      GET: ({ request }) => {
-        const origin = new URL(request.url).origin;
-        const body = `User-agent: *
-Allow: /
-Disallow: /account
-Disallow: /admin
-Disallow: /login
-Disallow: /post
-Sitemap: ${origin}/sitemap.xml
-`;
-        return new Response(body, {
-          headers: { "Content-Type": "text/plain; charset=utf-8" },
-        });
-      },
+      GET: () =>
+        new Response(robotsTxt(), {
+          headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "public, max-age=3600" },
+        }),
     },
   },
 });

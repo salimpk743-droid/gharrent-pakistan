@@ -1,18 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { listLocationTree } from "@/lib/server/locations";
+import { breadcrumbJsonLd, publicSeo } from "@/lib/seo";
+import { JsonLd } from "@/components/seo/json-ld";
 
 export const Route = createFileRoute("/locations")({
   loader: () => listLocationTree(),
-  head: () => ({
-    meta: [
-      { title: "Pakistan property locations — Apna Ghar" },
-      {
-        name: "description",
-        content:
-          "Browse Apna Ghar’s Pakistan location directory by province and city, then open homes for rent or sale in that area.",
-      },
-    ],
-  }),
+  head: () =>
+    publicSeo({
+      title: "Property Locations in Pakistan | Apna Ghar",
+      description:
+        "Browse Apna Ghar’s Pakistan location directory by province and city, then open homes for rent or sale in that area.",
+      path: "/locations",
+    }),
   component: LocationsPage,
 });
 
@@ -20,6 +19,12 @@ function LocationsPage() {
   const tree = Route.useLoaderData();
   return (
     <main className="mx-auto w-[min(1000px,calc(100%-32px))] py-16">
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "Locations", path: "/locations" },
+        ])}
+      />
       <p className="text-[10px] font-extrabold tracking-[0.16em] text-forest">PAKISTAN LOCATION DIRECTORY</p>
       <h1 className="font-display mt-2 text-4xl tracking-tight">Browse locations across Pakistan</h1>
       <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted">

@@ -1,13 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage } from "@/components/layout/legal-page";
 
+import { publicSeo } from "@/lib/seo";
+
 export const Route = createFileRoute("/disclaimer")({
-  head: () => ({
-    meta: [
-      { title: "Rental Disclaimer — Apna Ghar" },
-      { name: "description", content: "Apna Ghar is a marketplace, not a landlord or party to a rental contract." },
-    ],
-  }),
+  head: () =>
+    publicSeo({
+      title: "Marketplace Disclaimer | Apna Ghar",
+      description: "Apna Ghar is a marketplace, not a landlord, estate agent or party to a property contract.",
+      path: "/disclaimer",
+    }),
   component: Page,
 });
 

@@ -4,6 +4,8 @@ import { SearchBox } from "@/components/search/search-box";
 import { PROPERTY_TYPE_META, PROPERTY_TYPES, type ListingPurpose, typeFromSlug } from "@/lib/constants";
 import type { PublicProperty } from "@/lib/types";
 import { searchHeading } from "@/lib/search";
+import { resultsBreadcrumbJsonLd, resultsItemListJsonLd } from "@/lib/seo";
+import { JsonLd } from "@/components/seo/json-ld";
 
 export function ResultsPage({
   items,
@@ -33,8 +35,17 @@ export function ResultsPage({
   const heading = title || searchHeading({ type: typeFromSlug(typeSlug), typeSlug, purpose }, locationLabel);
   const pages = Math.max(1, Math.ceil(total / pageSize));
   const rootLabel = purpose === "SALE" ? "Buy" : "Rent";
+  const provinceName = locationLabel.split(", ").filter(Boolean).at(-1);
   return (
     <div className="pb-12">
+      <JsonLd
+        data={resultsBreadcrumbJsonLd({
+          purpose,
+          provinceSlug,
+          provinceName: provinceSlug ? provinceName : undefined,
+        })}
+      />
+      {items.length > 0 ? <JsonLd data={resultsItemListJsonLd(items)} /> : null}
       <section className="bg-ink px-4 py-8 text-white">
         <div className="mx-auto w-[min(1120px,100%)] min-w-0">
           <p className="text-[10px] font-extrabold tracking-[0.16em] text-lime">

@@ -1,12 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 
+import { publicSeo } from "@/lib/seo";
+
 export const Route = createFileRoute("/report")({
-  head: () => ({
-    meta: [
-      { title: "Report a problem — Apna Ghar" },
-      { name: "description", content: "Report a suspicious listing or a problem with Apna Ghar." },
-    ],
-  }),
+  head: () =>
+    publicSeo({
+      title: "Report a Problem | Apna Ghar",
+      description: "Report a suspicious listing or a problem with the Apna Ghar property marketplace.",
+      path: "/report",
+    }),
   component: Page,
 });
 

@@ -1,16 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { LegalPage } from "@/components/layout/legal-page";
 
+import { publicSeo } from "@/lib/seo";
+
 export const Route = createFileRoute("/account-deletion")({
-  head: () => ({
-    meta: [
-      { title: "Account & Data Deletion — GharRent Pakistan" },
-      {
-        name: "description",
-        content: "How GharRent Pakistan users can request deletion of their account and associated personal data.",
-      },
-    ],
-  }),
+  head: () =>
+    publicSeo({
+      title: "Account and Data Deletion | Apna Ghar",
+      description: "How Apna Ghar users can request deletion of their account and associated personal data.",
+      path: "/account-deletion",
+    }),
   component: Page,
 });
 

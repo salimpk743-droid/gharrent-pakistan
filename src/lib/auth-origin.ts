@@ -1,3 +1,5 @@
+import { PUBLIC_SITE_ORIGIN } from "./constants.ts";
+
 /**
  * Public origin used by Better Auth for OAuth redirect_uri / trusted origins.
  * Isolated so it can be unit-tested without loading the Better Auth server.
@@ -77,6 +79,8 @@ export function resolveTrustedOrigins(env: EnvMap): string[] {
   const base = resolveAuthBaseURL(env);
   if (base) urls.add(base);
   urls.add(KNOWN_PRODUCTION_ORIGIN);
+  urls.add(PUBLIC_SITE_ORIGIN);
+  urls.add("https://www.apnaaghar.pk");
   const vercelUrl = originFromHost(trim(env.VERCEL_URL));
   if (vercelUrl) urls.add(vercelUrl);
   const vercelProd = originFromHost(trim(env.VERCEL_PROJECT_PRODUCTION_URL));

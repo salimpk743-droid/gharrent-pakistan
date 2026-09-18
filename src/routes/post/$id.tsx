@@ -6,13 +6,10 @@ import { getMyListing } from "@/lib/server/listings";
 import { useEffect, useState } from "react";
 import type { OwnerListing } from "@/lib/types";
 
+import { privateSeo } from "@/lib/seo";
+
 export const Route = createFileRoute("/post/$id")({
-  head: () => ({
-    meta: [
-      { title: "Edit listing — Apna Ghar" },
-      { name: "robots", content: "noindex, nofollow" },
-    ],
-  }),
+  head: () => privateSeo({ title: "Edit listing — Apna Ghar" }),
   component: EditListing,
 });
 

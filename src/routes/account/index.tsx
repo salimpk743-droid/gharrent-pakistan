@@ -9,13 +9,10 @@ import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { toast } from "sonner";
 
+import { privateSeo } from "@/lib/seo";
+
 export const Route = createFileRoute("/account/")({
-  head: () => ({
-    meta: [
-      { title: "Account — Apna Ghar" },
-      { name: "robots", content: "noindex, nofollow" },
-    ],
-  }),
+  head: () => privateSeo({ title: "Account — Apna Ghar" }),
   component: AccountPage,
 });
 

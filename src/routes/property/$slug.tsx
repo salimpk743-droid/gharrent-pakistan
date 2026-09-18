@@ -9,6 +9,8 @@ import { getPropertyBySlug, recordContactClick } from "@/lib/server/properties";
 import { reportProperty } from "@/lib/server/reports";
 import { toggleFavorite } from "@/lib/server/favorites";
 import { FURNISHED_LABEL, PURPOSE_KICKER, REPORT_REASONS, SIZE_UNIT_LABEL } from "@/lib/constants";
+import { listingBreadcrumbJsonLd, listingJsonLd, listingSeo } from "@/lib/seo";
+import { JsonLd } from "@/components/seo/json-ld";
 import { formatListingPrice, formatLocation } from "@/lib/utils";
 import { telLink, whatsappLink } from "@/lib/phone";
 import { useAuthGate } from "@/components/auth/use-auth-gate";
@@ -21,23 +23,7 @@ export const Route = createFileRoute("/property/$slug")({
     if (!property || "notPublic" in property) throw notFound();
     return property as PublicProperty;
   },
-  head: ({ loaderData }) => {
-    const p = loaderData;
-    const loc = [p?.areaName || p?.area, p?.districtName, p?.provinceName].filter(Boolean).join(", ");
-    const purpose = p?.listingPurpose === "SALE" ? "for sale" : "for rent";
-    const priceBit = p ? formatListingPrice(p.monthlyRent, p.listingPurpose) : null;
-    return {
-      meta: [
-        { title: p ? `${p.title} in ${loc} — Apna Ghar` : "Property — Apna Ghar" },
-        {
-          name: "description",
-          content: p
-            ? `${p.propertyType} ${purpose} in ${loc}. ${priceBit?.amount}${priceBit?.suffix ? ` ${priceBit.suffix}` : ""}. ${p.bedrooms} beds, ${p.bathrooms} baths.`
-            : "Property listing on Apna Ghar Pakistan.",
-        },
-      ],
-    };
-  },
+  head: ({ loaderData }) => listingSeo(loaderData),
   component: PropertyPage,
   notFoundComponent: () => (
     <main className="mx-auto w-[min(720px,calc(100%-32px))] py-20 text-center">
@@ -111,6 +97,8 @@ function PropertyPage() {
 
   return (
     <main className="mx-auto w-[min(1120px,calc(100%-32px))] py-8 pb-24">
+      <JsonLd data={listingJsonLd(property)} />
+      <JsonLd data={listingBreadcrumbJsonLd(property)} />
       <nav className="mb-4 flex flex-wrap gap-2 text-sm text-muted" aria-label="Breadcrumb">
         <Link to="/" className="no-underline hover:text-forest">
           Home
@@ -213,31 +201,6 @@ function PropertyPage() {
               <p className="mt-2 text-sm text-muted">{property.address}</p>
             </>
           )}
-
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: JSON.stringify({
-                "@context": "https://schema.org",
-                "@type": "Residence",
-                name: property.title,
-                description: property.description,
-                address: {
-                  "@type": "PostalAddress",
-                  addressLocality: property.area,
-                  addressRegion: property.districtName,
-                  addressCountry: "PK",
-                },
-                numberOfRooms: property.bedrooms,
-                offers: {
-                  "@type": "Offer",
-                  price: property.monthlyRent,
-                  priceCurrency: "PKR",
-                  availability: "https://schema.org/InStock",
-                },
-              }),
-            }}
-          />
         </div>
 
         <aside className="h-fit rounded-xl border border-line bg-white p-5 lg:sticky lg:top-24">

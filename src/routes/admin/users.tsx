@@ -7,8 +7,10 @@ import { canModerate } from "@/lib/authz";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
+import { privateSeo } from "@/lib/seo";
+
 export const Route = createFileRoute("/admin/users")({
-  head: () => ({ meta: [{ title: "Users — Apna Ghar admin" }, { name: "robots", content: "noindex, nofollow" }] }),
+  head: () => privateSeo({ title: "Users — Apna Ghar admin" }),
   component: AdminUsers,
 });
 

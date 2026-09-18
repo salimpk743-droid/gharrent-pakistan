@@ -8,8 +8,10 @@ import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/utils";
 import { REPORT_REASONS } from "@/lib/constants";
 
+import { privateSeo } from "@/lib/seo";
+
 export const Route = createFileRoute("/admin/reports")({
-  head: () => ({ meta: [{ title: "Reports — Apna Ghar admin" }, { name: "robots", content: "noindex, nofollow" }] }),
+  head: () => privateSeo({ title: "Reports — Apna Ghar admin" }),
   component: AdminReports,
 });
 

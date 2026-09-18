@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ResultsPage } from "@/components/search/results-page";
 import { searchProperties } from "@/lib/server/properties";
-import { APP_NAME, PROPERTY_TYPE_META, typeFromSlug } from "@/lib/constants";
-
+import { typeFromSlug } from "@/lib/constants";
 import { parseRentSearch } from "@/lib/rent-search";
+import { searchRouteSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/rent/$province/$district/$type")({
   validateSearch: parseRentSearch,
@@ -18,17 +18,12 @@ export const Route = createFileRoute("/rent/$province/$district/$type")({
         purpose: "RENT",
       },
     }),
-  head: ({ loaderData, params }) => {
-    const t = typeFromSlug(params.type);
-    const label = t ? PROPERTY_TYPE_META[t].plural : "Homes";
-    const place = loaderData?.locationLabel || params.district;
-    return {
-      meta: [
-        { title: `${label} for rent in ${place} — ${APP_NAME}` },
-        { name: "description", content: `Find ${label.toLowerCase()} for rent in ${place} on Apna Ghar.` },
-      ],
-    };
-  },
+  head: ({ loaderData, params }) =>
+    searchRouteSeo({
+      purpose: "RENT",
+      params: { province: params.province, district: params.district, type: params.type },
+      data: { ...loaderData, type: typeFromSlug(params.type) ?? loaderData?.type ?? null },
+    }),
   component: Page,
 });
 

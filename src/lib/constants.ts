@@ -3,6 +3,10 @@ export const APP_TAGLINE = "Find a home to rent or buy across Pakistan.";
 export const APP_DESCRIPTION =
   "Search houses, flats, portions, plots and commercial properties for rent and sale across Pakistan by province, city, area, property type and budget.";
 
+/** Public SEO / sharing origin. Auth and the Android TWA still use the Vercel host. */
+export const PUBLIC_SITE_ORIGIN = "https://apnaaghar.pk";
+export const PUBLIC_SITE_HOST = "apnaaghar.pk";
+
 export const LISTING_PURPOSES = ["RENT", "SALE"] as const;
 export type ListingPurpose = (typeof LISTING_PURPOSES)[number];
 

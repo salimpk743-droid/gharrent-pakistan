@@ -1,13 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage } from "@/components/layout/legal-page";
 
+import { publicSeo } from "@/lib/seo";
+
 export const Route = createFileRoute("/terms")({
-  head: () => ({
-    meta: [
-      { title: "Terms of Use — Apna Ghar" },
-      { name: "description", content: "Terms of use for the Apna Ghar rental marketplace." },
-    ],
-  }),
+  head: () =>
+    publicSeo({
+      title: "Terms of Use | Apna Ghar",
+      description: "Terms of use for the Apna Ghar property marketplace in Pakistan.",
+      path: "/terms",
+    }),
   component: Page,
 });
 

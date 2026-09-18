@@ -9,6 +9,7 @@ import {
   resolveTrustedOrigins,
   shouldUsePreviewBrokerFallback,
 } from "./auth-origin.ts";
+import { PUBLIC_SITE_ORIGIN } from "./constants.ts";
 
 describe("auth origin", () => {
   it("uses BETTER_AUTH_URL when it is a real public origin", () => {
@@ -70,6 +71,8 @@ describe("auth origin", () => {
       VERCEL_PROJECT_PRODUCTION_URL: "gharrent-pakistan.vercel.app",
     });
     assert.ok(origins.includes(KNOWN_PRODUCTION_ORIGIN));
+    assert.ok(origins.includes(PUBLIC_SITE_ORIGIN));
+    assert.ok(origins.includes("https://www.apnaaghar.pk"));
     assert.ok(origins.includes("https://*.vercel.app"));
   });
 });

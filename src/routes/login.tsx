@@ -2,16 +2,13 @@ import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { SignInPanel } from "@/components/auth/sign-in-panel";
 import { useAuthGate } from "@/components/auth/use-auth-gate";
 
+import { privateSeo } from "@/lib/seo";
+
 export const Route = createFileRoute("/login")({
   validateSearch: (s: Record<string, unknown>) => ({
     next: typeof s.next === "string" && s.next.startsWith("/") ? s.next : "/",
   }),
-  head: () => ({
-    meta: [
-      { title: "Sign in — Apna Ghar" },
-      { name: "robots", content: "noindex, nofollow" },
-    ],
-  }),
+  head: () => privateSeo({ title: "Sign in — Apna Ghar" }),
   component: Login,
 });
 

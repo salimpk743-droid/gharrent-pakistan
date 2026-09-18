@@ -1,23 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ResultsPage } from "@/components/search/results-page";
 import { searchProperties } from "@/lib/server/properties";
-import { APP_NAME, typeToSlug } from "@/lib/constants";
+import { typeToSlug } from "@/lib/constants";
 import { parseMarketplaceSearch } from "@/lib/rent-search";
+import { searchRouteSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/sale/$province/")({
   validateSearch: parseMarketplaceSearch,
   loaderDeps: ({ search: s }) => s,
   loader: ({ params, deps }) =>
     searchProperties({ data: { ...deps, provinceSlug: params.province, purpose: "SALE" } }),
-  head: ({ loaderData, params }) => ({
-    meta: [
-      { title: `Homes for sale in ${loaderData?.locationLabel || params.province} — ${APP_NAME}` },
-      {
-        name: "description",
-        content: `Find properties for sale in ${loaderData?.locationLabel || params.province} on Apna Ghar.`,
-      },
-    ],
-  }),
+  head: ({ loaderData, params }) =>
+    searchRouteSeo({ purpose: "SALE", params: { province: params.province }, data: loaderData }),
   component: Page,
 });
 

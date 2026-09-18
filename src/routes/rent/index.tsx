@@ -1,20 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ResultsPage } from "@/components/search/results-page";
 import { searchProperties } from "@/lib/server/properties";
-import { APP_NAME } from "@/lib/constants";
-
 import { parseRentSearch } from "@/lib/rent-search";
+import { searchRouteSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/rent/")({
   validateSearch: parseRentSearch,
   loaderDeps: ({ search: s }) => s,
   loader: ({ deps }) => searchProperties({ data: { ...deps, purpose: "RENT" } }),
-  head: () => ({
-    meta: [
-      { title: `Homes for rent in Pakistan — ${APP_NAME}` },
-      { name: "description", content: "Browse rental homes across Pakistan. Filter by type, budget and location." },
-    ],
-  }),
+  head: ({ loaderData }) => searchRouteSeo({ purpose: "RENT", data: loaderData }),
   component: Page,
 });
 

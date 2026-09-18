@@ -4,13 +4,10 @@ import { SignInPanel } from "@/components/auth/sign-in-panel";
 import { useAuthGate } from "@/components/auth/use-auth-gate";
 import { createDraft } from "@/lib/server/listings";
 
+import { privateSeo } from "@/lib/seo";
+
 export const Route = createFileRoute("/post/")({
-  head: () => ({
-    meta: [
-      { title: "Post a property — Apna Ghar" },
-      { name: "robots", content: "noindex, nofollow" },
-    ],
-  }),
+  head: () => privateSeo({ title: "Post a property — Apna Ghar" }),
   component: PostStart,
 });
 

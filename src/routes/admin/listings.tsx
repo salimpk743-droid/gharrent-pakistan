@@ -13,8 +13,10 @@ import type { PublicProperty } from "@/lib/types";
 import type { AdminAction } from "@/lib/listing-lifecycle";
 import { LISTING_STATUSES, PURPOSE_KICKER } from "@/lib/constants";
 
+import { privateSeo } from "@/lib/seo";
+
 export const Route = createFileRoute("/admin/listings")({
-  head: () => ({ meta: [{ title: "Moderate listings — Apna Ghar" }, { name: "robots", content: "noindex, nofollow" }] }),
+  head: () => privateSeo({ title: "Moderate listings — Apna Ghar" }),
   component: AdminListings,
 });
 

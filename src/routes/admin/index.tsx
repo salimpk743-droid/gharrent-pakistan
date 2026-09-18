@@ -6,13 +6,10 @@ import { getMyProfile } from "@/lib/server/profile";
 import { canModerate } from "@/lib/authz";
 import type { Profile } from "@/lib/types";
 
+import { privateSeo } from "@/lib/seo";
+
 export const Route = createFileRoute("/admin/")({
-  head: () => ({
-    meta: [
-      { title: "Admin — Apna Ghar" },
-      { name: "robots", content: "noindex, nofollow" },
-    ],
-  }),
+  head: () => privateSeo({ title: "Admin — Apna Ghar" }),
   component: AdminHome,
 });
 

@@ -2,21 +2,14 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { SearchBox } from "@/components/search/search-box";
 import { PropertyCard } from "@/components/property/property-card";
 import { getHomeData } from "@/lib/server/properties";
-import { APP_NAME, APP_TAGLINE, FEATURED_PROPERTY_TYPES, POPULAR_CITIES, PROPERTY_TYPE_META } from "@/lib/constants";
+import { APP_TAGLINE, FEATURED_PROPERTY_TYPES, POPULAR_CITIES, PROPERTY_TYPE_META } from "@/lib/constants";
+import { HOME_SEO_DESCRIPTION, HOME_SEO_TITLE, homeJsonLd, publicSeo } from "@/lib/seo";
+import { JsonLd } from "@/components/seo/json-ld";
 import { Building2, DoorOpen, Home, Hotel, LayoutGrid } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   loader: () => getHomeData(),
-  head: () => ({
-    meta: [
-      { title: `${APP_NAME} — Homes for Rent and Sale Across Pakistan` },
-      {
-        name: "description",
-        content:
-          "Find a home to rent or buy across Pakistan. Search houses, flats, portions, plots and commercial properties by location, type and budget.",
-      },
-    ],
-  }),
+  head: () => publicSeo({ title: HOME_SEO_TITLE, description: HOME_SEO_DESCRIPTION, path: "/" }),
   component: HomePage,
 });
 
@@ -34,6 +27,7 @@ function HomePage() {
   const data = Route.useLoaderData();
   return (
     <>
+      <JsonLd data={homeJsonLd()} />
       <section className="hero-photo relative flex min-h-[500px] items-start overflow-hidden text-white">
         <div className="mx-auto w-[min(1050px,calc(100%-32px))] py-10 sm:py-14">
           <p className="text-[10px] font-extrabold tracking-[0.16em] text-lime">FIND YOUR NEXT HOME</p>
