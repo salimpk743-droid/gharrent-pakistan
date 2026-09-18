@@ -246,6 +246,96 @@ describe("index / noindex", () => {
     );
   });
 
+  it("uses batch-2 copy on live Peshawar, Faisalabad and Multan rent pages", () => {
+    const peshawarCity = searchRouteSeo({
+      purpose: "RENT",
+      params: { province: "khyber-pakhtunkhwa", district: "peshawar" },
+      data: { total: 1, district: { slug: "peshawar", name: "Peshawar" } },
+    });
+    assert.ok(peshawarCity.meta.some((m) => m.title === "Property for Rent in Peshawar | Apna Ghar"));
+    assert.ok(
+      peshawarCity.links?.some(
+        (l) => l.rel === "canonical" && l.href === "https://apnaaghar.pk/rent/khyber-pakhtunkhwa/peshawar",
+      ),
+    );
+    assert.ok(peshawarCity.meta.some((m) => m.name === "robots" && m.content === "index, follow"));
+
+    const peshawarHouses = searchRouteSeo({
+      purpose: "RENT",
+      params: { province: "khyber-pakhtunkhwa", district: "peshawar", type: "houses" },
+      data: { total: 1, district: { slug: "peshawar", name: "Peshawar" }, type: "House" },
+    });
+    assert.ok(peshawarHouses.meta.some((m) => m.title === "Houses for Rent in Peshawar | Apna Ghar"));
+    assert.ok(
+      peshawarHouses.links?.some(
+        (l) => l.rel === "canonical" && l.href === "https://apnaaghar.pk/rent/khyber-pakhtunkhwa/peshawar/houses",
+      ),
+    );
+
+    const faisalabadCity = searchRouteSeo({
+      purpose: "RENT",
+      params: { province: "punjab", district: "faisalabad" },
+      data: { total: 1, district: { slug: "faisalabad", name: "Faisalabad" } },
+    });
+    assert.ok(faisalabadCity.meta.some((m) => m.title === "Property for Rent in Faisalabad | Apna Ghar"));
+    assert.ok(
+      faisalabadCity.links?.some((l) => l.rel === "canonical" && l.href === "https://apnaaghar.pk/rent/punjab/faisalabad"),
+    );
+
+    const faisalabadPortions = searchRouteSeo({
+      purpose: "RENT",
+      params: { province: "punjab", district: "faisalabad", type: "portions" },
+      data: { total: 1, district: { slug: "faisalabad", name: "Faisalabad" }, type: "Portion" },
+    });
+    assert.ok(faisalabadPortions.meta.some((m) => m.title === "Portions for Rent in Faisalabad | Apna Ghar"));
+    assert.ok(
+      faisalabadPortions.links?.some(
+        (l) => l.rel === "canonical" && l.href === "https://apnaaghar.pk/rent/punjab/faisalabad/portions",
+      ),
+    );
+
+    const multanCity = searchRouteSeo({
+      purpose: "RENT",
+      params: { province: "punjab", district: "multan" },
+      data: { total: 1, district: { slug: "multan", name: "Multan" } },
+    });
+    assert.ok(multanCity.meta.some((m) => m.title === "Property for Rent in Multan | Apna Ghar"));
+    assert.ok(multanCity.links?.some((l) => l.rel === "canonical" && l.href === "https://apnaaghar.pk/rent/punjab/multan"));
+
+    const multanHouses = searchRouteSeo({
+      purpose: "RENT",
+      params: { province: "punjab", district: "multan", type: "houses" },
+      data: { total: 1, district: { slug: "multan", name: "Multan" }, type: "House" },
+    });
+    assert.ok(multanHouses.meta.some((m) => m.title === "Houses for Rent in Multan | Apna Ghar"));
+    assert.ok(
+      multanHouses.links?.some((l) => l.rel === "canonical" && l.href === "https://apnaaghar.pk/rent/punjab/multan/houses"),
+    );
+  });
+
+  it("leaves empty batch-2 pages on the generic title and noindex", () => {
+    const emptySale = searchRouteSeo({
+      purpose: "SALE",
+      params: { province: "khyber-pakhtunkhwa", district: "peshawar" },
+      data: { total: 0, district: { slug: "peshawar", name: "Peshawar" } },
+    });
+    assert.ok(emptySale.meta.some((m) => m.title === "Properties for Sale in Peshawar | Apna Ghar"));
+    assert.ok(emptySale.meta.some((m) => m.name === "robots" && m.content === "noindex, follow"));
+    assert.ok(
+      emptySale.links?.some(
+        (l) => l.rel === "canonical" && l.href === "https://apnaaghar.pk/sale/khyber-pakhtunkhwa/peshawar",
+      ),
+    );
+
+    const emptyHouses = searchRouteSeo({
+      purpose: "RENT",
+      params: { province: "punjab", district: "faisalabad", type: "houses" },
+      data: { total: 0, district: { slug: "faisalabad", name: "Faisalabad" }, type: "House" },
+    });
+    assert.ok(emptyHouses.meta.some((m) => m.title === "Houses for Rent in Faisalabad | Apna Ghar"));
+    assert.ok(emptyHouses.meta.some((m) => m.name === "robots" && m.content === "noindex, follow"));
+  });
+
   it("keeps generic titles on untargeted marketplace pages", () => {
     const karachi = searchRouteSeo({
       purpose: "RENT",

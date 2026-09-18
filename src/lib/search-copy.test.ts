@@ -61,3 +61,104 @@ describe("search page copy batch 1", () => {
     assert.equal(searchPageCopy({ purpose: "RENT", province: "punjab" }), undefined);
   });
 });
+
+describe("search page copy batch 2", () => {
+  it("uses property copy on the Peshawar rent city page", () => {
+    const copy = searchPageCopy({
+      purpose: "RENT",
+      province: "khyber-pakhtunkhwa",
+      district: "peshawar",
+    });
+    assert.equal(copy?.title, "Property for Rent in Peshawar | Apna Ghar");
+    assert.equal(copy?.h1, "Property for Rent in Peshawar");
+    assert.match(copy?.intro || "", /10 marla/i);
+    assert.match(copy?.intro || "", /University Town/);
+    assert.doesNotMatch(copy?.title || "", /^Houses for Rent in Peshawar/);
+    assert.doesNotMatch(copy?.intro || "", /Hayatabad/);
+    assert.doesNotMatch(copy?.intro || "", /flat|apartment|portion/i);
+  });
+
+  it("uses houses-for-rent copy for Peshawar houses", () => {
+    const copy = searchPageCopy({
+      purpose: "RENT",
+      province: "khyber-pakhtunkhwa",
+      district: "peshawar",
+      type: "houses",
+    });
+    assert.equal(copy?.title, "Houses for Rent in Peshawar | Apna Ghar");
+    assert.equal(copy?.h1, "Houses for Rent in Peshawar");
+    assert.match(copy?.intro || "", /10 marla/i);
+    assert.match(copy?.intro || "", /University Town/);
+    assert.doesNotMatch(copy?.h1 || "", /Khyber Pakhtunkhwa/);
+  });
+
+  it("does not treat Faisalabad rent as a houses page", () => {
+    const copy = searchPageCopy({ purpose: "RENT", province: "punjab", district: "faisalabad" });
+    assert.equal(copy?.title, "Property for Rent in Faisalabad | Apna Ghar");
+    assert.equal(copy?.h1, "Property for Rent in Faisalabad");
+    assert.match(copy?.intro || "", /portion/i);
+    assert.match(copy?.intro || "", /Madina Town/);
+    assert.match(copy?.intro || "", /5 marla/i);
+    assert.match(copy?.intro || "", /first-floor/i);
+    assert.doesNotMatch(copy?.title || "", /^Houses for Rent in Faisalabad/);
+    assert.doesNotMatch(copy?.intro || "", /house|flat|apartment/i);
+  });
+
+  it("uses portions-for-rent copy for Faisalabad portions", () => {
+    const copy = searchPageCopy({
+      purpose: "RENT",
+      province: "punjab",
+      district: "faisalabad",
+      type: "portions",
+    });
+    assert.equal(copy?.title, "Portions for Rent in Faisalabad | Apna Ghar");
+    assert.equal(copy?.h1, "Portions for Rent in Faisalabad");
+    assert.match(copy?.intro || "", /first-floor/i);
+    assert.match(copy?.intro || "", /Madina Town/);
+    assert.match(copy?.intro || "", /5 marla/i);
+  });
+
+  it("uses property copy on the Multan rent city page", () => {
+    const copy = searchPageCopy({ purpose: "RENT", province: "punjab", district: "multan" });
+    assert.equal(copy?.title, "Property for Rent in Multan | Apna Ghar");
+    assert.equal(copy?.h1, "Property for Rent in Multan");
+    assert.match(copy?.intro || "", /7 marla/i);
+    assert.match(copy?.intro || "", /Gulgasht Colony/);
+    assert.doesNotMatch(copy?.title || "", /^Houses for Rent in Multan/);
+    assert.doesNotMatch(copy?.intro || "", /flat|apartment|portion/i);
+  });
+
+  it("uses houses-for-rent copy for Multan houses", () => {
+    const copy = searchPageCopy({ purpose: "RENT", province: "punjab", district: "multan", type: "houses" });
+    assert.equal(copy?.title, "Houses for Rent in Multan | Apna Ghar");
+    assert.equal(copy?.h1, "Houses for Rent in Multan");
+    assert.match(copy?.intro || "", /7 marla/i);
+    assert.match(copy?.intro || "", /Gulgasht Colony/);
+  });
+
+  it("skips empty batch-2 city and type pages", () => {
+    const skipped = [
+      { purpose: "SALE" as const, province: "khyber-pakhtunkhwa", district: "peshawar" },
+      { purpose: "SALE" as const, province: "khyber-pakhtunkhwa", district: "peshawar", type: "houses" },
+      { purpose: "RENT" as const, province: "khyber-pakhtunkhwa", district: "peshawar", type: "apartments" },
+      { purpose: "SALE" as const, province: "khyber-pakhtunkhwa", district: "peshawar", type: "apartments" },
+      { purpose: "RENT" as const, province: "khyber-pakhtunkhwa", district: "peshawar", type: "portions" },
+      { purpose: "SALE" as const, province: "khyber-pakhtunkhwa", district: "peshawar", type: "portions" },
+      { purpose: "SALE" as const, province: "punjab", district: "faisalabad" },
+      { purpose: "RENT" as const, province: "punjab", district: "faisalabad", type: "houses" },
+      { purpose: "SALE" as const, province: "punjab", district: "faisalabad", type: "houses" },
+      { purpose: "RENT" as const, province: "punjab", district: "faisalabad", type: "apartments" },
+      { purpose: "SALE" as const, province: "punjab", district: "faisalabad", type: "apartments" },
+      { purpose: "SALE" as const, province: "punjab", district: "faisalabad", type: "portions" },
+      { purpose: "SALE" as const, province: "punjab", district: "multan" },
+      { purpose: "SALE" as const, province: "punjab", district: "multan", type: "houses" },
+      { purpose: "RENT" as const, province: "punjab", district: "multan", type: "apartments" },
+      { purpose: "SALE" as const, province: "punjab", district: "multan", type: "apartments" },
+      { purpose: "RENT" as const, province: "punjab", district: "multan", type: "portions" },
+      { purpose: "SALE" as const, province: "punjab", district: "multan", type: "portions" },
+    ];
+    for (const opts of skipped) {
+      assert.equal(searchPageCopy(opts), undefined, JSON.stringify(opts));
+    }
+  });
+});
