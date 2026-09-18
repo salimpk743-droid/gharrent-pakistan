@@ -4,6 +4,7 @@ import { SearchBox } from "@/components/search/search-box";
 import { PROPERTY_TYPE_META, PROPERTY_TYPES, type ListingPurpose, typeFromSlug } from "@/lib/constants";
 import type { PublicProperty } from "@/lib/types";
 import { searchHeading } from "@/lib/search";
+import { searchPageCopy } from "@/lib/search-copy";
 import { resultsBreadcrumbJsonLd, resultsItemListJsonLd } from "@/lib/seo";
 import { JsonLd } from "@/components/seo/json-ld";
 
@@ -32,7 +33,13 @@ export function ResultsPage({
   title?: string;
   description?: string;
 }) {
-  const heading = title || searchHeading({ type: typeFromSlug(typeSlug), typeSlug, purpose }, locationLabel);
+  const copy = searchPageCopy({
+    purpose,
+    province: provinceSlug,
+    district: districtSlug,
+    type: typeSlug,
+  });
+  const heading = copy?.h1 || title || searchHeading({ type: typeFromSlug(typeSlug), typeSlug, purpose }, locationLabel);
   const pages = Math.max(1, Math.ceil(total / pageSize));
   const rootLabel = purpose === "SALE" ? "Buy" : "Rent";
   const labelParts = locationLabel.split(", ").filter((part) => part && part !== "Pakistan");
@@ -64,6 +71,7 @@ export function ResultsPage({
           <p className="mt-2 max-w-2xl text-sm text-[#d6e2dc]">
             {description || `${total} listing${total === 1 ? "" : "s"} · ${locationLabel}`}
           </p>
+          {copy?.intro ? <p className="mt-2 max-w-2xl text-sm text-[#d6e2dc]">{copy.intro}</p> : null}
           <div className="mt-5 min-w-0">
             <SearchBox compact purpose={purpose} />
           </div>

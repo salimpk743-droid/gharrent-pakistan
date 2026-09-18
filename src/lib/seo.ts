@@ -8,6 +8,7 @@ import {
   type ListingPurpose,
   type PropertyType,
 } from "./constants.ts";
+import { searchPageCopy } from "./search-copy.ts";
 
 export { PUBLIC_SITE_ORIGIN, PUBLIC_SITE_HOST } from "./constants.ts";
 
@@ -341,9 +342,15 @@ export function searchRouteSeo(opts: {
   const place = locationPlaceName(opts.data);
   const hub = !params.district && !params.type;
   const total = opts.data?.total ?? 0;
+  const copy = searchPageCopy({
+    purpose: opts.purpose,
+    province: params.province,
+    district: params.district,
+    type: typeSlug,
+  });
   return publicSeo({
-    title: locationSeoTitle({ purpose: opts.purpose, place, type }),
-    description: locationSeoDescription({ purpose: opts.purpose, place, type }),
+    title: copy?.title || locationSeoTitle({ purpose: opts.purpose, place, type }),
+    description: copy?.description || locationSeoDescription({ purpose: opts.purpose, place, type }),
     path,
     index: !unknownType && (hub || total > 0),
   });

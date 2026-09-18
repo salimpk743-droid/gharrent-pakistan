@@ -196,6 +196,65 @@ describe("index / noindex", () => {
     assert.ok(unknown.links?.some((l) => l.rel === "canonical" && l.href === "https://apnaaghar.pk/rent/punjab/lahore"));
   });
 
+  it("uses batch-1 copy on the four targeted rent pages without changing canonicals", () => {
+    const lahoreCity = searchRouteSeo({
+      purpose: "RENT",
+      params: { province: "punjab", district: "lahore" },
+      data: { total: 3, district: { slug: "lahore", name: "Lahore" } },
+    });
+    assert.ok(lahoreCity.meta.some((m) => m.title === "Property for Rent in Lahore | Apna Ghar"));
+    assert.ok(
+      lahoreCity.meta.some((m) => m.name === "description" && (m.content || "").includes("houses, flats and rooms")),
+    );
+    assert.ok(lahoreCity.links?.some((l) => l.rel === "canonical" && l.href === "https://apnaaghar.pk/rent/punjab/lahore"));
+    assert.ok(lahoreCity.meta.some((m) => m.name === "robots" && m.content === "index, follow"));
+
+    const lahoreHouses = searchRouteSeo({
+      purpose: "RENT",
+      params: { province: "punjab", district: "lahore", type: "houses" },
+      data: { total: 1, district: { slug: "lahore", name: "Lahore" }, type: "House" },
+    });
+    assert.ok(lahoreHouses.meta.some((m) => m.title === "Houses for Rent in Lahore | Apna Ghar"));
+    assert.ok(
+      lahoreHouses.links?.some((l) => l.rel === "canonical" && l.href === "https://apnaaghar.pk/rent/punjab/lahore/houses"),
+    );
+
+    const lahoreFlats = searchRouteSeo({
+      purpose: "RENT",
+      params: { province: "punjab", district: "lahore", type: "apartments" },
+      data: { total: 1, district: { slug: "lahore", name: "Lahore" }, type: "Apartment" },
+    });
+    assert.ok(lahoreFlats.meta.some((m) => m.title === "Flats for Rent in Lahore | Apna Ghar"));
+    assert.ok(lahoreFlats.meta.some((m) => m.name === "description" && /flats for rent in Lahore/i.test(m.content || "")));
+    assert.ok(
+      lahoreFlats.links?.some(
+        (l) => l.rel === "canonical" && l.href === "https://apnaaghar.pk/rent/punjab/lahore/apartments",
+      ),
+    );
+
+    const isbHouses = searchRouteSeo({
+      purpose: "RENT",
+      params: { province: "islamabad-capital-territory", district: "islamabad", type: "houses" },
+      data: { total: 1, district: { slug: "islamabad", name: "Islamabad" }, type: "House" },
+    });
+    assert.ok(isbHouses.meta.some((m) => m.title === "Houses for Rent in Islamabad | Apna Ghar"));
+    assert.equal(isbHouses.meta.find((m) => m.title)?.title?.includes("Capital Territory"), false);
+    assert.ok(
+      isbHouses.links?.some(
+        (l) => l.rel === "canonical" && l.href === "https://apnaaghar.pk/rent/islamabad-capital-territory/islamabad/houses",
+      ),
+    );
+  });
+
+  it("keeps generic titles on untargeted marketplace pages", () => {
+    const karachi = searchRouteSeo({
+      purpose: "RENT",
+      params: { province: "sindh", district: "karachi" },
+      data: { total: 2, district: { slug: "karachi", name: "Karachi" } },
+    });
+    assert.ok(karachi.meta.some((m) => m.title === "Houses for Rent in Karachi | Apna Ghar"));
+  });
+
   it("does not index unpublished listings", () => {
     const head = listingSeo({
       slug: "draft-home",
