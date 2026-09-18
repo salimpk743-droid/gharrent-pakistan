@@ -28,23 +28,23 @@ const SEARCH_PAGE_COPY: Record<string, SearchPageCopy> = {
     description:
       "Browse houses, flats and rooms for rent in Lahore. Compare monthly rent, size and location on Apna Ghar, then contact the advertiser.",
     intro:
-      "Browse property for rent in Lahore, including houses, flats and rooms. Current listings are in Johar Town, Gulberg and DHA Phase 5. Compare monthly rent, size and location, then contact the advertiser to arrange a visit.",
+      "Use this Lahore rental search to browse available houses, flats and rooms by location, size and monthly rent. When listings are available, compare the details and contact the advertiser to arrange a visit.",
   },
   "RENT|punjab|lahore|houses": {
     title: `Houses for Rent in Lahore | ${APP_NAME}`,
     h1: "Houses for Rent in Lahore",
     description:
-      "Find houses for rent in Lahore, including a 5 marla home in Johar Town. Compare rent and size on Apna Ghar, then contact the advertiser.",
+      "Find houses for rent in Lahore. Compare monthly rent, size and location on Apna Ghar.",
     intro:
-      "Search houses for rent in Lahore. There is currently a 5 marla family house listed in Johar Town. Compare rent and size, then contact the advertiser to visit.",
+      "Search houses for rent in Lahore. Compare available houses in Lahore by monthly rent, size and location, then contact the advertiser directly when a suitable property is available.",
   },
   "RENT|punjab|lahore|apartments": {
     title: `Flats for Rent in Lahore | ${APP_NAME}`,
     h1: "Flats for Rent in Lahore",
     description:
-      "Find flats for rent in Lahore, including apartments in Gulberg. Compare monthly rent and location on Apna Ghar, then contact the advertiser.",
+      "Find flats for rent in Lahore. Compare monthly rent, size and location on Apna Ghar.",
     intro:
-      "Search flats for rent in Lahore, including apartments in established neighbourhoods. There is currently a flat listed in Gulberg. Compare monthly rent and location, then contact the advertiser.",
+      "Search flats for rent in Lahore, including apartments in established neighbourhoods. Compare available flats in Lahore by monthly rent, size and location, then contact the advertiser directly when a suitable property is available.",
   },
   "RENT|islamabad-capital-territory|islamabad|houses": {
     title: `Houses for Rent in Islamabad | ${APP_NAME}`,
