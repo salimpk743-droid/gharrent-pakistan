@@ -19,6 +19,8 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ReportRouteImport } from './routes/report'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as SafetyRouteImport } from './routes/safety'
+import { Route as SitemapLocationsDotxmlRouteImport } from './routes/sitemap-locations[.]xml'
+import { Route as SitemapPagesDotxmlRouteImport } from './routes/sitemap-pages[.]xml'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as DotwellKnownAssetlinksDotjsonRouteImport } from './routes/[.]well-known/assetlinks[.]json'
@@ -34,6 +36,7 @@ import { Route as PostIdRouteImport } from './routes/post/$id'
 import { Route as PropertySlugRouteImport } from './routes/property/$slug'
 import { Route as RentIndexRouteImport } from './routes/rent/index'
 import { Route as SaleIndexRouteImport } from './routes/sale/index'
+import { Route as SitemapListingsPageRouteImport } from './routes/sitemap-listings/$page'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiImagesIdRouteImport } from './routes/api/images/$id'
 import { Route as RentProvinceIndexRouteImport } from './routes/rent/$province/index'
@@ -91,6 +94,16 @@ const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
 const SafetyRoute = SafetyRouteImport.update({
   id: '/safety',
   path: '/safety',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapLocationsDotxmlRoute = SitemapLocationsDotxmlRouteImport.update({
+  id: '/sitemap-locations.xml',
+  path: '/sitemap-locations.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapPagesDotxmlRoute = SitemapPagesDotxmlRouteImport.update({
+  id: '/sitemap-pages.xml',
+  path: '/sitemap-pages.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -169,6 +182,11 @@ const SaleIndexRoute = SaleIndexRouteImport.update({
   path: '/sale/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SitemapListingsPageRoute = SitemapListingsPageRouteImport.update({
+  id: '/sitemap-listings/$page',
+  path: '/sitemap-listings/$page',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -225,6 +243,8 @@ export interface FileRoutesByFullPath {
   '/report': typeof ReportRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/safety': typeof SafetyRoute
+  '/sitemap-locations.xml': typeof SitemapLocationsDotxmlRoute
+  '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/.well-known/assetlinks.json': typeof DotwellKnownAssetlinksDotjsonRoute
@@ -235,6 +255,7 @@ export interface FileRoutesByFullPath {
   '/admin/users': typeof AdminUsersRoute
   '/post/$id': typeof PostIdRoute
   '/property/$slug': typeof PropertySlugRoute
+  '/sitemap-listings/$page': typeof SitemapListingsPageRoute
   '/account/': typeof AccountIndexRoute
   '/admin/': typeof AdminIndexRoute
   '/post/': typeof PostIndexRoute
@@ -260,6 +281,8 @@ export interface FileRoutesByTo {
   '/report': typeof ReportRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/safety': typeof SafetyRoute
+  '/sitemap-locations.xml': typeof SitemapLocationsDotxmlRoute
+  '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/.well-known/assetlinks.json': typeof DotwellKnownAssetlinksDotjsonRoute
@@ -270,6 +293,7 @@ export interface FileRoutesByTo {
   '/admin/users': typeof AdminUsersRoute
   '/post/$id': typeof PostIdRoute
   '/property/$slug': typeof PropertySlugRoute
+  '/sitemap-listings/$page': typeof SitemapListingsPageRoute
   '/account': typeof AccountIndexRoute
   '/admin': typeof AdminIndexRoute
   '/post': typeof PostIndexRoute
@@ -296,6 +320,8 @@ export interface FileRoutesById {
   '/report': typeof ReportRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/safety': typeof SafetyRoute
+  '/sitemap-locations.xml': typeof SitemapLocationsDotxmlRoute
+  '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/.well-known/assetlinks.json': typeof DotwellKnownAssetlinksDotjsonRoute
@@ -306,6 +332,7 @@ export interface FileRoutesById {
   '/admin/users': typeof AdminUsersRoute
   '/post/$id': typeof PostIdRoute
   '/property/$slug': typeof PropertySlugRoute
+  '/sitemap-listings/$page': typeof SitemapListingsPageRoute
   '/account/': typeof AccountIndexRoute
   '/admin/': typeof AdminIndexRoute
   '/post/': typeof PostIndexRoute
@@ -333,6 +360,8 @@ export interface FileRouteTypes {
     | '/report'
     | '/robots.txt'
     | '/safety'
+    | '/sitemap-locations.xml'
+    | '/sitemap-pages.xml'
     | '/sitemap.xml'
     | '/terms'
     | '/.well-known/assetlinks.json'
@@ -343,6 +372,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/post/$id'
     | '/property/$slug'
+    | '/sitemap-listings/$page'
     | '/account/'
     | '/admin/'
     | '/post/'
@@ -368,6 +398,8 @@ export interface FileRouteTypes {
     | '/report'
     | '/robots.txt'
     | '/safety'
+    | '/sitemap-locations.xml'
+    | '/sitemap-pages.xml'
     | '/sitemap.xml'
     | '/terms'
     | '/.well-known/assetlinks.json'
@@ -378,6 +410,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/post/$id'
     | '/property/$slug'
+    | '/sitemap-listings/$page'
     | '/account'
     | '/admin'
     | '/post'
@@ -403,6 +436,8 @@ export interface FileRouteTypes {
     | '/report'
     | '/robots.txt'
     | '/safety'
+    | '/sitemap-locations.xml'
+    | '/sitemap-pages.xml'
     | '/sitemap.xml'
     | '/terms'
     | '/.well-known/assetlinks.json'
@@ -413,6 +448,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/post/$id'
     | '/property/$slug'
+    | '/sitemap-listings/$page'
     | '/account/'
     | '/admin/'
     | '/post/'
@@ -439,6 +475,8 @@ export interface RootRouteChildren {
   ReportRoute: typeof ReportRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SafetyRoute: typeof SafetyRoute
+  SitemapLocationsDotxmlRoute: typeof SitemapLocationsDotxmlRoute
+  SitemapPagesDotxmlRoute: typeof SitemapPagesDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   DotwellKnownAssetlinksDotjsonRoute: typeof DotwellKnownAssetlinksDotjsonRoute
@@ -449,6 +487,7 @@ export interface RootRouteChildren {
   AdminUsersRoute: typeof AdminUsersRoute
   PostIdRoute: typeof PostIdRoute
   PropertySlugRoute: typeof PropertySlugRoute
+  SitemapListingsPageRoute: typeof SitemapListingsPageRoute
   AccountIndexRoute: typeof AccountIndexRoute
   AdminIndexRoute: typeof AdminIndexRoute
   PostIndexRoute: typeof PostIndexRoute
@@ -534,6 +573,20 @@ declare module '@tanstack/react-router' {
       path: '/safety'
       fullPath: '/safety'
       preLoaderRoute: typeof SafetyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-locations.xml': {
+      id: '/sitemap-locations.xml'
+      path: '/sitemap-locations.xml'
+      fullPath: '/sitemap-locations.xml'
+      preLoaderRoute: typeof SitemapLocationsDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-pages.xml': {
+      id: '/sitemap-pages.xml'
+      path: '/sitemap-pages.xml'
+      fullPath: '/sitemap-pages.xml'
+      preLoaderRoute: typeof SitemapPagesDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -641,6 +694,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SaleIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sitemap-listings/$page': {
+      id: '/sitemap-listings/$page'
+      path: '/sitemap-listings/$page'
+      fullPath: '/sitemap-listings/$page'
+      preLoaderRoute: typeof SitemapListingsPageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -711,6 +771,8 @@ const rootRouteChildren: RootRouteChildren = {
   ReportRoute: ReportRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SafetyRoute: SafetyRoute,
+  SitemapLocationsDotxmlRoute: SitemapLocationsDotxmlRoute,
+  SitemapPagesDotxmlRoute: SitemapPagesDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   DotwellKnownAssetlinksDotjsonRoute: DotwellKnownAssetlinksDotjsonRoute,
@@ -721,6 +783,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminUsersRoute: AdminUsersRoute,
   PostIdRoute: PostIdRoute,
   PropertySlugRoute: PropertySlugRoute,
+  SitemapListingsPageRoute: SitemapListingsPageRoute,
   AccountIndexRoute: AccountIndexRoute,
   AdminIndexRoute: AdminIndexRoute,
   PostIndexRoute: PostIndexRoute,

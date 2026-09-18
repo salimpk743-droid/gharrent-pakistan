@@ -17,16 +17,16 @@ function Page() {
   return (
     <LegalPage eyebrow="ACCOUNT & DATA" title="Account & Data Deletion">
       <p>
-        GharRent Pakistan provides a simple way for users to request deletion of their account and associated
+        Apna Ghar provides a simple way for users to request deletion of their account and associated
         personal data.
       </p>
 
       <h2>How to request deletion</h2>
       <ol>
         <li>
-          Open the <Link to="/contact" className="underline">Contact GharRent</Link> page.
+          Open the <Link to="/contact" className="underline">Contact Apna Ghar</Link> page.
         </li>
-        <li>Enter the email address associated with your GharRent account.</li>
+        <li>Enter the email address associated with your Apna Ghar account.</li>
         <li>For the subject, enter <strong>Account deletion request</strong>.</li>
         <li>Ask us to delete your account and associated personal data, and include any relevant details that help us identify your account.</li>
         <li>Submit the request using the Send message button.</li>

@@ -35,14 +35,23 @@ export function ResultsPage({
   const heading = title || searchHeading({ type: typeFromSlug(typeSlug), typeSlug, purpose }, locationLabel);
   const pages = Math.max(1, Math.ceil(total / pageSize));
   const rootLabel = purpose === "SALE" ? "Buy" : "Rent";
-  const provinceName = locationLabel.split(", ").filter(Boolean).at(-1);
+  const labelParts = locationLabel.split(", ").filter((part) => part && part !== "Pakistan");
+  const provinceName = provinceSlug ? labelParts.at(-1) : undefined;
+  const districtName = districtSlug ? (labelParts.length >= 2 ? labelParts.at(-2) : undefined) : undefined;
+  const type = typeFromSlug(typeSlug);
+  const typeName = type ? PROPERTY_TYPE_META[type].plural : undefined;
+  const crumbClass = "text-muted no-underline hover:text-forest";
   return (
     <div className="pb-12">
       <JsonLd
         data={resultsBreadcrumbJsonLd({
           purpose,
           provinceSlug,
-          provinceName: provinceSlug ? provinceName : undefined,
+          provinceName,
+          districtSlug,
+          districtName,
+          typeSlug,
+          typeName,
         })}
       />
       {items.length > 0 ? <JsonLd data={resultsItemListJsonLd(items)} /> : null}
@@ -62,37 +71,73 @@ export function ResultsPage({
       </section>
       <div className="mx-auto w-[min(1120px,calc(100%-32px))] py-8">
         <nav className="mb-5 flex flex-wrap gap-2 text-sm" aria-label="Breadcrumb">
-          <Link to="/" className="text-muted no-underline hover:text-forest">
+          <Link to="/" className={crumbClass}>
             Home
           </Link>
           <span className="text-line">/</span>
           {purpose === "SALE" ? (
-            <Link to="/sale" className="text-muted no-underline hover:text-forest">
+            <Link to="/sale" className={crumbClass}>
               {rootLabel}
             </Link>
           ) : (
-            <Link to="/rent" className="text-muted no-underline hover:text-forest">
+            <Link to="/rent" className={crumbClass}>
               {rootLabel}
             </Link>
           )}
-          {provinceSlug && (
+          {provinceSlug && provinceName && (
+            <>
+              <span className="text-line">/</span>
+              {purpose === "SALE" ? (
+                <Link to="/sale/$province" params={{ province: provinceSlug }} className={crumbClass}>
+                  {provinceName}
+                </Link>
+              ) : (
+                <Link to="/rent/$province" params={{ province: provinceSlug }} className={crumbClass}>
+                  {provinceName}
+                </Link>
+              )}
+            </>
+          )}
+          {provinceSlug && districtSlug && districtName && (
             <>
               <span className="text-line">/</span>
               {purpose === "SALE" ? (
                 <Link
-                  to="/sale/$province"
-                  params={{ province: provinceSlug }}
-                  className="text-muted no-underline hover:text-forest"
+                  to="/sale/$province/$district"
+                  params={{ province: provinceSlug, district: districtSlug }}
+                  className={crumbClass}
                 >
-                  {locationLabel.split(", ").at(-1)}
+                  {districtName}
                 </Link>
               ) : (
                 <Link
-                  to="/rent/$province"
-                  params={{ province: provinceSlug }}
-                  className="text-muted no-underline hover:text-forest"
+                  to="/rent/$province/$district"
+                  params={{ province: provinceSlug, district: districtSlug }}
+                  className={crumbClass}
                 >
-                  {locationLabel.split(", ").at(-1)}
+                  {districtName}
+                </Link>
+              )}
+            </>
+          )}
+          {provinceSlug && districtSlug && typeSlug && typeName && (
+            <>
+              <span className="text-line">/</span>
+              {purpose === "SALE" ? (
+                <Link
+                  to="/sale/$province/$district/$type"
+                  params={{ province: provinceSlug, district: districtSlug, type: typeSlug }}
+                  className={crumbClass}
+                >
+                  {typeName}
+                </Link>
+              ) : (
+                <Link
+                  to="/rent/$province/$district/$type"
+                  params={{ province: provinceSlug, district: districtSlug, type: typeSlug }}
+                  className={crumbClass}
+                >
+                  {typeName}
                 </Link>
               )}
             </>

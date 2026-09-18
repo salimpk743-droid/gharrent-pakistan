@@ -115,6 +115,28 @@ function xmlEscape(value: string): string {
     .replace(/"/g, "\u0026quot;");
 }
 
+/** Calendar date for sitemap lastmod. Accepts Date, ISO, or YYYY-MM-DD. */
+export function toSitemapDate(value: string | Date | null | undefined): string | undefined {
+  if (value == null || value === "") return undefined;
+  if (value instanceof Date) {
+    if (Number.isNaN(value.getTime())) return undefined;
+    return value.toISOString().slice(0, 10);
+  }
+  const raw = String(value).trim();
+  const isoDay = raw.match(/^(\d{4}-\d{2}-\d{2})/);
+  if (isoDay) return isoDay[1];
+  const parsed = new Date(raw);
+  if (Number.isNaN(parsed.getTime())) return undefined;
+  return parsed.toISOString().slice(0, 10);
+}
+
+/** ISO-8601 timestamp for JSON-LD dates. */
+export function toIsoDateTime(value: string | Date | null | undefined): string | undefined {
+  if (value == null || value === "") return undefined;
+  const parsed = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(parsed.getTime())) return undefined;
+  return parsed.toISOString();
+}
 
 export function robotsTxt(): string {
   return `User-agent: *
@@ -130,7 +152,13 @@ Sitemap: ${PUBLIC_SITE_ORIGIN}/sitemap.xml
 `;
 }
 
-export type SitemapEntry = { path: string; lastmod?: string };
+export type SitemapEntry = { path: string; lastmod?: string | Date | null };
+
+export const LISTING_SITEMAP_CHUNK = 10_000;
+
+export function listingSitemapPages(total: number): number {
+  return Math.max(1, Math.ceil(Math.max(0, total) / LISTING_SITEMAP_CHUNK));
+}
 
 export function renderSitemapXml(entries: SitemapEntry[]): string {
   const seen = new Set<string>();
@@ -139,17 +167,43 @@ export function renderSitemapXml(entries: SitemapEntry[]): string {
     const loc = canonicalUrl(entry.path);
     if (seen.has(loc)) continue;
     seen.add(loc);
-    const lastmod =
-      entry.lastmod && /^\d{4}-\d{2}-\d{2}/.test(entry.lastmod)
-        ? `\n    <lastmod>${xmlEscape(entry.lastmod.slice(0, 10))}</lastmod>`
-        : "";
-    rows.push(`  <url>\n    <loc>${xmlEscape(loc)}</loc>${lastmod}\n  </url>`);
+    const lastmod = toSitemapDate(entry.lastmod);
+    const lastmodXml = lastmod ? `\n    <lastmod>${xmlEscape(lastmod)}</lastmod>` : "";
+    rows.push(`  <url>\n    <loc>${xmlEscape(loc)}</loc>${lastmodXml}\n  </url>`);
   }
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${rows.join("\n")}
 </urlset>
 `;
+}
+
+export function renderSitemapIndex(entries: SitemapEntry[]): string {
+  const seen = new Set<string>();
+  const rows: string[] = [];
+  for (const entry of entries) {
+    const loc = canonicalUrl(entry.path);
+    if (seen.has(loc)) continue;
+    seen.add(loc);
+    const lastmod = toSitemapDate(entry.lastmod);
+    const lastmodXml = lastmod ? `\n    <lastmod>${xmlEscape(lastmod)}</lastmod>` : "";
+    rows.push(`  <sitemap>\n    <loc>${xmlEscape(loc)}</loc>${lastmodXml}\n  </sitemap>`);
+  }
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${rows.join("\n")}
+</sitemapindex>
+`;
+}
+
+export function xmlResponse(body: string, status = 200) {
+  return new Response(body, {
+    status,
+    headers: {
+      "Content-Type": "application/xml; charset=utf-8",
+      "Cache-Control": "public, max-age=3600",
+    },
+  });
 }
 
 export function publicSeo(opts: {
@@ -369,16 +423,36 @@ export function resultsBreadcrumbJsonLd(opts: {
   purpose: ListingPurpose;
   provinceSlug?: string;
   provinceName?: string;
+  districtSlug?: string;
+  districtName?: string;
+  typeSlug?: string;
+  typeName?: string;
 }) {
-  const rootPath = opts.purpose === "SALE" ? "/sale" : "/rent";
   const items = [
     { name: "Home", path: "/" },
-    { name: opts.purpose === "SALE" ? "Buy" : "Rent", path: rootPath },
+    { name: opts.purpose === "SALE" ? "Buy" : "Rent", path: opts.purpose === "SALE" ? "/sale" : "/rent" },
   ];
   if (opts.provinceSlug && opts.provinceName) {
     items.push({
       name: opts.provinceName,
       path: searchPath({ purpose: opts.purpose, province: opts.provinceSlug }),
+    });
+  }
+  if (opts.provinceSlug && opts.districtSlug && opts.districtName) {
+    items.push({
+      name: opts.districtName,
+      path: searchPath({ purpose: opts.purpose, province: opts.provinceSlug, district: opts.districtSlug }),
+    });
+  }
+  if (opts.provinceSlug && opts.districtSlug && opts.typeSlug && opts.typeName) {
+    items.push({
+      name: opts.typeName,
+      path: searchPath({
+        purpose: opts.purpose,
+        province: opts.provinceSlug,
+        district: opts.districtSlug,
+        type: opts.typeSlug,
+      }),
     });
   }
   return breadcrumbJsonLd(items);
@@ -404,45 +478,79 @@ function offeredType(type: PropertyType): string {
   return "Accommodation";
 }
 
+function isResidential(type: PropertyType): boolean {
+  return type === "House" || type === "Apartment" || type === "Portion" || type === "Room" || type === "Hostel";
+}
+
+function sizeUnitText(unit?: string | null): string | undefined {
+  if (unit === "MARLA") return "Marla";
+  if (unit === "KANAL") return "Kanal";
+  if (unit === "SQFT") return "sq ft";
+  if (unit === "SQYARD") return "sq yard";
+  return undefined;
+}
+
 export function listingJsonLd(p: ListingSeoInput) {
   const url = canonicalUrl(`/property/${p.slug}`);
   const images = [p.coverImage?.url, ...(p.images ?? []).map((img) => img.url)]
     .map((u) => absoluteAssetUrl(u))
     .filter((u): u is string => Boolean(u));
   const uniqueImages = [...new Set(images)].slice(0, 4);
-  const locality = (p.areaName || p.area || p.districtName || "").trim() || undefined;
-  const region = (p.districtName || p.provinceName || "").trim() || undefined;
+  const city = (p.districtName || "").trim() || undefined;
+  const region = (p.provinceName || "").trim() || city;
+  const area = (p.areaName || p.area || "").trim();
+  const price = Number(p.monthlyRent) || 0;
+  const sale = p.listingPurpose === "SALE";
+  const about: Record<string, unknown> = {
+    "@type": offeredType(p.propertyType),
+    name: p.title,
+  };
+  if (isResidential(p.propertyType)) {
+    about.numberOfBedrooms = p.bedrooms;
+    about.numberOfBathroomsTotal = p.bathrooms;
+  }
+  if (p.propertySize != null) {
+    about.floorSize = {
+      "@type": "QuantitativeValue",
+      value: p.propertySize,
+      unitText: sizeUnitText(p.sizeUnit) || p.sizeUnit,
+    };
+  }
+  const priceSpecification: Record<string, unknown> = {
+    "@type": "UnitPriceSpecification",
+    price,
+    priceCurrency: "PKR",
+  };
+  if (!sale) {
+    priceSpecification.unitCode = "MON";
+    priceSpecification.unitText = "month";
+  }
   return {
     "@context": "https://schema.org",
     "@type": "RealEstateListing",
     name: p.title,
     description: p.description.slice(0, 400),
     url,
-    datePosted: p.publishedAt || undefined,
+    datePosted: toIsoDateTime(p.publishedAt),
     image: uniqueImages.length ? uniqueImages : undefined,
     address: {
       "@type": "PostalAddress",
-      streetAddress: p.address || undefined,
-      addressLocality: locality,
+      streetAddress: p.address || area || undefined,
+      addressLocality: city || area || undefined,
       addressRegion: region,
       addressCountry: "PK",
     },
-    about: {
-      "@type": offeredType(p.propertyType),
-      name: p.title,
-      numberOfBedrooms: p.bedrooms,
-      numberOfBathroomsTotal: p.bathrooms,
-    },
+    about,
     offers: {
       "@type": "Offer",
       url,
-      price: p.monthlyRent,
+      price,
       priceCurrency: "PKR",
       availability: "https://schema.org/InStock",
-      businessFunction:
-        p.listingPurpose === "SALE"
-          ? "http://purl.org/goodrelations/v1#Sell"
-          : "http://purl.org/goodrelations/v1#LeaseOut",
+      businessFunction: sale
+        ? "http://purl.org/goodrelations/v1#Sell"
+        : "http://purl.org/goodrelations/v1#LeaseOut",
+      priceSpecification,
     },
   };
 }

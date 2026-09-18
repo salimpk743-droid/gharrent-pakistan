@@ -15,9 +15,9 @@ export const Route = createFileRoute("/disclaimer")({
 
 function Page() {
   return (
-    <LegalPage eyebrow="IMPORTANT INFORMATION" title="Rental Disclaimer">
+    <LegalPage eyebrow="IMPORTANT INFORMATION" title="Marketplace Disclaimer" updated="18 September 2026">
       <div className="rounded-lg border border-line bg-cream p-4 text-ink">
-        Apna Ghar is a marketplace, not a property owner, estate agent or party to a rental contract.
+        Apna Ghar is a marketplace, not a property owner, estate agent or party to a rental or sale contract.
       </div>
       <h2>Listings</h2>
       <p>
@@ -28,8 +28,8 @@ function Page() {
       <h2>Before you pay or sign</h2>
       <ul>
         <li>Visit and inspect the property.</li>
-        <li>Verify the owner’s identity and legal authority to rent it.</li>
-        <li>Confirm rent, deposit, utilities, maintenance and other terms in writing.</li>
+        <li>Verify the owner’s identity and legal authority to rent or sell it.</li>
+        <li>Confirm price, deposit, utilities, maintenance and other terms in writing.</li>
         <li>Do not send money solely because a listing looks genuine.</li>
         <li>Keep receipts, agreements and important communications.</li>
       </ul>
@@ -41,8 +41,8 @@ function Page() {
       <h2>No guarantee</h2>
       <p>
         To the extent permitted by law, Apna Ghar does not guarantee that the website or any listing will always be
-        accurate, available, complete or suitable for a particular purpose. Users make rental decisions at their
-        own discretion.
+        accurate, available, complete or suitable for a particular purpose. Users make rent, buy and sale decisions
+        at their own discretion.
       </p>
     </LegalPage>
   );

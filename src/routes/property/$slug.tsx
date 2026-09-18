@@ -103,6 +103,16 @@ function PropertyPage() {
         <Link to="/" className="no-underline hover:text-forest">
           Home
         </Link>
+        <span>/</span>
+        {property.listingPurpose === "SALE" ? (
+          <Link to="/sale" className="no-underline hover:text-forest">
+            Buy
+          </Link>
+        ) : (
+          <Link to="/rent" className="no-underline hover:text-forest">
+            Rent
+          </Link>
+        )}
         {property.provinceSlug && (
           <>
             <span>/</span>

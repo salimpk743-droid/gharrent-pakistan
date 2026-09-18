@@ -1,8 +1,8 @@
-# GharRent Pakistan
+# Apna Ghar
 
-A Pakistan-wide rental marketplace. People search homes without an account, then sign in with Google to post listings, save favourites and manage their own properties.
+A Pakistan-wide property marketplace for rent, buy and sale. People search homes without an account, then sign in with Google to post listings, save favourites and manage their own properties.
 
-**Find a home. Rent with confidence.**
+**Find a home to rent or buy across Pakistan.**
 
 This repository is the production application. The old static HTML / `localStorage` prototype (`index.html` + `app.js`) has been replaced.
 
@@ -79,7 +79,7 @@ npm test
 npm run build
 ```
 
-`npm test` includes template-workspace tests that expect auth *off*. This app has auth on, so a few of those template assertions fail. GharRent domain tests (`authz`, listing lifecycle, validation, phone, search, image magic, auth origin) pass.
+`npm test` includes template-workspace tests that expect auth *off*. This app has auth on, so a few of those template assertions fail. Apna Ghar domain tests (`authz`, listing lifecycle, validation, phone, search, image magic, auth origin, SEO) pass.
 
 ## Environment variables
 
@@ -111,7 +111,7 @@ Do **not** add `VITE_GOOGLE_CLIENT_SECRET`. Do **not** put the Google client sec
    - `https://gharrent-pakistan.vercel.app`
 3. Authorized redirect URIs (must match Better Auth exactly):
    - `https://gharrent-pakistan.vercel.app/api/auth/callback/google`
-4. OAuth consent screen: app name **GharRent Pakistan**, scopes `openid`, `email`, `profile`.
+4. OAuth consent screen: app name **Apna Ghar**, scopes `openid`, `email`, `profile`.
 5. In the Vercel project → Settings → Environment Variables, add for **Production** (and Preview if you use it):
 
 | Name | Value |

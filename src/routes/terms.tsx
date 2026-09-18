@@ -15,7 +15,7 @@ export const Route = createFileRoute("/terms")({
 
 function Page() {
   return (
-    <LegalPage eyebrow="LEGAL" title="Terms of Use">
+    <LegalPage eyebrow="LEGAL" title="Terms of Use" updated="18 September 2026">
       <div className="rounded-lg border border-line bg-cream p-4 text-ink">
         <strong>Please read carefully.</strong> This is a draft for a marketplace, not legal advice and not a
         guarantee that every listing is accurate.
@@ -37,11 +37,11 @@ function Page() {
         publish. A listing on Apna Ghar is not verification, endorsement or confirmation of ownership unless we
         clearly mark that a specific check has been done.
       </p>
-      <h2>4. Rental transactions</h2>
+      <h2>4. Property transactions</h2>
       <p>
-        Apna Ghar does not become a party to a rental agreement merely because users find each other here. You are
-        responsible for verifying identity, authority to rent, property condition, rent, deposits, utilities and
-        all contractual terms before paying or signing.
+        Apna Ghar does not become a party to a rental or sale agreement merely because users find each other here.
+        You are responsible for verifying identity, authority to rent or sell, property condition, price, deposits,
+        utilities and all contractual terms before paying or signing.
       </p>
       <h2>5. Safety</h2>
       <ul>
