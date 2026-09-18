@@ -49,7 +49,7 @@ export async function sitemapLocationEntries(): Promise<SitemapEntry[]> {
     from properties p
     join districts d on d.id = p.district_id
     join provinces pr on pr.id = d.province_id
-    where p.status = 'PUBLISHED' and p.deleted_at is null
+    where p.status = 'PUBLISHED' and p.deleted_at is null and p.is_sample = false
     group by pr.slug, d.slug, p.listing_purpose, p.property_type
   `;
   const city = new Map<string, string | Date | null>();
@@ -73,7 +73,7 @@ export async function sitemapListingCount(): Promise<number> {
   const rows = await sql<{ n: number }>`
     select count(*)::int as n
     from properties
-    where status = 'PUBLISHED' and deleted_at is null
+    where status = 'PUBLISHED' and deleted_at is null and is_sample = false
   `;
   return rows[0]?.n ?? 0;
 }
@@ -84,7 +84,7 @@ export async function sitemapListingEntries(page: number): Promise<SitemapEntry[
   const rows = await sql.query<{ slug: string; lastmod: string | Date | null }>(
     `select slug, coalesce(updated_at, published_at, created_at)::date as lastmod
      from properties
-     where status = 'PUBLISHED' and deleted_at is null
+     where status = 'PUBLISHED' and deleted_at is null and is_sample = false
      order by published_at desc nulls last, slug asc
      limit $1 offset $2`,
     [LISTING_SITEMAP_CHUNK, offset],
