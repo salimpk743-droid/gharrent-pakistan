@@ -94,9 +94,15 @@ export async function sitemapListingEntries(page: number): Promise<SitemapEntry[
 
 export async function sitemapIndexEntries(): Promise<SitemapEntry[]> {
   const total = await sitemapListingCount();
+  const locations = await sitemapLocationEntries();
   const listingPages = listingSitemapPages(total);
   const listingSitemaps = Array.from({ length: listingPages }, (_, i) => ({
     path: `/sitemap-listings/${i + 1}`,
   }));
-  return [{ path: "/sitemap-pages.xml" }, { path: "/sitemap-locations.xml" }, ...listingSitemaps];
+
+  return [
+    { path: "/sitemap-pages.xml" },
+    ...(locations.length > 0 ? [{ path: "/sitemap-locations.xml" }] : []),
+    ...listingSitemaps,
+  ];
 }
