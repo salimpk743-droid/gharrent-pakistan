@@ -23,7 +23,7 @@
   "appVersionCode": 1,
   "shortcuts": [],
   "generatorApp": "bubblewrap-cli",
-  "webManifestUrl": "https://gharrent-pakistan.vercel.app/",
+  "webManifestUrl": "https://gharrent-pakistan.vercel.app/manifest.webmanifest",
   "fallbackType": "customtabs",
   "features": {},
   "alphaDependencies": {
