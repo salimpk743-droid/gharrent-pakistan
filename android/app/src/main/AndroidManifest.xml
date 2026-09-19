@@ -31,7 +31,7 @@
 
             <meta-data
                 android:name="android.support.customtabs.trusted.DEFAULT_URL"
-                android:value="https://gharrent-pakistan.vercel.app/" />
+                android:value="https://apnaaghar.pk/" />
 
             <meta-data
                 android:name="android.support.customtabs.trusted.STATUS_BAR_COLOR"
@@ -83,7 +83,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
-                    android:host="gharrent-pakistan.vercel.app"
+                    android:host="apnaaghar.pk"
                     android:scheme="https" />
             </intent-filter>
         </activity>
