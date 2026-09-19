@@ -173,7 +173,8 @@ export type SitemapEntry = { path: string; lastmod?: string | Date | null };
 export const LISTING_SITEMAP_CHUNK = 10_000;
 
 export function listingSitemapPages(total: number): number {
-  return Math.max(1, Math.ceil(Math.max(0, total) / LISTING_SITEMAP_CHUNK));
+  const safeTotal = Math.max(0, total);
+  return safeTotal === 0 ? 0 : Math.ceil(safeTotal / LISTING_SITEMAP_CHUNK);
 }
 
 export function renderSitemapXml(entries: SitemapEntry[]): string {
