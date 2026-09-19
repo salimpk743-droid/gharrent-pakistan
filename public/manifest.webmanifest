@@ -1,0 +1,19 @@
+{
+  "name": "GharRent Pakistan",
+  "short_name": "GharRent",
+  "description": "Find homes to rent or buy across Pakistan.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#176B52",
+  "background_color": "#FFFFFF",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
