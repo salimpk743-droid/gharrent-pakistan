@@ -1,5 +1,6 @@
 plugins {
     id "com.android.application"
+    id "org.jetbrains.kotlin.android"
 }
 
 def twaManifest = new groovy.json.JsonSlurper().parseText(file("../twa-manifest.json").text)
@@ -25,12 +26,12 @@ def hasReleaseSigning = uploadStoreFile != null &&
 
 android {
     namespace twaManifest.packageId
-    compileSdk 35
+    compileSdk 36
 
     defaultConfig {
         applicationId twaManifest.packageId
         minSdk twaManifest.minSdkVersion
-        targetSdk 35
+        targetSdk 36
         versionCode twaManifest.appVersionCode
         versionName twaManifest.appVersionName
     }
@@ -52,6 +53,7 @@ android {
             if (hasReleaseSigning) {
                 signingConfig signingConfigs.release
             }
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
         debug {
             minifyEnabled false
@@ -61,6 +63,10 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
     }
 }
 
@@ -73,9 +79,7 @@ configurations.configureEach {
 }
 
 dependencies {
-    implementation("com.google.androidbrowserhelper:androidbrowserhelper:2.5.0") {
-        exclude group: "androidx.browser", module: "browser"
-    }
+    implementation("com.google.androidbrowserhelper:androidbrowserhelper:2.6.1")
     implementation "androidx.browser:browser:1.8.0"
-    implementation "androidx.appcompat:appcompat:1.7.0"
+    implementation "androidx.appcompat:appcompat:1.7.1"
 }
