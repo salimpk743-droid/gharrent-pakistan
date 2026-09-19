@@ -5,7 +5,7 @@ import com.google.androidbrowserhelper.trusted.LauncherActivity;
 
 public class TwaLauncherActivity extends LauncherActivity {
     @Override
-    protected Uri getLaunchingUrl() {
+    public Uri getLaunchingUrl() {
         Uri incoming = getIntent() != null ? getIntent().getData() : null;
         if (incoming != null && "apnaaghar.pk".equalsIgnoreCase(incoming.getHost())) {
             return incoming;
