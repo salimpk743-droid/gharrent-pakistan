@@ -1,13 +1,16 @@
 {
-  "name": "GharRent Pakistan",
-  "short_name": "GharRent",
+  "id": "/",
+  "name": "Apna Ghar",
+  "short_name": "Apna Ghar",
   "description": "Find homes to rent or buy across Pakistan.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "orientation": "any",
+  "orientation": "portrait",
   "theme_color": "#176B52",
   "background_color": "#FFFFFF",
+  "lang": "en",
+  "categories": ["housing", "lifestyle"],
   "icons": [
     {
       "src": "/favicon.svg",
