@@ -2,5 +2,5 @@
 <resources>
     <string name="appName">Apna Ghar</string>
     <string name="launcherName">Apna Ghar</string>
-    <string name="assetStatements">[ { "relation": ["delegate_permission/common.handle_all_urls"], "target": { "namespace": "web", "site": "https://apnaaghar.pk" } } ]</string>
+    <string name="assetStatements" translatable="false">[{ "relation": ["delegate_permission/common.handle_all_urls"], "target": { "namespace": "web", "site": "https://apnaaghar.pk" } }]</string>
 </resources>
