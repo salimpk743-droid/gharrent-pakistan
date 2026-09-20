@@ -24,7 +24,7 @@ jobs:
       - name: Render PNG and JPEG
         run: |
           rsvg-convert -w 1200 -h 630 public/og-apna-ghar.svg -o public/og-apna-ghar.png
-          magick public/og-apna-ghar.png -strip -quality 92 public/og.jpg
+          convert public/og-apna-ghar.png -strip -quality 92 public/og.jpg
 
       - name: Commit generated images
         run: |
