@@ -364,7 +364,7 @@ export function searchRouteSeo(opts: {
     title: copy?.title || locationSeoTitle({ purpose: opts.purpose, place, type }),
     description: copy?.description || locationSeoDescription({ purpose: opts.purpose, place, type }),
     path,
-    index: !unknownType && ((!params.district && !params.type) || (Boolean(params.province) && total > 0)),
+    index: !unknownType && (!params.province && !params.district && !params.type || (Boolean(params.province) && !params.district && !params.type && total > 0)),
   });
 }
 
