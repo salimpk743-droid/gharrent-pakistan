@@ -19,12 +19,12 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install ImageMagick
-        run: sudo apt-get update && sudo apt-get install -y imagemagick
+        run: sudo apt-get update && sudo apt-get install -y imagemagick librsvg2-bin
 
       - name: Render PNG and JPEG
         run: |
-          magick -background none public/og-apna-ghar.svg -strip public/og-apna-ghar.png
-          magick -background none public/og-apna-ghar.svg -strip -quality 92 public/og.jpg
+          rsvg-convert -w 1200 -h 630 public/og-apna-ghar.svg -o public/og-apna-ghar.png
+          magick public/og-apna-ghar.png -strip -quality 92 public/og.jpg
 
       - name: Commit generated images
         run: |
