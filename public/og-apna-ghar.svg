@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+<rect width="1200" height="630" fill="#176B52"/>
+<rect x="70" y="70" width="1060" height="490" rx="36" fill="#F8FAF8"/>
+<rect x="70" y="70" width="350" height="490" rx="36" fill="#176B52"/>
+<g fill="#F6F8F6">
+<path d="M125 285 L245 165 L365 285 L330 285 L330 425 L160 425 L160 285 Z"/>
+<rect x="220" y="345" width="50" height="80" fill="#176B52"/>
+</g>
+<text x="505" y="220" font-family="Arial, Helvetica, sans-serif" font-size="76" font-weight="700" fill="#176B52">Apna Ghar</text>
+<text x="510" y="305" font-family="Arial, Helvetica, sans-serif" font-size="38" fill="#2D3C36">Find a home to rent or buy</text>
+<text x="510" y="355" font-family="Arial, Helvetica, sans-serif" font-size="38" fill="#2D3C36">across Pakistan.</text>
+<text x="510" y="425" font-family="Arial, Helvetica, sans-serif" font-size="28" fill="#55655E">Houses • Flats • Plots • Commercial</text>
+<text x="510" y="470" font-family="Arial, Helvetica, sans-serif" font-size="26" fill="#55655E">Search by location, type and budget.</text>
+<text x="510" y="525" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700" fill="#176B52">apnaaghar.pk</text>
+</svg>
