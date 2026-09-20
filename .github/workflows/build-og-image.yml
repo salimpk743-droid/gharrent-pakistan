@@ -25,12 +25,13 @@ jobs:
         run: |
           rsvg-convert -w 1200 -h 630 public/og-apna-ghar.svg -o public/og-apna-ghar.png
           convert public/og-apna-ghar.png -strip -quality 92 public/og.jpg
+          cp public/og-apna-ghar.png public/apna-ghar-social-1200x630.png
 
       - name: Commit generated images
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add public/og-apna-ghar.png public/og.jpg
+          git add public/og-apna-ghar.png public/og.jpg public/apna-ghar-social-1200x630.png
           if git diff --cached --quiet; then
             echo "No image changes."
             exit 0
