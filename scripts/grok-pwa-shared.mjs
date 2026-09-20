@@ -254,6 +254,11 @@ export function readOgSite(cwd = process.cwd()) {
 
 /** Public path of an on-disk share card, or "" if neither file exists. */
 export function ogCardPublicPath(cwd = process.cwd()) {
+  // Use the current uniquely named Apna Ghar card first. The legacy /og.jpg
+  // can remain for compatibility, but must never win social-preview injection.
+  if (existsSync(join(cwd, "public/apna-ghar-social-1200x630.png"))) {
+    return "/apna-ghar-social-1200x630.png";
+  }
   if (existsSync(join(cwd, "public/og.jpg"))) return "/og.jpg";
   if (existsSync(join(cwd, "public/og.png"))) return "/og.png";
   return "";
