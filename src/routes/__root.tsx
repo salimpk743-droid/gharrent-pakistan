@@ -46,14 +46,14 @@ function Root() {
     <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-QGMH7GV4MP" />
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-GQMH7GV4MP" />
         <script
           dangerouslySetInnerHTML={{
             __html: `
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
-              gtag('config', 'G-QGMH7GV4MP');
+              gtag('config', 'G-GQMH7GV4MP');
             `,
           }}
         />
