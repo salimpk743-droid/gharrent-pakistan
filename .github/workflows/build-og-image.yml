@@ -31,6 +31,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git pull --rebase origin main
           git add public/og-apna-ghar.png public/og.jpg public/apna-ghar-social-1200x630.png
           if git diff --cached --quiet; then
             echo "No image changes."
