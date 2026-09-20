@@ -25,7 +25,7 @@ export const GUIDE_HOW_TO_RENT_TITLE = "How to Rent a House in Pakistan | Apna G
 export const GUIDE_HOW_TO_RENT_DESCRIPTION =
   "A practical guide to renting a house in Pakistan: how to search, inspect the property, agree rent and a deposit, and what to put in writing before you move in.";
 
-const SHARE_IMAGE = `${PUBLIC_SITE_ORIGIN}/__grok/icon-180.png?brand=apna-ghar-2026`;
+const SHARE_IMAGE = `${PUBLIC_SITE_ORIGIN}/og-apna-ghar.png?brand=apna-ghar-2026-v2`;
 
 export type HeadSnippet = {
   meta: Array<Record<string, string>>;
