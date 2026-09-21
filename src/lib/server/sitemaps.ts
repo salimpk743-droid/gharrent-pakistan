@@ -20,6 +20,8 @@ export async function sitemapStaticEntries(): Promise<SitemapEntry[]> {
     { path: "/rent" },
     { path: "/sale" },
     { path: "/locations" },
+    { path: "/guides" },
+    { path: "/guides/cities/rawalpindi" },
     { path: "/how-to-rent-a-house-in-pakistan" },
     { path: "/safety" },
     { path: "/privacy" },
