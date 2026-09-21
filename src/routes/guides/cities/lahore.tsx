@@ -114,7 +114,7 @@ function Page() {
           When comparing listings, check bedrooms, bathrooms, covered area where provided, parking, construction
           condition and exact location alongside the advertised Marla size. Current market reporting also shows that
           asking rents can vary substantially between Lahore areas and property sizes, so broad city-wide figures should
-          be treated as context rather than a quote. citeturn0search4turn0search11
+          be treated as context rather than a quote.
         </p>
 
         <h2>Flats and apartments</h2>

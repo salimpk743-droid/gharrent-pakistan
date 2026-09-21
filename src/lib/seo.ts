@@ -40,6 +40,11 @@ export const LAHORE_GUIDE_TITLE = "Lahore Property & Rental Guide | Apna Ghar";
 export const LAHORE_GUIDE_DESCRIPTION =
   "A practical Lahore property and rental guide covering houses, flats, portions, common areas, 5 Marla and 10 Marla homes, budgets, inspections and current Apna Ghar listings.";
 
+export const KARACHI_GUIDE_PATH = "/guides/cities/karachi";
+export const KARACHI_GUIDE_TITLE = "Karachi Property & Rental Guide | Apna Ghar";
+export const KARACHI_GUIDE_DESCRIPTION =
+  "A comprehensive Karachi property and rental guide covering major residential areas, apartments, houses, portions, square-yard sizes, commute planning, costs, inspections and current Apna Ghar listings.";
+
 const SHARE_IMAGE = `${PUBLIC_SITE_ORIGIN}/apna-ghar-facebook.jpg?v=20260920`;
 
 export type HeadSnippet = {

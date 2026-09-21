@@ -23,6 +23,7 @@ export async function sitemapStaticEntries(): Promise<SitemapEntry[]> {
     { path: "/guides" },
     { path: "/guides/cities/rawalpindi" },
     { path: "/guides/cities/lahore" },
+    { path: "/guides/cities/karachi" },
     { path: "/guides/buying/property-buying-due-diligence-pakistan" },
     { path: "/guides/buying/fard-registry-intiqal-punjab" },
     { path: "/guides/buying/sale-agreement-registration-pakistan" },
