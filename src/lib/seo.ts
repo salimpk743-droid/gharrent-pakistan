@@ -35,6 +35,11 @@ export const RAWALPINDI_GUIDE_TITLE = "Rawalpindi Property & Rental Guide | Apna
 export const RAWALPINDI_GUIDE_DESCRIPTION =
   "A practical Rawalpindi property and rental guide covering house and flat rentals, common property types, areas, budgets, inspections and current Apna Ghar listings.";
 
+export const LAHORE_GUIDE_PATH = "/guides/cities/lahore";
+export const LAHORE_GUIDE_TITLE = "Lahore Property & Rental Guide | Apna Ghar";
+export const LAHORE_GUIDE_DESCRIPTION =
+  "A practical Lahore property and rental guide covering houses, flats, portions, common areas, 5 Marla and 10 Marla homes, budgets, inspections and current Apna Ghar listings.";
+
 const SHARE_IMAGE = `${PUBLIC_SITE_ORIGIN}/apna-ghar-facebook.jpg?v=20260920`;
 
 export type HeadSnippet = {
