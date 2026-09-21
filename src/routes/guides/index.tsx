@@ -25,13 +25,21 @@ const groups = [
   },
   {
     title: "Buying",
-    description: "Buying guidance will be added here as the property knowledge base grows.",
-    links: [],
+    description: "Legal and practical guidance for checking property documents, sale agreements, registration and Punjab land records.",
+    links: [
+      { label: "Property Buying Due Diligence in Pakistan", to: "/guides/buying/property-buying-due-diligence-pakistan" },
+      { label: "Fard, Registry and Intiqal in Punjab", to: "/guides/buying/fard-registry-intiqal-punjab" },
+      { label: "Sale Agreement and Property Registration", to: "/guides/buying/sale-agreement-registration-pakistan" },
+    ],
   },
   {
     title: "Landlords",
-    description: "Practical guidance for owners preparing and advertising rental properties.",
-    links: [],
+    description: "Practical and legal guidance for owners preparing, documenting and managing rental properties.",
+    links: [
+      { label: "Rental Agreement Legal Checklist", to: "/guides/landlords/rental-agreement-legal-checklist" },
+      { label: "Landlord Responsibilities in Pakistan", to: "/guides/landlords/landlord-responsibilities-pakistan" },
+      { label: "Security Deposit, Advance Rent and Rent Terms", to: "/guides/landlords/security-deposit-rent-terms-pakistan" },
+    ],
   },
 ];
 
@@ -54,7 +62,7 @@ function Page() {
       <LegalPage eyebrow="PROPERTY & RENTAL GUIDES" title="Property & Rental Guides in Pakistan">
         <p>
           Practical information for renters, property owners and people researching the Pakistan property market.
-          These guides are designed to answer useful questions and connect you with live Apna Ghar property listings.
+          These guides are designed to answer useful questions, explain practical and legal considerations, and connect you with live Apna Ghar property listings.
         </p>
         <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
           {groups.map((group) => (
@@ -71,9 +79,7 @@ function Page() {
                     </li>
                   ))}
                 </ul>
-              ) : (
-                <p className="mt-4 text-sm text-muted">More guides are coming in this section.</p>
-              )}
+              ) : null}
             </section>
           ))}
         </div>
