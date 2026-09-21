@@ -24,6 +24,7 @@ const groups = [
     links: [
       { label: "Rawalpindi Property & Rental Guide", to: "/guides/cities/rawalpindi" },
       { label: "Lahore Property & Rental Guide", to: "/guides/cities/lahore" },
+      { label: "Karachi Property & Rental Guide", to: "/guides/cities/karachi" },
     ],
   },
   {
