@@ -25,6 +25,16 @@ export const GUIDE_HOW_TO_RENT_TITLE = "How to Rent a House in Pakistan | Apna G
 export const GUIDE_HOW_TO_RENT_DESCRIPTION =
   "A practical guide to renting a house in Pakistan: how to search, inspect the property, agree rent and a deposit, and what to put in writing before you move in.";
 
+export const GUIDES_PATH = "/guides";
+export const GUIDES_TITLE = "Property & Rental Guides in Pakistan | Apna Ghar";
+export const GUIDES_DESCRIPTION =
+  "Practical property and rental guides for Pakistan: renting, buying, safety, landlords, and city-specific housing information from Apna Ghar.";
+
+export const RAWALPINDI_GUIDE_PATH = "/guides/cities/rawalpindi";
+export const RAWALPINDI_GUIDE_TITLE = "Rawalpindi Property & Rental Guide | Apna Ghar";
+export const RAWALPINDI_GUIDE_DESCRIPTION =
+  "A practical Rawalpindi property and rental guide covering house and flat rentals, common property types, areas, budgets, inspections and current Apna Ghar listings.";
+
 const SHARE_IMAGE = `${PUBLIC_SITE_ORIGIN}/apna-ghar-facebook.jpg?v=20260920`;
 
 export type HeadSnippet = {
@@ -381,7 +391,11 @@ function listingSizePrefix(p: ListingSeoInput): string {
   return "";
 }
 
-export function listingSeoTitle(p: ListingSeoInput): string {
+
+export function guideSeo(opts: { title: string; description: string; path: string; index?: boolean }): HeadSnippet {
+  return publicSeo({ title: opts.title, description: opts.description, path: opts.path, index: opts.index ?? true });
+}
+\nexport function listingSeoTitle(p: ListingSeoInput): string {
   const verb = p.listingPurpose === "SALE" ? "Sale" : "Rent";
   const core = `${listingSizePrefix(p)}${p.propertyType} for ${verb} in ${listingPlace(p)}`;
   return `${core} | ${formatPkrSeo(p.monthlyRent)} | ${APP_NAME}`;
