@@ -126,7 +126,6 @@ function Page() {
         <p>
           Current Lahore rental guides report apartment supply concentrated in areas including DHA, Gulberg, Johar Town
           and Bahria Town, but actual availability changes. Use the live Apna Ghar results for the current inventory.
-          citeturn0search5
         </p>
 
         <h2>What can affect rent?</h2>
