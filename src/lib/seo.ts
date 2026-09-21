@@ -395,7 +395,8 @@ function listingSizePrefix(p: ListingSeoInput): string {
 export function guideSeo(opts: { title: string; description: string; path: string; index?: boolean }): HeadSnippet {
   return publicSeo({ title: opts.title, description: opts.description, path: opts.path, index: opts.index ?? true });
 }
-\nexport function listingSeoTitle(p: ListingSeoInput): string {
+
+export function listingSeoTitle(p: ListingSeoInput): string {
   const verb = p.listingPurpose === "SALE" ? "Sale" : "Rent";
   const core = `${listingSizePrefix(p)}${p.propertyType} for ${verb} in ${listingPlace(p)}`;
   return `${core} | ${formatPkrSeo(p.monthlyRent)} | ${APP_NAME}`;
