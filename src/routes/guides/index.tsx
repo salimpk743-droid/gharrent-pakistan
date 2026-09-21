@@ -21,7 +21,10 @@ const groups = [
   {
     title: "City guides",
     description: "Location-focused housing information connected to live Apna Ghar inventory.",
-    links: [{ label: "Rawalpindi Property & Rental Guide", to: "/guides/cities/rawalpindi" }],
+    links: [
+      { label: "Rawalpindi Property & Rental Guide", to: "/guides/cities/rawalpindi" },
+      { label: "Lahore Property & Rental Guide", to: "/guides/cities/lahore" },
+    ],
   },
   {
     title: "Buying",
