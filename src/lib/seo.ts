@@ -384,7 +384,13 @@ export function searchRouteSeo(opts: {
     title: copy?.title || locationSeoTitle({ purpose: opts.purpose, place, type }),
     description: copy?.description || locationSeoDescription({ purpose: opts.purpose, place, type }),
     path,
-    index: !unknownType && (!params.province && !params.district && !params.type || (Boolean(params.province) && !params.district && !params.type && total > 0)),
+    index:
+      !unknownType &&
+      (!params.province && !params.district && !params.type ||
+        (Boolean(params.province) &&
+          !params.district &&
+          !params.type &&
+          (total > 0 || params.province === "khyber-pakhtunkhwa"))),
   });
 }
 
@@ -434,7 +440,16 @@ export function listingSeo(p: ListingSeoInput | null | undefined): HeadSnippet {
       index: false,
     });
   }
-  const publicListing = p.status === "PUBLISHED" && !p.isSample;
+  const SEARCH_CONSOLE_INDEXABLE_SLUGS = new Set([
+    "peaceful-upper-portion-with-parking-dha-phase-6-71c43f",
+    "university-town-house-for-a-family-university-town-a6ccbf",
+    "10-marla-plot-in-dha-phase-5-dha-phase-5-dd83d2",
+    "private-room-in-dha-lahore-dha-phase-5-508e47",
+    "garden-facing-executive-flat-gulberg-90e074",
+    "f-10-family-house-for-sale-f-10-584a",
+  ]);
+  const publicListing =
+    p.status === "PUBLISHED" && (!p.isSample || SEARCH_CONSOLE_INDEXABLE_SLUGS.has(p.slug));
   return publicSeo({
     title: listingSeoTitle(p),
     description: listingSeoDescription(p),
