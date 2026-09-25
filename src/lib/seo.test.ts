@@ -198,7 +198,7 @@ describe("index / noindex", () => {
       params: { province: "punjab", district: "lahore", type: "houses" },
       data: { total: 0, district: { slug: "lahore", name: "Lahore" }, type: "House" },
     });
-    assert.ok(curatedEmptyLahoreHouses.meta.some((m) => m.name === "robots" && m.content === "index, follow"));
+    assert.ok(curatedEmptyLahoreHouses.meta.some((m) => m.name === "robots" && m.content === "noindex, follow"));
     assert.ok(
       curatedEmptyLahoreHouses.links?.some(
         (l) => l.rel === "canonical" && l.href === "https://apnaaghar.pk/rent/punjab/lahore/houses",
@@ -347,7 +347,7 @@ describe("index / noindex", () => {
     );
   });
 
-  it("keeps uncurated empty pages noindex while curated empty pages remain indexable", () => {
+  it("keeps empty type-specific pages noindex until real inventory exists", () => {
     const emptySale = searchRouteSeo({
       purpose: "SALE",
       params: { province: "khyber-pakhtunkhwa", district: "peshawar" },
@@ -367,7 +367,7 @@ describe("index / noindex", () => {
       data: { total: 0, district: { slug: "faisalabad", name: "Faisalabad" }, type: "House" },
     });
     assert.ok(emptyHouses.meta.some((m) => m.title === "Houses for Rent in Faisalabad | Apna Ghar"));
-    assert.ok(emptyHouses.meta.some((m) => m.name === "robots" && m.content === "index, follow"));
+    assert.ok(emptyHouses.meta.some((m) => m.name === "robots" && m.content === "noindex, follow"));
   });
 
   it("keeps generic titles on untargeted marketplace pages", () => {
