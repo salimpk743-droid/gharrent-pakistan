@@ -187,6 +187,23 @@ describe("index / noindex", () => {
       data: { total: 0, district: { slug: "lahore", name: "Lahore" } },
     });
     assert.ok(curatedEmptyCity.meta.some((m) => m.name === "robots" && m.content === "index, follow"));
+    assert.ok(
+      curatedEmptyCity.links?.some(
+        (l) => l.rel === "canonical" && l.href === "https://apnaaghar.pk/rent/punjab/lahore",
+      ),
+    );
+
+    const curatedEmptyLahoreHouses = searchRouteSeo({
+      purpose: "RENT",
+      params: { province: "punjab", district: "lahore", type: "houses" },
+      data: { total: 0, district: { slug: "lahore", name: "Lahore" }, type: "House" },
+    });
+    assert.ok(curatedEmptyLahoreHouses.meta.some((m) => m.name === "robots" && m.content === "index, follow"));
+    assert.ok(
+      curatedEmptyLahoreHouses.links?.some(
+        (l) => l.rel === "canonical" && l.href === "https://apnaaghar.pk/rent/punjab/lahore/houses",
+      ),
+    );
     const liveCity = searchRouteSeo({
       purpose: "SALE",
       params: { province: "punjab", district: "lahore" },
