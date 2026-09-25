@@ -186,7 +186,7 @@ describe("index / noindex", () => {
       params: { province: "punjab", district: "lahore" },
       data: { total: 0, district: { slug: "lahore", name: "Lahore" } },
     });
-    assert.ok(curatedEmptyCity.meta.some((m) => m.name === "robots" && m.content === "index, follow"));
+    assert.ok(curatedEmptyCity.meta.some((m) => m.name === "robots" && m.content === "noindex, follow"));
     assert.ok(
       curatedEmptyCity.links?.some(
         (l) => l.rel === "canonical" && l.href === "https://apnaaghar.pk/rent/punjab/lahore",
