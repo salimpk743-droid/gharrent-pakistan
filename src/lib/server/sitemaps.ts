@@ -83,17 +83,7 @@ export async function sitemapListingCount(): Promise<number> {
   const rows = await sql<{ n: number }>`
     select count(*)::int as n
     from properties p
-    where p.status = 'PUBLISHED' and p.deleted_at is null and (
-      p.is_sample = false
-      or p.slug in (
-        'peaceful-upper-portion-with-parking-dha-phase-6-71c43f',
-        'university-town-house-for-a-family-university-town-a6ccbf',
-        '10-marla-plot-in-dha-phase-5-dha-phase-5-dd83d2',
-        'private-room-in-dha-lahore-dha-phase-5-508e47',
-        'garden-facing-executive-flat-gulberg-90e074',
-        'f-10-family-house-for-sale-f-10-584a'
-      )
-    )
+    where p.status = 'PUBLISHED' and p.deleted_at is null and p.is_sample = false
   `;
   return rows[0]?.n ?? 0;
 }
@@ -104,16 +94,7 @@ export async function sitemapListingEntries(page: number): Promise<SitemapEntry[
   const rows = await sql.query<{ slug: string; lastmod: string | Date | null }>(
     `select slug, coalesce(updated_at, published_at, created_at)::date as lastmod
      from properties
-     where status = 'PUBLISHED' and deleted_at is null and (
-       is_sample = false or slug in (
-         'peaceful-upper-portion-with-parking-dha-phase-6-71c43f',
-         'university-town-house-for-a-family-university-town-a6ccbf',
-         '10-marla-plot-in-dha-phase-5-dha-phase-5-dd83d2',
-         'private-room-in-dha-lahore-dha-phase-5-508e47',
-         'garden-facing-executive-flat-gulberg-90e074',
-         'f-10-family-house-for-sale-f-10-584a'
-       )
-     )
+     where status = 'PUBLISHED' and deleted_at is null and is_sample = false
      order by published_at desc nulls last, slug asc
      limit $1 offset $2`,
     [LISTING_SITEMAP_CHUNK, offset],
