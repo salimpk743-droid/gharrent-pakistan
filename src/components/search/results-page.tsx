@@ -187,22 +187,15 @@ export function ResultsPage({
           </div>
         )}
         {items.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-line bg-white px-6 py-10 text-center text-muted">
-            {provinceSlug || districtSlug || typeSlug ? (
-              <>
-                <p className="font-semibold text-ink">No matching properties are currently available.</p>
-                <p className="mt-2">Try a broader location, property type or budget.</p>
-              </>
-            ) : (
-              <>
-                <p className="font-semibold text-ink">
-                  New {purpose === "SALE" ? "sale" : "rental"} listings are added as advertisers publish properties.
-                </p>
-                <p className="mt-2">
-                  Use the search above to explore locations and property types, or read our guide before making a rental decision.
-                </p>
-              </>
-            )}
+          <div className="rounded-xl border border-line bg-white px-6 py-8">
+            <p className="font-semibold text-ink">
+              {copy ? "No published listings match this landing page right now." : "No matching properties are currently available."}
+            </p>
+            <p className="mt-2 text-sm leading-6 text-muted">
+              {copy
+                ? "The page remains available as a permanent location and property-type landing page. Broaden the search above, explore the main location page, or check again after advertisers publish new properties."
+                : "Try a broader location, property type or budget."}
+            </p>
           </div>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -216,6 +209,41 @@ export function ResultsPage({
             Page {page} of {pages}
           </p>
         )}
+        {copy?.landingContent ? (
+          <section className="mt-10 max-w-4xl rounded-xl border border-line bg-white p-6">
+            <h2 className="font-display text-2xl text-ink">{copy.landingContent.heading}</h2>
+            {copy.landingContent.paragraphs.map((paragraph) => (
+              <p key={paragraph} className="mt-3 text-sm leading-6 text-muted">
+                {paragraph}
+              </p>
+            ))}
+            <div className="mt-5 flex flex-wrap gap-3 text-sm">
+              {districtSlug && provinceSlug && typeSlug ? (
+                <Link
+                  to={purpose === "SALE" ? "/sale/$province/$district" : "/rent/$province/$district"}
+                  params={{ province: provinceSlug, district: districtSlug }}
+                  className="font-semibold text-forest underline"
+                >
+                  Browse all {locationLabel} properties
+                </Link>
+              ) : null}
+              {districtSlug && provinceSlug && !typeSlug ? (
+                <Link
+                  to={purpose === "SALE" ? "/sale/$province" : "/rent/$province"}
+                  params={{ province: provinceSlug }}
+                  className="font-semibold text-forest underline"
+                >
+                  Browse more {provinceName ?? "local"} properties
+                </Link>
+              ) : null}
+              {purpose === "RENT" ? (
+                <Link to="/how-to-rent-a-house-in-pakistan" className="font-semibold text-forest underline">
+                  Read the Pakistan rental guide
+                </Link>
+              ) : null}
+            </div>
+          </section>
+        ) : null}
         {!provinceSlug && !districtSlug && !typeSlug && (
           <section className="mt-10 max-w-3xl rounded-xl border border-line bg-white p-6">
             <h2 className="font-display text-2xl text-ink">
