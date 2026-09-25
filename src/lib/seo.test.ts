@@ -171,7 +171,7 @@ describe("titles", () => {
 });
 
 describe("index / noindex", () => {
-  it("indexes hubs even when empty, and skips empty city pages", () => {
+  it("indexes hubs and curated SEO city pages even when empty, while skipping other empty cities", () => {
     const national = searchRouteSeo({ purpose: "RENT", params: {}, data: { total: 0 } });
     assert.ok(national.meta.some((m) => m.name === "robots" && m.content === "index, follow"));
     const emptyCity = searchRouteSeo({
@@ -180,6 +180,13 @@ describe("index / noindex", () => {
       data: { total: 0, district: { slug: "chiniot", name: "Chiniot" } },
     });
     assert.ok(emptyCity.meta.some((m) => m.name === "robots" && m.content === "noindex, follow"));
+
+    const curatedEmptyCity = searchRouteSeo({
+      purpose: "RENT",
+      params: { province: "punjab", district: "lahore" },
+      data: { total: 0, district: { slug: "lahore", name: "Lahore" } },
+    });
+    assert.ok(curatedEmptyCity.meta.some((m) => m.name === "robots" && m.content === "index, follow"));
     const liveCity = searchRouteSeo({
       purpose: "SALE",
       params: { province: "punjab", district: "lahore" },
@@ -323,7 +330,7 @@ describe("index / noindex", () => {
     );
   });
 
-  it("leaves empty batch-2 pages on the generic title and noindex", () => {
+  it("keeps uncurated empty pages noindex while curated empty pages remain indexable", () => {
     const emptySale = searchRouteSeo({
       purpose: "SALE",
       params: { province: "khyber-pakhtunkhwa", district: "peshawar" },
@@ -343,7 +350,7 @@ describe("index / noindex", () => {
       data: { total: 0, district: { slug: "faisalabad", name: "Faisalabad" }, type: "House" },
     });
     assert.ok(emptyHouses.meta.some((m) => m.title === "Houses for Rent in Faisalabad | Apna Ghar"));
-    assert.ok(emptyHouses.meta.some((m) => m.name === "robots" && m.content === "noindex, follow"));
+    assert.ok(emptyHouses.meta.some((m) => m.name === "robots" && m.content === "index, follow"));
   });
 
   it("keeps generic titles on untargeted marketplace pages", () => {
