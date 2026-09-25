@@ -5,6 +5,7 @@ export type SearchPageCopy = {
   h1: string;
   description: string;
   intro: string;
+  landingContent?: { heading: string; paragraphs: string[] };
 };
 
 function copyKey(opts: {
@@ -28,7 +29,15 @@ const SEARCH_PAGE_COPY: Record<string, SearchPageCopy> = {
     description:
       "Browse houses, flats and rooms for rent in Lahore. Compare monthly rent, size and location on Apna Ghar, then contact the advertiser.",
     intro:
-      "Use this Lahore rental search to browse available houses, flats and rooms by location, size and monthly rent. When listings are available, compare the details and contact the advertiser to arrange a visit.",
+      "Use this Lahore rental search to browse houses, flats and rooms by location, size and monthly rent. When listings are published, compare the details and contact the advertiser to arrange a visit.",
+    landingContent: {
+      heading: "Renting property in Lahore",
+      paragraphs: [
+        "Lahore has a broad residential rental market, with houses, flats, portions and rooms available across different neighbourhoods and budgets. This page is the canonical Apna Ghar starting point for people searching for property to rent in Lahore.",
+        "Use the search controls to narrow Lahore rentals by property type, monthly rent, bedrooms, bathrooms, size and other available filters. Published listings can change as advertisers add, update or remove properties, so the results shown here reflect the current public inventory.",
+        "If you are specifically looking for a house, use the houses-for-rent page to keep the search focused. For practical guidance on inspections, rent terms and what to put in writing, read the Apna Ghar guide to renting a house in Pakistan.",
+      ],
+    },
   },
   "RENT|punjab|lahore|houses": {
     title: `Houses for Rent in Lahore | ${APP_NAME}`,
@@ -36,7 +45,15 @@ const SEARCH_PAGE_COPY: Record<string, SearchPageCopy> = {
     description:
       "Find houses for rent in Lahore. Compare monthly rent, size and location on Apna Ghar.",
     intro:
-      "Search houses for rent in Lahore. Compare available houses in Lahore by monthly rent, size and location, then contact the advertiser directly when a suitable property is available.",
+      "Search houses for rent in Lahore by monthly rent, size and location. Published inventory changes as advertisers add and remove properties.",
+    landingContent: {
+      heading: "Houses for rent in Lahore",
+      paragraphs: [
+        "This is the dedicated Apna Ghar landing page for houses for rent in Lahore. Use it to compare published house listings by monthly rent, property size and location when inventory is available.",
+        "Lahore rental searches can cover different residential neighbourhoods, house sizes and budgets. Use the filters above to narrow the results instead of relying on a single area or price range.",
+        "Property inventory changes over time. When no published house matches the current search, you can broaden the location or budget, return to all Lahore rentals, or check again after new advertisers publish properties.",
+      ],
+    },
   },
   "RENT|punjab|lahore|apartments": {
     title: `Flats for Rent in Lahore | ${APP_NAME}`,
@@ -44,7 +61,14 @@ const SEARCH_PAGE_COPY: Record<string, SearchPageCopy> = {
     description:
       "Find flats for rent in Lahore. Compare monthly rent, size and location on Apna Ghar.",
     intro:
-      "Search flats for rent in Lahore, including apartments in established neighbourhoods. Compare available flats in Lahore by monthly rent, size and location, then contact the advertiser directly when a suitable property is available.",
+      "Search flats for rent in Lahore and compare published apartments by monthly rent, size and location.",
+    landingContent: {
+      heading: "Flats for rent in Lahore",
+      paragraphs: [
+        "This Apna Ghar page is the dedicated search landing page for flats and apartments for rent in Lahore. Use the available filters to compare published listings by rent, size, bedrooms, bathrooms and location.",
+        "Rental inventory changes as advertisers publish and remove properties. If a particular search is empty, broaden the budget, property type or location filters and return to the main Lahore rental page for more options.",
+      ],
+    },
   },
   "RENT|islamabad-capital-territory|islamabad|houses": {
     title: `Houses for Rent in Islamabad | ${APP_NAME}`,
