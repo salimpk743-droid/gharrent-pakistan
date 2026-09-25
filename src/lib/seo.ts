@@ -384,13 +384,14 @@ export function searchRouteSeo(opts: {
     title: copy?.title || locationSeoTitle({ purpose: opts.purpose, place, type }),
     description: copy?.description || locationSeoDescription({ purpose: opts.purpose, place, type }),
     path,
-    // Index canonical marketplace landing pages when they contain inventory.
+    // Index canonical marketplace landing pages when they have inventory,
+    // or when we have curated SEO copy for that specific landing page.
     // Unknown property types remain out of the index.
     index:
       !unknownType &&
       (
         (!params.province && !params.district && !params.type) ||
-        (Boolean(params.province) && total > 0)
+        (Boolean(params.province) && (total > 0 || Boolean(copy)))
       ),
   });
 }
