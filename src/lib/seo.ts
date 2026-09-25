@@ -391,8 +391,9 @@ export function searchRouteSeo(opts: {
       !unknownType &&
       (
         (!params.province && !params.district && !params.type) ||
-        (Boolean(params.province) && !params.type && Boolean(copy)) ||
-        (Boolean(params.province) && Boolean(params.type) && total > 0)
+        (Boolean(params.province) && !params.district && !params.type) ||
+        (Boolean(params.province) && Boolean(params.district) && !params.type && total > 0) ||
+        (Boolean(params.province) && Boolean(params.district) && Boolean(params.type) && total > 0)
       ),
   });
 }

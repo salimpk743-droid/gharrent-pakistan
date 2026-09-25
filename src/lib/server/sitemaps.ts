@@ -31,10 +31,9 @@ export async function sitemapStaticEntries(): Promise<SitemapEntry[]> {
     { path: "/guides/landlords/landlord-responsibilities-pakistan" },
     { path: "/guides/landlords/security-deposit-rent-terms-pakistan" },
     { path: "/how-to-rent-a-house-in-pakistan" },
-    // Curated city landing pages remain in the pages sitemap even when
-    // inventory is temporarily empty. Type-specific pages enter the
-    // location sitemap automatically once real published inventory exists.
-    { path: "/rent/punjab/lahore" },
+    // Empty city/type result pages are excluded from the static sitemap.
+    // They enter the location sitemap automatically when real published
+    // inventory exists.
     { path: "/safety" },
     { path: "/privacy" },
     { path: "/terms" },
