@@ -31,17 +31,10 @@ export async function sitemapStaticEntries(): Promise<SitemapEntry[]> {
     { path: "/guides/landlords/landlord-responsibilities-pakistan" },
     { path: "/guides/landlords/security-deposit-rent-terms-pakistan" },
     { path: "/how-to-rent-a-house-in-pakistan" },
-    // Curated marketplace landing pages are indexable even when inventory is temporarily empty.
+    // Curated city landing pages remain in the pages sitemap even when
+    // inventory is temporarily empty. Type-specific pages enter the
+    // location sitemap automatically once real published inventory exists.
     { path: "/rent/punjab/lahore" },
-    { path: "/rent/punjab/lahore/houses" },
-    { path: "/rent/punjab/lahore/apartments" },
-    { path: "/rent/islamabad-capital-territory/islamabad/houses" },
-    { path: "/rent/khyber-pakhtunkhwa/peshawar" },
-    { path: "/rent/khyber-pakhtunkhwa/peshawar/houses" },
-    { path: "/rent/punjab/faisalabad" },
-    { path: "/rent/punjab/faisalabad/portions" },
-    { path: "/rent/punjab/multan" },
-    { path: "/rent/punjab/multan/houses" },
     { path: "/safety" },
     { path: "/privacy" },
     { path: "/terms" },
