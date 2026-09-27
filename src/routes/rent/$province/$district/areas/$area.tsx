@@ -1,7 +1,7 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { ResultsPage } from "@/components/search/results-page";
 import { searchProperties } from "@/lib/server/properties";
-import { getSeoArea, listSeoAreas } from "@/lib/server/locations";
+import { getSeoArea, listSeoTypeSummaries } from "@/lib/server/locations";
 import { parseRentSearch } from "@/lib/rent-search";
 import { areaPath, areaRouteSeo, assertCanonicalMarketplacePath } from "@/lib/seo";
 
@@ -51,7 +51,7 @@ export const Route = createFileRoute("/rent/$province/$district/areas/$area")({
 });
 
 function Page() {
-  const { data, area } = Route.useLoaderData();
+  const { data, area, typeSummaries } = Route.useLoaderData();
   const { province, district } = Route.useParams();
   return (
     <ResultsPage
