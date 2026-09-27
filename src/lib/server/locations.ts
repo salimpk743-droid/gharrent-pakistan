@@ -136,7 +136,7 @@ export async function listSeoIntents(opts: {
   const values = intentDefinitions.map((item) => {
     const start = params.length + 1;
     params.push(item.slug, item.kind, item.value, item.unit);
-    return `(${start}, ${start + 1}, ${start + 2}, ${start + 3})`;
+    return "(" + [start, start + 1, start + 2, start + 3].map((n) => "$" + n).join(", ") + ")";
   }).join(", ");
   const rows = await sql.query<{ slug: string; kind: SeoIntentSummary["kind"]; count: number }>(
     `select i.slug, i.kind, count(*)::int as count
