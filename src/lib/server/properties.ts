@@ -24,6 +24,7 @@ const SearchSchema = z.object({
   bathrooms: z.number().optional(),
   minSize: z.number().optional(),
   maxSize: z.number().optional(),
+  sizeUnit: z.enum(["MARLA", "KANAL", "SQFT", "SQYARD"]).optional(),
   furnished: z.string().optional(),
   parking: z.boolean().optional(),
   family: z.boolean().optional(),
@@ -100,6 +101,7 @@ export async function searchPropertiesInternal(raw: SearchFilters) {
   if (filters.bathrooms != null) add("p.bathrooms >= ?", filters.bathrooms);
   if (filters.minSize != null) add("p.property_size >= ?", filters.minSize);
   if (filters.maxSize != null) add("p.property_size <= ?", filters.maxSize);
+  if (filters.sizeUnit) add("p.size_unit = ?", filters.sizeUnit);
   if (filters.furnished) add("p.furnished_status = ?", filters.furnished);
   if (filters.parking) conditions.push("p.parking = true");
   if (filters.family) conditions.push("p.family_allowed = true");
