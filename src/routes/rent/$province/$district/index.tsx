@@ -37,6 +37,7 @@ function Page() {
   const data = Route.useLoaderData();
   const { province } = Route.useParams();
   return (
+    <div>
     <ResultsPage
       items={data.items}
       total={data.total}
@@ -77,5 +78,6 @@ function Page() {
         </div>
       </div>
     </section>
+    </div>
   );
 }
