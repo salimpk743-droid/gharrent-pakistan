@@ -21,6 +21,7 @@ const SearchSchema = z.object({
   minRent: z.number().optional(),
   maxRent: z.number().optional(),
   bedrooms: z.number().optional(),
+  bedroomsExact: z.number().optional(),
   bathrooms: z.number().optional(),
   minSize: z.number().optional(),
   maxSize: z.number().optional(),
@@ -98,6 +99,7 @@ export async function searchPropertiesInternal(raw: SearchFilters) {
   if (filters.minRent != null) add("p.monthly_rent >= ?", filters.minRent);
   if (filters.maxRent != null) add("p.monthly_rent <= ?", filters.maxRent);
   if (filters.bedrooms != null) add("p.bedrooms >= ?", filters.bedrooms);
+  if (filters.bedroomsExact != null) add("p.bedrooms = ?", filters.bedroomsExact);
   if (filters.bathrooms != null) add("p.bathrooms >= ?", filters.bathrooms);
   if (filters.minSize != null) add("p.property_size >= ?", filters.minSize);
   if (filters.maxSize != null) add("p.property_size <= ?", filters.maxSize);
