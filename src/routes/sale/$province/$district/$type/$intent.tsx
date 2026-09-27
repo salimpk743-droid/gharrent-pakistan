@@ -7,7 +7,7 @@ import { assertCanonicalMarketplacePath, publicSeo } from "@/lib/seo";
 import { parseSeoIntent, seoIntentDescription, seoIntentFilters, seoIntentPath, seoIntentTitle, SEO_INTENT_MIN_INDEXABLE } from "@/lib/seo-intent";
 
 export const Route = createFileRoute("/sale/$province/$district/$type/$intent")({
-  validateSearch: parseRentSearch,
+  validateSearch: parseMarketplaceSearch,
   loaderDeps: ({ search: s }) => s,
   beforeLoad: ({ params }) => {
     assertCanonicalMarketplacePath({
