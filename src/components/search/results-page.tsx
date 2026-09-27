@@ -240,14 +240,25 @@ export function ResultsPage({
                 <p className="mt-1 text-sm text-muted">Browse live published inventory by property type.</p>
                 <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
                   {typeSummaries.map((item) => (
-                    <Link
-                      key={item.slug}
-                      to={purpose === "SALE" ? "/sale/$province/$district/$type" : "/rent/$province/$district/$type"}
-                      params={{ province: provinceSlug, district: districtSlug, type: item.slug }}
-                      className="flex items-center justify-between rounded-lg border border-line px-3 py-2 text-sm font-semibold text-forest no-underline hover:border-forest"
-                    >
-                      <span>{item.plural}</span><span className="text-xs text-muted">{item.count}</span>
-                    </Link>
+                    purpose === "SALE" ? (
+                      <Link
+                        key={item.slug}
+                        to="/sale/$province/$district/$type"
+                        params={{ province: provinceSlug, district: districtSlug, type: item.slug }}
+                        className="flex items-center justify-between rounded-lg border border-line px-3 py-2 text-sm font-semibold text-forest no-underline hover:border-forest"
+                      >
+                        <span>{item.plural}</span><span className="text-xs text-muted">{item.count}</span>
+                      </Link>
+                    ) : (
+                      <Link
+                        key={item.slug}
+                        to="/rent/$province/$district/$type"
+                        params={{ province: provinceSlug, district: districtSlug, type: item.slug }}
+                        className="flex items-center justify-between rounded-lg border border-line px-3 py-2 text-sm font-semibold text-forest no-underline hover:border-forest"
+                      >
+                        <span>{item.plural}</span><span className="text-xs text-muted">{item.count}</span>
+                      </Link>
+                    )
                   ))}
                 </div>
               </section>
