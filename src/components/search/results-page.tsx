@@ -369,46 +369,6 @@ export function ResultsPage({
             </div>
           </section>
         ) : null}
-        {provinceSlug && districtSlug && (
-          <section className="mt-10 max-w-4xl rounded-xl border border-line bg-white p-6">
-            <h2 className="font-display text-2xl text-ink">
-              {areaName ? `About ${areaName}` : `About properties in ${locationLabel}`}
-            </h2>
-            <div className="mt-5 space-y-5">
-              <div>
-                <h3 className="font-semibold text-ink">What property types can I find here?</h3>
-                <p className="mt-1 text-sm leading-6 text-muted">
-                  Apna Ghar groups published listings by property type, so you can move from this location page into live houses, apartments, portions, plots and other available categories.
-                </p>
-              </div>
-              <div>
-                <h3 className="font-semibold text-ink">{purpose === "SALE" ? "How should I compare properties for sale?" : "How should I compare rental properties?"}</h3>
-                <p className="mt-1 text-sm leading-6 text-muted">
-                  Compare the asking price or monthly rent, property size, bedrooms where available, location and listing details before contacting the advertiser.
-                </p>
-              </div>
-              <div>
-                <h3 className="font-semibold text-ink">Where can I get practical property guidance?</h3>
-                <p className="mt-1 text-sm leading-6 text-muted">
-                  {purpose === "SALE"
-                    ? "Use the property-buying checklist for search, document checks, agreement, payment, registration and handover."
-                    : "Use the rental guides for budgeting, choosing between houses, flats and portions, rental agreements and practical safety checks."}
-                </p>
-                <div className="mt-3 flex flex-wrap gap-3 text-sm">
-                  {purpose === "SALE" ? (
-                    <Link to="/guides/buying/how-to-buy-property-in-pakistan" className="font-semibold text-forest underline">Property-buying checklist</Link>
-                  ) : (
-                    <>
-                      <Link to="/guides/renting/rental-budget-and-costs-pakistan" className="font-semibold text-forest underline">Rental budget guide</Link>
-                      <Link to="/guides/renting/house-vs-flat-vs-portion-pakistan" className="font-semibold text-forest underline">House vs flat vs portion</Link>
-                      <Link to="/how-to-rent-a-house-in-pakistan" className="font-semibold text-forest underline">How to rent a house</Link>
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
-          </section>
-        ) : null}
         {!provinceSlug && !districtSlug && !typeSlug && (
           <section className="mt-10 max-w-3xl rounded-xl border border-line bg-white p-6">
             <h2 className="font-display text-2xl text-ink">
