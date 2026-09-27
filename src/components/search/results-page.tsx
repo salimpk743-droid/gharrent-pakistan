@@ -176,68 +176,88 @@ export function ResultsPage({
             </>
           )}
         </nav>
-        {districtSlug && provinceSlug && (
-          {areas.length > 0 ? (
-            <section className="mb-8 rounded-xl border border-line bg-white p-5">
-              <h2 className="font-display text-xl text-ink">
-                Popular areas with live {typeName ? typeName.toLowerCase() : "property"} inventory
-              </h2>
-              <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                {areas.slice(0, 24).map((area) => (
+        {districtSlug && provinceSlug ? (
+          <>
+            {areas.length > 0 ? (
+              <section className="mb-8 rounded-xl border border-line bg-white p-5">
+                <h2 className="font-display text-xl text-ink">
+                  Popular areas with live {typeName ? typeName.toLowerCase() : "property"} inventory
+                </h2>
+                <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                  {areas.slice(0, 24).map((area) =>
+                    purpose === "SALE" ? (
+                      typeSlug ? (
+                        <Link
+                          key={area.slug}
+                          to="/sale/$province/$district/areas/$area/$type"
+                          params={{ province: provinceSlug, district: districtSlug, area: area.slug, type: typeSlug }}
+                          className="flex items-center justify-between rounded-lg border border-line px-3 py-2 text-sm font-semibold text-forest no-underline hover:border-forest"
+                        >
+                          <span>{area.name}</span><span className="text-xs text-muted">{area.count}</span>
+                        </Link>
+                      ) : (
+                        <Link
+                          key={area.slug}
+                          to="/sale/$province/$district/areas/$area"
+                          params={{ province: provinceSlug, district: districtSlug, area: area.slug }}
+                          className="flex items-center justify-between rounded-lg border border-line px-3 py-2 text-sm font-semibold text-forest no-underline hover:border-forest"
+                        >
+                          <span>{area.name}</span><span className="text-xs text-muted">{area.count}</span>
+                        </Link>
+                      )
+                    ) : typeSlug ? (
+                      <Link
+                        key={area.slug}
+                        to="/rent/$province/$district/areas/$area/$type"
+                        params={{ province: provinceSlug, district: districtSlug, area: area.slug, type: typeSlug }}
+                        className="flex items-center justify-between rounded-lg border border-line px-3 py-2 text-sm font-semibold text-forest no-underline hover:border-forest"
+                      >
+                        <span>{area.name}</span><span className="text-xs text-muted">{area.count}</span>
+                      </Link>
+                    ) : (
+                      <Link
+                        key={area.slug}
+                        to="/rent/$province/$district/areas/$area"
+                        params={{ province: provinceSlug, district: districtSlug, area: area.slug }}
+                        className="flex items-center justify-between rounded-lg border border-line px-3 py-2 text-sm font-semibold text-forest no-underline hover:border-forest"
+                      >
+                        <span>{area.name}</span><span className="text-xs text-muted">{area.count}</span>
+                      </Link>
+                    ),
+                  )}
+                </div>
+              </section>
+            ) : null}
+            <div className="mb-6 flex flex-wrap gap-2">
+              {PROPERTY_TYPES.map((t) => {
+                const slug = PROPERTY_TYPE_META[t].slug;
+                const active = typeSlug === slug;
+                const chipClass = `rounded-full border px-3 py-1.5 text-xs font-semibold no-underline ${
+                  active ? "border-forest bg-forest text-white" : "border-line text-ink hover:border-forest"
+                }`;
+                return purpose === "SALE" ? (
                   <Link
-                    key={area.slug}
-                    to={
-                      purpose === "SALE"
-                        ? typeSlug
-                          ? "/sale/$province/$district/areas/$area/$type"
-                          : "/sale/$province/$district/areas/$area"
-                        : typeSlug
-                          ? "/rent/$province/$district/areas/$area/$type"
-                          : "/rent/$province/$district/areas/$area"
-                    }
-                    params={
-                      typeSlug
-                        ? { province: provinceSlug!, district: districtSlug!, area: area.slug, type: typeSlug }
-                        : { province: provinceSlug!, district: districtSlug!, area: area.slug }
-                    }
-                    className="flex items-center justify-between rounded-lg border border-line px-3 py-2 text-sm font-semibold text-forest no-underline hover:border-forest"
+                    key={t}
+                    to="/sale/$province/$district/$type"
+                    params={{ province: provinceSlug, district: districtSlug, type: slug }}
+                    className={chipClass}
                   >
-                    <span>{area.name}</span>
-                    <span className="text-xs text-muted">{area.count}</span>
+                    {PROPERTY_TYPE_META[t].plural}
                   </Link>
-                ))}
-              </div>
-            </section>
-          ) : null}
-          <div className="mb-6 flex flex-wrap gap-2">
-            {PROPERTY_TYPES.map((t) => {
-              const slug = PROPERTY_TYPE_META[t].slug;
-              const active = typeSlug === slug;
-              const chipClass = `rounded-full border px-3 py-1.5 text-xs font-semibold no-underline ${
-                active ? "border-forest bg-forest text-white" : "border-line text-ink hover:border-forest"
-              }`;
-              return purpose === "SALE" ? (
-                <Link
-                  key={t}
-                  to="/sale/$province/$district/$type"
-                  params={{ province: provinceSlug, district: districtSlug, type: slug }}
-                  className={chipClass}
-                >
-                  {PROPERTY_TYPE_META[t].plural}
-                </Link>
-              ) : (
-                <Link
-                  key={t}
-                  to="/rent/$province/$district/$type"
-                  params={{ province: provinceSlug, district: districtSlug, type: slug }}
-                  className={chipClass}
-                >
-                  {PROPERTY_TYPE_META[t].plural}
-                </Link>
-              );
-            })}
-          </div>
-        )}
+                ) : (
+                  <Link
+                    key={t}
+                    to="/rent/$province/$district/$type"
+                    params={{ province: provinceSlug, district: districtSlug, type: slug }}
+                    className={chipClass}
+                  >
+                    {PROPERTY_TYPE_META[t].plural}
+                  </Link>
+                );
+              })}
+            </div>
+          </>
+        ) : null}
         {items.length === 0 ? (
           <div className="rounded-xl border border-line bg-white px-6 py-8">
             <p className="font-semibold text-ink">
