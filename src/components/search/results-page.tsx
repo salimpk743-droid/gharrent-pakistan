@@ -133,6 +133,18 @@ export function ResultsPage({
               )}
             </>
           )}
+          {provinceSlug && districtSlug && areaSlug && areaName && (
+            <>
+              <span className="text-line">/</span>
+              <Link
+                to={purpose === "SALE" ? "/sale/$province/$district/areas/$area" : "/rent/$province/$district/areas/$area"}
+                params={{ province: provinceSlug, district: districtSlug, area: areaSlug }}
+                className={crumbClass}
+              >
+                {areaName}
+              </Link>
+            </>
+          )}
           {provinceSlug && districtSlug && typeSlug && typeName && (
             <>
               <span className="text-line">/</span>
