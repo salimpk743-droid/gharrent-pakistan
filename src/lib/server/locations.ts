@@ -67,6 +67,64 @@ export const listAreasForCity = createServerFn({ method: "GET" })
     `;
   });
 
+
+export type SeoArea = {
+  id: string;
+  slug: string;
+  name: string;
+  count: number;
+  lastmod: string | Date | null;
+};
+
+export async function listSeoAreas(opts: {
+  provinceSlug: string;
+  districtSlug: string;
+  purpose: "RENT" | "SALE";
+  type?: string;
+}): Promise<SeoArea[]> {
+  await ensureSeedData();
+  const sql = await getSql();
+  const typeCondition = opts.type ? sql`and p.property_type = ${opts.type}` : sql``;
+  return sql<SeoArea>`
+    select a.id, a.slug, a.name, count(*)::int as count,
+           max(p.updated_at::date) as lastmod
+    from properties p
+    join provinces pr on pr.id = p.province_id
+    join districts d on d.id = p.district_id
+    join areas a on a.id = p.area_id
+    where p.status = 'PUBLISHED'
+      and p.deleted_at is null
+      and p.is_sample = false
+      and p.listing_purpose = ${opts.purpose}
+      and pr.slug = ${opts.provinceSlug}
+      and d.slug = ${opts.districtSlug}
+      ${typeCondition}
+    group by a.id, a.slug, a.name
+    having count(*) > 0
+    order by count(*) desc, a.name asc
+  `;
+}
+
+export async function getSeoArea(opts: {
+  provinceSlug: string;
+  districtSlug: string;
+  areaSlug: string;
+}) {
+  await ensureSeedData();
+  const sql = await getSql();
+  const rows = await sql<{ id: string; slug: string; name: string }>`
+    select a.id, a.slug, a.name
+    from areas a
+    join districts d on d.id = a.district_id
+    join provinces p on p.id = d.province_id
+    where p.slug = ${opts.provinceSlug}
+      and d.slug = ${opts.districtSlug}
+      and a.slug = ${opts.areaSlug}
+    limit 1
+  `;
+  return rows[0] ?? null;
+}
+
 export async function resolveLocation(slugs: {
   provinceSlug?: string;
   districtSlug?: string;

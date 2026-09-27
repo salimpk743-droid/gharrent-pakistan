@@ -356,6 +356,46 @@ export function assertCanonicalMarketplacePath(opts: {
   }
 }
 
+export function areaPath(opts: {
+  purpose: ListingPurpose;
+  province: string;
+  district: string;
+  area: string;
+  type?: string;
+}): string {
+  const base = opts.purpose === "SALE" ? "sale" : "rent";
+  const type = canonicalTypeSlug(opts.type);
+  return type
+    ? `/${base}/${opts.province}/${opts.district}/areas/${opts.area}/${type}`
+    : `/${base}/${opts.province}/${opts.district}/areas/${opts.area}`;
+}
+
+export function areaRouteSeo(opts: {
+  purpose: ListingPurpose;
+  provinceSlug: string;
+  districtSlug: string;
+  areaSlug: string;
+  areaName: string;
+  type?: string;
+  typeName?: string;
+  total: number;
+}): HeadSnippet {
+  const city = opts.districtSlug.replaceAll("-", " ");
+  const type = opts.typeName;
+  const title = type
+    ? `${type} for ${opts.purpose === "SALE" ? "Sale" : "Rent"} in ${opts.areaName}, ${city} | ${APP_NAME}`
+    : `Property for ${opts.purpose === "SALE" ? "Sale" : "Rent"} in ${opts.areaName}, ${city} | ${APP_NAME}`;
+  const description = type
+    ? `Browse ${type.toLowerCase()} for ${opts.purpose === "SALE" ? "sale" : "rent"} in ${opts.areaName}, ${city}. Compare current listings, price, size and location on ${APP_NAME}.`
+    : `Browse properties for ${opts.purpose === "SALE" ? "sale" : "rent"} in ${opts.areaName}, ${city}. Compare current listings, price, size and location on ${APP_NAME}.`;
+  return publicSeo({
+    title,
+    description,
+    path: areaPath({ purpose: opts.purpose, province: opts.provinceSlug, district: opts.districtSlug, area: opts.areaSlug, type: opts.type }),
+    index: opts.total > 0,
+  });
+}
+
 export function searchRouteSeo(opts: {
   purpose: ListingPurpose;
   params?: { province?: string; district?: string; type?: string };
@@ -511,6 +551,8 @@ export function resultsBreadcrumbJsonLd(opts: {
   districtName?: string;
   typeSlug?: string;
   typeName?: string;
+  areaSlug?: string;
+  areaName?: string;
 }) {
   const items = [
     { name: "Home", path: "/" },
@@ -535,6 +577,18 @@ export function resultsBreadcrumbJsonLd(opts: {
         purpose: opts.purpose,
         province: opts.provinceSlug,
         district: opts.districtSlug,
+        type: opts.typeSlug,
+      }),
+    });
+  }
+  if (opts.provinceSlug && opts.districtSlug && opts.areaSlug && opts.areaName) {
+    items.push({
+      name: opts.areaName,
+      path: areaPath({
+        purpose: opts.purpose,
+        province: opts.provinceSlug,
+        district: opts.districtSlug,
+        area: opts.areaSlug,
         type: opts.typeSlug,
       }),
     });
