@@ -1,7 +1,7 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { ResultsPage } from "@/components/search/results-page";
 import { searchProperties } from "@/lib/server/properties";
-import { getSeoArea } from "@/lib/server/locations";
+import { getSeoArea, listSeoIntents } from "@/lib/server/locations";
 import { typeFromSlug, PROPERTY_TYPE_META } from "@/lib/constants";
 import { areaRouteSeo } from "@/lib/seo";
 
@@ -25,7 +25,8 @@ export const Route = createFileRoute("/sale/$province/$district/areas/$area/$typ
         purpose: "SALE",
       },
     });
-    return { data, area, type };
+    const intents = await listSeoIntents({ provinceSlug: params.province, districtSlug: params.district, purpose: "SALE", type: params.type, areaSlug: params.area });
+    return { data, area, type, intents };
   },
   head: ({ loaderData, params }) =>
     areaRouteSeo({

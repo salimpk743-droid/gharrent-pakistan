@@ -235,12 +235,34 @@ export function ResultsPage({
                 <h2 className="font-display text-xl text-ink">Popular ways to search {typeName?.toLowerCase() ?? "properties"}</h2>
                 <p className="mt-1 text-sm text-muted">Browse live inventory by budget, bedrooms and property size.</p>
                 <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                  {intents.slice(0, 18).map((intent) =>
-                    purpose === "SALE" ? (
+                  {intents.slice(0, 18).map((intent) => {
+                    const hrefParams = { province: provinceSlug, district: districtSlug, area: areaSlug, type: typeSlug, intent: intent.slug };
+                    if (purpose === "SALE") {
+                      return areaSlug ? (
+                        <Link
+                          key={intent.slug}
+                          to="/sale/$province/$district/areas/$area/$type/$intent"
+                          params={hrefParams}
+                          className="flex items-center justify-between rounded-lg border border-line px-3 py-2 text-sm font-semibold text-forest no-underline hover:border-forest"
+                        >
+                          <span>{intent.label}</span><span className="text-xs text-muted">{intent.count}</span>
+                        </Link>
+                      ) : (
+                        <Link
+                          key={intent.slug}
+                          to="/sale/$province/$district/$type/$intent"
+                          params={{ province: provinceSlug, district: districtSlug, type: typeSlug, intent: intent.slug }}
+                          className="flex items-center justify-between rounded-lg border border-line px-3 py-2 text-sm font-semibold text-forest no-underline hover:border-forest"
+                        >
+                          <span>{intent.label}</span><span className="text-xs text-muted">{intent.count}</span>
+                        </Link>
+                      );
+                    }
+                    return areaSlug ? (
                       <Link
                         key={intent.slug}
-                        to="/sale/$province/$district/$type/$intent"
-                        params={{ province: provinceSlug, district: districtSlug, type: typeSlug, intent: intent.slug }}
+                        to="/rent/$province/$district/areas/$area/$type/$intent"
+                        params={hrefParams}
                         className="flex items-center justify-between rounded-lg border border-line px-3 py-2 text-sm font-semibold text-forest no-underline hover:border-forest"
                       >
                         <span>{intent.label}</span><span className="text-xs text-muted">{intent.count}</span>
@@ -254,8 +276,8 @@ export function ResultsPage({
                       >
                         <span>{intent.label}</span><span className="text-xs text-muted">{intent.count}</span>
                       </Link>
-                    ),
-                  )}
+                    );
+                  })}
                 </div>
               </section>
             ) : null}

@@ -1,7 +1,7 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { ResultsPage } from "@/components/search/results-page";
 import { searchProperties } from "@/lib/server/properties";
-import { getSeoArea } from "@/lib/server/locations";
+import { getSeoArea, listSeoIntents } from "@/lib/server/locations";
 import { typeFromSlug, PROPERTY_TYPE_META } from "@/lib/constants";
 import { parseRentSearch } from "@/lib/rent-search";
 import { areaPath, areaRouteSeo } from "@/lib/seo";
@@ -28,7 +28,8 @@ export const Route = createFileRoute("/rent/$province/$district/areas/$area/$typ
         purpose: "RENT",
       },
     });
-    return { data, area, type };
+    const intents = await listSeoIntents({ provinceSlug: params.province, districtSlug: params.district, purpose: "RENT", type: params.type, areaSlug: params.area });
+    return { data, area, type, intents };
   },
   head: ({ loaderData, params }) =>
     areaRouteSeo({
@@ -63,6 +64,7 @@ function Page() {
       purpose="RENT"
       title={`${typeName} for Rent in ${area.name}`}
       description={`Find ${typeName.toLowerCase()} for rent in ${area.name}. Compare current listings, monthly rent, size and location on Apna Ghar.`}
+      intents={data.intents}
     />
   );
 }

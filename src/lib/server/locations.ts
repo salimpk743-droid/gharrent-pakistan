@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { getSql } from "@/lib/db";
 import { ensureSeedData } from "./seed";
-import { parseSeoIntent, seoIntentSlugs, SEO_INTENT_MIN_INDEXABLE } from "@/lib/seo-intent";
+import { parseSeoIntent, seoIntentSlugs, SEO_INTENT_MIN_INDEXABLE, SEO_AREA_INTENT_MIN_INDEXABLE } from "@/lib/seo-intent";
 
 const PROVINCE_SLUG_ALIASES: Record<string, string> = {
   islamabad: "islamabad-capital-territory",
@@ -118,6 +118,7 @@ export async function listSeoIntents(opts: {
   districtSlug: string;
   purpose: "RENT" | "SALE";
   type: string;
+  areaSlug?: string;
 }): Promise<SeoIntentSummary[]> {
   await ensureSeedData();
   const sql = await getSql();
@@ -143,6 +144,7 @@ export async function listSeoIntents(opts: {
      from properties p
      join provinces pr on pr.id = p.province_id
      join districts d on d.id = p.district_id
+     join areas a on a.id = p.area_id
      cross join (values ${values}) as i(slug, kind, value, unit)
      where p.status = 'PUBLISHED'
        and p.deleted_at is null
@@ -150,15 +152,16 @@ export async function listSeoIntents(opts: {
        and p.listing_purpose = $${params.length + 1}
        and pr.slug = $${params.length + 2}
        and d.slug = $${params.length + 3}
-       and p.property_type = $${params.length + 4}
+       and p.property_type = ${params.length + 4}
+       ${opts.areaSlug ? "and a.slug = $" + (params.length + 5) : ""}
        and (
          (i.kind = 'budget' and p.monthly_rent <= i.value::numeric)
          or (i.kind = 'bedrooms' and p.bedrooms = i.value::int)
          or (i.kind = 'size' and p.property_size = i.value::numeric and p.size_unit = i.unit)
        )
      group by i.slug, i.kind
-     having count(*) >= ${SEO_INTENT_MIN_INDEXABLE}`,
-    [...params, opts.purpose, opts.provinceSlug, opts.districtSlug, opts.type],
+     having count(*) >= ${opts.areaSlug ? SEO_AREA_INTENT_MIN_INDEXABLE : SEO_INTENT_MIN_INDEXABLE}`,
+    [...params, opts.purpose, opts.provinceSlug, opts.districtSlug, opts.type, ...(opts.areaSlug ? [opts.areaSlug] : [])],
   );
   const labels = new Map(intentDefinitions.map((item) => [item.slug, item.label]));
   return rows

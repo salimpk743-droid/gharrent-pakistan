@@ -6,7 +6,7 @@ import {
   type SitemapEntry,
 } from "@/lib/seo";
 import { ensureSeedData } from "./seed";
-import { parseSeoIntent, seoIntentSlugs, SEO_INTENT_MIN_INDEXABLE } from "@/lib/seo-intent";
+import { parseSeoIntent, seoIntentSlugs, SEO_INTENT_MIN_INDEXABLE, SEO_AREA_INTENT_MIN_INDEXABLE } from "@/lib/seo-intent";
 
 async function readySql() {
   await ensureSeedData();
@@ -172,12 +172,64 @@ export async function sitemapLocationEntries(): Promise<SitemapEntry[]> {
     }];
   });
 
+  const areaIntentParams: unknown[] = [];
+  const areaIntentValues = intentDefinitions.map((item) => {
+    const start = areaIntentParams.length + 1;
+    areaIntentParams.push(item.purpose, item.slug, item.kind, item.value, item.unit);
+    return "(" + [start, start + 1, start + 2, start + 3, start + 4].map((n) => "$" + n).join(", ") + ")";
+  }).join(", ");
+  const areaIntentRows = await sql.query<{
+    pslug: string;
+    dslug: string;
+    aslug: string;
+    ptype: string;
+    intent: string;
+    purpose: "RENT" | "SALE";
+    lastmod: string | Date | null;
+  }>(
+    `select
+       pr.slug as pslug,
+       d.slug as dslug,
+       a.slug as aslug,
+       p.property_type as ptype,
+       i.slug as intent,
+       i.purpose as purpose,
+       max(p.updated_at::date) as lastmod
+     from properties p
+     join districts d on d.id = p.district_id
+     join provinces pr on pr.id = d.province_id
+     join areas a on a.id = p.area_id
+     cross join (values ${areaIntentValues}) as i(purpose, slug, kind, value, unit)
+     where p.status = 'PUBLISHED'
+       and p.deleted_at is null
+       and p.is_sample = false
+       and p.listing_purpose = i.purpose
+       and (
+         (i.kind = 'budget' and p.monthly_rent <= i.value::numeric)
+         or (i.kind = 'bedrooms' and p.bedrooms = i.value::int)
+         or (i.kind = 'size' and p.property_size = i.value::numeric and p.size_unit = i.unit)
+       )
+     group by pr.slug, d.slug, a.slug, p.property_type, i.slug, i.purpose
+     having count(*) >= ${SEO_AREA_INTENT_MIN_INDEXABLE}`,
+    areaIntentParams,
+  );
+  const areaIntentEntries = areaIntentRows.flatMap((row) => {
+    const typeSlug = PROPERTY_TYPE_META[row.ptype as PropertyType]?.slug;
+    if (!typeSlug) return [];
+    const purposePath = row.purpose === "SALE" ? "sale" : "rent";
+    return [{
+      path: `/${purposePath}/${row.pslug}/${row.dslug}/areas/${row.aslug}/${typeSlug}/${row.intent}`,
+      lastmod: row.lastmod,
+    }];
+  });
+
   return [
     ...[...city.entries()].map(([path, lastmod]) => ({ path, lastmod })),
     ...[...type.entries()].map(([path, lastmod]) => ({ path, lastmod })),
     ...[...area.entries()].map(([path, lastmod]) => ({ path, lastmod })),
     ...[...areaType.entries()].map(([path, lastmod]) => ({ path, lastmod })),
     ...intentEntries,
+    ...areaIntentEntries,
   ];
 }
 
