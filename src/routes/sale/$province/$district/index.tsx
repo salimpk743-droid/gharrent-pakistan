@@ -37,6 +37,7 @@ function Page() {
   const data = Route.useLoaderData();
   const { province } = Route.useParams();
   return (
+    <div>
     <ResultsPage
       items={data.items}
       total={data.total}
@@ -49,5 +50,7 @@ function Page() {
       purpose="SALE"
       areas={data.areas}
     />
+    <section className="mx-auto mt-10 max-w-5xl rounded-xl border border-line bg-white p-6"><h2 className="font-display text-2xl text-ink">About properties for sale in {data.locationLabel}</h2><p className="mt-2 text-sm leading-6 text-muted">Compare current published properties by asking price, size, location and listing details before contacting an advertiser.</p><div className="mt-6 space-y-5"><div><h3 className="font-semibold text-ink">What should I compare before buying?</h3><p className="mt-1 text-sm leading-6 text-muted">Compare asking price, property size, location and advertised property details. Review ownership and relevant documents before making payments.</p></div><div><h3 className="font-semibold text-ink">What should I check before completing a purchase?</h3><p className="mt-1 text-sm leading-6 text-muted">Review agreement terms, payment arrangements, registration requirements and handover details. Local authority requirements can vary.</p></div><div><h3 className="font-semibold text-ink">Property guidance</h3><a href="/guides/buying/how-to-buy-property-in-pakistan" className="mt-2 inline-block font-semibold text-forest underline">Property-buying checklist</a></div></div></section>
+    </div>
   );
 }

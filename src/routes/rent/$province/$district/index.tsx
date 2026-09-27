@@ -37,6 +37,7 @@ function Page() {
   const data = Route.useLoaderData();
   const { province } = Route.useParams();
   return (
+    <div>
     <ResultsPage
       items={data.items}
       total={data.total}
@@ -49,5 +50,7 @@ function Page() {
       purpose="RENT"
       areas={data.areas}
     />
+    <section className="mx-auto mt-10 max-w-5xl rounded-xl border border-line bg-white p-6"><h2 className="font-display text-2xl text-ink">About properties for rent in {data.locationLabel}</h2><p className="mt-2 text-sm leading-6 text-muted">Compare current published rental properties by monthly rent, size, location and listing details before contacting an advertiser.</p><div className="mt-6 space-y-5"><div><h3 className="font-semibold text-ink">How should I compare rental properties?</h3><p className="mt-1 text-sm leading-6 text-muted">Compare monthly rent, property size, bedrooms where available, location, parking and listing details before choosing a property.</p></div><div><h3 className="font-semibold text-ink">What should I check before renting?</h3><p className="mt-1 text-sm leading-6 text-muted">Review monthly rent, security deposit, advance rent, utilities, maintenance responsibilities and tenancy terms before making a payment.</p></div><div><h3 className="font-semibold text-ink">Rental guides</h3><div className="mt-2 flex flex-wrap gap-4 text-sm"><a href="/guides/renting/rental-budget-and-costs-pakistan" className="font-semibold text-forest underline">Rental budget guide</a><a href="/guides/renting/house-vs-flat-vs-portion-pakistan" className="font-semibold text-forest underline">House vs flat vs portion</a><a href="/how-to-rent-a-house-in-pakistan" className="font-semibold text-forest underline">How to rent a house</a></div></div></div></section>
+    </div>
   );
 }
