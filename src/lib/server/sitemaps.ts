@@ -134,6 +134,7 @@ export async function sitemapLocationEntries(): Promise<SitemapEntry[]> {
     dslug: string;
     ptype: string;
     intent: string;
+    purpose: "RENT" | "SALE";
     lastmod: string | Date | null;
   }>(
     `select
@@ -141,6 +142,7 @@ export async function sitemapLocationEntries(): Promise<SitemapEntry[]> {
        d.slug as dslug,
        p.property_type as ptype,
        i.slug as intent,
+       i.purpose as purpose,
        max(p.updated_at::date) as lastmod
      from properties p
      join districts d on d.id = p.district_id
@@ -155,15 +157,14 @@ export async function sitemapLocationEntries(): Promise<SitemapEntry[]> {
          or (i.kind = 'bedrooms' and p.bedrooms = i.value::int)
          or (i.kind = 'size' and p.property_size = i.value::numeric and p.size_unit = i.unit)
        )
-     group by pr.slug, d.slug, p.property_type, i.slug
+     group by pr.slug, d.slug, p.property_type, i.slug, i.purpose
      having count(*) >= ${SEO_INTENT_MIN_INDEXABLE}`,
     intentParams,
   );
   const intentEntries = intentRows.flatMap((row) => {
     const typeSlug = PROPERTY_TYPE_META[row.ptype as PropertyType]?.slug;
     if (!typeSlug) return [];
-    const purpose = row.ptype && intentDefinitions.find((i) => i.slug === row.intent)?.purpose;
-    if (!purpose) return [];
+    const purpose = row.purpose;
     const purposePath = purpose === "SALE" ? "sale" : "rent";
     return [{
       path: `/${purposePath}/${row.pslug}/${row.dslug}/${typeSlug}/${row.intent}`,
