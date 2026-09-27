@@ -169,6 +169,38 @@ export function ResultsPage({
           )}
         </nav>
         {districtSlug && provinceSlug && (
+          {areas.length > 0 ? (
+            <section className="mb-8 rounded-xl border border-line bg-white p-5">
+              <h2 className="font-display text-xl text-ink">
+                Popular areas with live {typeName ? typeName.toLowerCase() : "property"} inventory
+              </h2>
+              <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                {areas.slice(0, 24).map((area) => (
+                  <Link
+                    key={area.slug}
+                    to={
+                      purpose === "SALE"
+                        ? typeSlug
+                          ? "/sale/$province/$district/areas/$area/$type"
+                          : "/sale/$province/$district/areas/$area"
+                        : typeSlug
+                          ? "/rent/$province/$district/areas/$area/$type"
+                          : "/rent/$province/$district/areas/$area"
+                    }
+                    params={
+                      typeSlug
+                        ? { province: provinceSlug!, district: districtSlug!, area: area.slug, type: typeSlug }
+                        : { province: provinceSlug!, district: districtSlug!, area: area.slug }
+                    }
+                    className="flex items-center justify-between rounded-lg border border-line px-3 py-2 text-sm font-semibold text-forest no-underline hover:border-forest"
+                  >
+                    <span>{area.name}</span>
+                    <span className="text-xs text-muted">{area.count}</span>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          ) : null}
           <div className="mb-6 flex flex-wrap gap-2">
             {PROPERTY_TYPES.map((t) => {
               const slug = PROPERTY_TYPE_META[t].slug;
