@@ -13,6 +13,7 @@ export type SearchFilters = {
   minRent?: number;
   maxRent?: number;
   bedrooms?: number;
+  bedroomsExact?: number;
   bathrooms?: number;
   minSize?: number;
   maxSize?: number;
