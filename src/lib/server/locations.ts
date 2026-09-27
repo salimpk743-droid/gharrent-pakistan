@@ -136,7 +136,7 @@ export async function listSeoIntents(opts: {
   const values = intentDefinitions.map((item) => {
     const start = params.length + 1;
     params.push(item.slug, item.kind, item.value, item.unit);
-    return `(${start}, ${start + 1}, ${start + 2}, ${start + 3})`;
+    return "(" + [start, start + 1, start + 2, start + 3].map((n) => "$" + n).join(", ") + ")";
   }).join(", ");
   const rows = await sql.query<{ slug: string; kind: SeoIntentSummary["kind"]; count: number }>(
     `select i.slug, i.kind, count(*)::int as count
@@ -147,10 +147,10 @@ export async function listSeoIntents(opts: {
      where p.status = 'PUBLISHED'
        and p.deleted_at is null
        and p.is_sample = false
-       and p.listing_purpose = ${params.length + 1}
-       and pr.slug = ${params.length + 2}
-       and d.slug = ${params.length + 3}
-       and p.property_type = ${params.length + 4}
+       and p.listing_purpose = $${params.length + 1}
+       and pr.slug = $${params.length + 2}
+       and d.slug = $${params.length + 3}
+       and p.property_type = $${params.length + 4}
        and (
          (i.kind = 'budget' and p.monthly_rent <= i.value::numeric)
          or (i.kind = 'bedrooms' and p.bedrooms = i.value::int)
