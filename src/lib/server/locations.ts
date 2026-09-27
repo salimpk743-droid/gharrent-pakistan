@@ -147,10 +147,10 @@ export async function listSeoIntents(opts: {
      where p.status = 'PUBLISHED'
        and p.deleted_at is null
        and p.is_sample = false
-       and p.listing_purpose = ${params.length + 1}
-       and pr.slug = ${params.length + 2}
-       and d.slug = ${params.length + 3}
-       and p.property_type = ${params.length + 4}
+       and p.listing_purpose = $${params.length + 1}
+       and pr.slug = $${params.length + 2}
+       and d.slug = $${params.length + 3}
+       and p.property_type = $${params.length + 4}
        and (
          (i.kind = 'budget' and p.monthly_rent <= i.value::numeric)
          or (i.kind = 'bedrooms' and p.bedrooms = i.value::int)
