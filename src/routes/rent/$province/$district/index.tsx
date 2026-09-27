@@ -1,7 +1,7 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { ResultsPage } from "@/components/search/results-page";
 import { searchProperties } from "@/lib/server/properties";
-import { listSeoAreas, listSeoTypeSummaries } from "@/lib/server/locations";
+import { listSeoAreas } from "@/lib/server/locations";
 import { typeToSlug } from "@/lib/constants";
 import { parseRentSearch } from "@/lib/rent-search";
 import { assertCanonicalMarketplacePath, searchRouteSeo } from "@/lib/seo";
@@ -21,11 +21,8 @@ export const Route = createFileRoute("/rent/$province/$district/")({
       data: { ...deps, provinceSlug: params.province, districtSlug: params.district, purpose: "RENT" },
     });
     if (!data.province || !data.district) throw notFound();
-    const [areas, typeSummaries] = await Promise.all([
-      listSeoAreas({ provinceSlug: params.province, districtSlug: params.district, purpose: "RENT" }),
-      listSeoTypeSummaries({ provinceSlug: params.province, districtSlug: params.district, purpose: "RENT" }),
-    ]);
-    return { ...data, areas, typeSummaries };
+    const areas = await listSeoAreas({ provinceSlug: params.province, districtSlug: params.district, purpose: "RENT" });
+    return { ...data, areas };
   },
   head: ({ loaderData, params }) =>
     searchRouteSeo({
@@ -57,20 +54,6 @@ function Page() {
       <p className="mt-2 text-sm leading-6 text-muted">
         Browse live published rental inventory by property type in {data.locationLabel}.
       </p>
-      {data.typeSummaries.length > 0 ? (
-        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {data.typeSummaries.map((item) => (
-            <a
-              key={item.slug}
-              href={`/rent/${province}/${data.district?.slug}/${item.slug}`}
-              className="rounded-lg border border-line p-4 no-underline hover:border-forest"
-            >
-              <span className="font-semibold text-forest">{item.plural}</span>
-              <span className="mt-1 block text-sm text-muted">{item.count} published listings</span>
-            </a>
-          ))}
-        </div>
-      ) : null}
       <div className="mt-8 space-y-5">
         <div>
           <h3 className="font-semibold text-ink">How do I compare rental properties here?</h3>
