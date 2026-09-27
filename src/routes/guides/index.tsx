@@ -16,6 +16,8 @@ const groups = [
     links: [
       { label: "How to Rent a House in Pakistan", to: "/how-to-rent-a-house-in-pakistan" },
       { label: "Rental Safety Checks", to: "/safety" },
+      { label: "Rental Budget and Hidden Costs", to: "/guides/renting/rental-budget-and-costs-pakistan" },
+      { label: "House vs Flat vs Portion", to: "/guides/renting/house-vs-flat-vs-portion-pakistan" },
     ],
   },
   {
@@ -31,6 +33,7 @@ const groups = [
     title: "Buying",
     description: "Legal and practical guidance for checking property documents, sale agreements, registration and Punjab land records.",
     links: [
+      { label: "How to Buy Property in Pakistan", to: "/guides/buying/how-to-buy-property-in-pakistan" },
       { label: "Property Buying Due Diligence in Pakistan", to: "/guides/buying/property-buying-due-diligence-pakistan" },
       { label: "Fard, Registry and Intiqal in Punjab", to: "/guides/buying/fard-registry-intiqal-punjab" },
       { label: "Sale Agreement and Property Registration", to: "/guides/buying/sale-agreement-registration-pakistan" },
