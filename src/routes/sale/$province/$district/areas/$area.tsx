@@ -37,7 +37,7 @@ export const Route = createFileRoute("/sale/$province/$district/areas/$area")({
 });
 
 function Page() {
-  const { data, area } = Route.useLoaderData();
+  const { data, area, typeSummaries } = Route.useLoaderData();
   const { province, district } = Route.useParams();
   return (
     <ResultsPage
