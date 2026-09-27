@@ -32,6 +32,9 @@ export async function sitemapStaticEntries(): Promise<SitemapEntry[]> {
     { path: "/guides/landlords/landlord-responsibilities-pakistan" },
     { path: "/guides/landlords/security-deposit-rent-terms-pakistan" },
     { path: "/how-to-rent-a-house-in-pakistan" },
+    { path: "/guides/renting/rental-budget-and-costs-pakistan" },
+    { path: "/guides/renting/house-vs-flat-vs-portion-pakistan" },
+    { path: "/guides/buying/how-to-buy-property-in-pakistan" },
     // Empty city/type result pages are excluded from the static sitemap.
     // They enter the location sitemap automatically when real published
     // inventory exists.
