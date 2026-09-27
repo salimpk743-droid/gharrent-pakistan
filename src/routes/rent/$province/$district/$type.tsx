@@ -28,7 +28,7 @@ export const Route = createFileRoute("/rent/$province/$district/$type")({
       },
     });
     if (!data.province || !data.district) throw notFound();
-    const areas = await listSeoAreas({ provinceSlug: params.province, districtSlug: params.district, purpose: "RENT" });
+    const areas = await listSeoAreas({ provinceSlug: params.province, districtSlug: params.district, purpose: "RENT", type: typeFromSlug(params.type) });
     return { ...data, areas };
   },
   head: ({ loaderData, params }) =>
