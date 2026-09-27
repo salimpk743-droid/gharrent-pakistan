@@ -1,7 +1,7 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { ResultsPage } from "@/components/search/results-page";
 import { searchProperties } from "@/lib/server/properties";
-import { getSeoArea, listSeoTypeSummaries } from "@/lib/server/locations";
+import { getSeoArea } from "@/lib/server/locations";
 import { areaRouteSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/sale/$province/$district/areas/$area")({
@@ -21,8 +21,7 @@ export const Route = createFileRoute("/sale/$province/$district/areas/$area")({
         purpose: "SALE",
       },
     });
-    const typeSummaries = await listSeoTypeSummaries({ provinceSlug: params.province, districtSlug: params.district, purpose: "SALE", areaSlug: params.area });
-    return { data, area, typeSummaries };
+    return { data, area };
   },
   head: ({ loaderData, params }) =>
     areaRouteSeo({
@@ -37,7 +36,7 @@ export const Route = createFileRoute("/sale/$province/$district/areas/$area")({
 });
 
 function Page() {
-  const { data, area, typeSummaries } = Route.useLoaderData();
+  const { data, area } = Route.useLoaderData();
   const { province, district } = Route.useParams();
   return (
     <ResultsPage
@@ -51,7 +50,6 @@ function Page() {
       areaSlug={area.slug}
       areaName={area.name}
       purpose="SALE"
-      typeSummaries={typeSummaries}
       title={`Property for Sale in ${area.name}`}
       description={`Browse current properties for sale in ${area.name}. Compare asking price, size and location on Apna Ghar.`}
     />
