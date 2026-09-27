@@ -23,6 +23,7 @@ export function ResultsPage({
   purpose = "RENT",
   title,
   description,
+  intents = [],
 }: {
   items: PublicProperty[];
   total: number;
@@ -35,6 +36,7 @@ export function ResultsPage({
   areaSlug?: string;
   areaName?: string;
   areas?: { slug: string; name: string; count: number }[];
+  intents?: { slug: string; label: string; kind: "budget" | "bedrooms" | "size"; count: number }[];
   purpose?: ListingPurpose;
   title?: string;
   description?: string;
@@ -222,6 +224,35 @@ export function ResultsPage({
                         className="flex items-center justify-between rounded-lg border border-line px-3 py-2 text-sm font-semibold text-forest no-underline hover:border-forest"
                       >
                         <span>{area.name}</span><span className="text-xs text-muted">{area.count}</span>
+                      </Link>
+                    ),
+                  )}
+                </div>
+              </section>
+            ) : null}
+            {intents.length > 0 && provinceSlug && districtSlug && typeSlug ? (
+              <section className="mb-6 rounded-xl border border-line bg-white p-5">
+                <h2 className="font-display text-xl text-ink">Popular ways to search {typeName?.toLowerCase() ?? "properties"}</h2>
+                <p className="mt-1 text-sm text-muted">Browse live inventory by budget, bedrooms and property size.</p>
+                <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                  {intents.slice(0, 18).map((intent) =>
+                    purpose === "SALE" ? (
+                      <Link
+                        key={intent.slug}
+                        to="/sale/$province/$district/$type/$intent"
+                        params={{ province: provinceSlug, district: districtSlug, type: typeSlug, intent: intent.slug }}
+                        className="flex items-center justify-between rounded-lg border border-line px-3 py-2 text-sm font-semibold text-forest no-underline hover:border-forest"
+                      >
+                        <span>{intent.label}</span><span className="text-xs text-muted">{intent.count}</span>
+                      </Link>
+                    ) : (
+                      <Link
+                        key={intent.slug}
+                        to="/rent/$province/$district/$type/$intent"
+                        params={{ province: provinceSlug, district: districtSlug, type: typeSlug, intent: intent.slug }}
+                        className="flex items-center justify-between rounded-lg border border-line px-3 py-2 text-sm font-semibold text-forest no-underline hover:border-forest"
+                      >
+                        <span>{intent.label}</span><span className="text-xs text-muted">{intent.count}</span>
                       </Link>
                     ),
                   )}

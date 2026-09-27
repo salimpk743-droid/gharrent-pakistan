@@ -2,11 +2,11 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { ResultsPage } from "@/components/search/results-page";
 import { searchProperties } from "@/lib/server/properties";
 import { typeFromSlug } from "@/lib/constants";
-import { listSeoAreas, listSeoIntents } from "@/lib/server/locations";
 import { parseRentSearch } from "@/lib/rent-search";
-import { assertCanonicalMarketplacePath, searchRouteSeo } from "@/lib/seo";
+import { assertCanonicalMarketplacePath, publicSeo } from "@/lib/seo";
+import { parseSeoIntent, seoIntentDescription, seoIntentFilters, seoIntentPath, seoIntentTitle, SEO_INTENT_MIN_INDEXABLE } from "@/lib/seo-intent";
 
-export const Route = createFileRoute("/rent/$province/$district/$type")({
+export const Route = createFileRoute("/rent/$province/$district/$type/$intent")({
   validateSearch: parseRentSearch,
   loaderDeps: ({ search: s }) => s,
   beforeLoad: ({ params }) => {
@@ -16,11 +16,16 @@ export const Route = createFileRoute("/rent/$province/$district/$type")({
       district: params.district,
       type: params.type,
     });
+    if (!parseSeoIntent(params.intent, "RENT") || !typeFromSlug(params.type)) throw notFound();
   },
   loader: async ({ params, deps }) => {
+    const intent = parseSeoIntent(params.intent, "RENT");
+    const type = typeFromSlug(params.type);
+    if (!intent || !type) throw notFound();
     const data = await searchProperties({
       data: {
         ...deps,
+        ...seoIntentFilters(intent),
         provinceSlug: params.province,
         districtSlug: params.district,
         typeSlug: params.type,
@@ -28,17 +33,20 @@ export const Route = createFileRoute("/rent/$province/$district/$type")({
       },
     });
     if (!data.province || !data.district) throw notFound();
-    const type = typeFromSlug(params.type);
-    const areas = await listSeoAreas({ provinceSlug: params.province, districtSlug: params.district, purpose: "RENT", type });
-    const intents = type ? await listSeoIntents({ provinceSlug: params.province, districtSlug: params.district, purpose: "RENT", type }) : [];
-    return { ...data, areas, intents };
+    return { ...data, intent, type };
   },
-  head: ({ loaderData, params }) =>
-    searchRouteSeo({
-      purpose: "RENT",
-      params: { province: params.province, district: params.district, type: params.type },
-      data: { ...loaderData, type: typeFromSlug(params.type) ?? loaderData?.type ?? null },
-    }),
+  head: ({ loaderData, params }) => {
+    const intent = loaderData?.intent;
+    const type = loaderData?.type ?? typeFromSlug(params.type);
+    if (!intent || !type) return {};
+    const place = loaderData?.district?.name ?? params.district.replaceAll("-", " ");
+    return publicSeo({
+      title: seoIntentTitle({ purpose: "RENT", place, type, intent }),
+      description: seoIntentDescription({ purpose: "RENT", place, type, intent }),
+      path: seoIntentPath({ purpose: "RENT", province: params.province, district: params.district, type: params.type, intent: params.intent }),
+      index: (loaderData?.total ?? 0) >= SEO_INTENT_MIN_INDEXABLE,
+    });
+  },
   component: Page,
 });
 
@@ -56,8 +64,6 @@ function Page() {
       districtSlug={district}
       typeSlug={type}
       purpose="RENT"
-      areas={data.areas}
-      intents={data.intents}
     />
   );
 }

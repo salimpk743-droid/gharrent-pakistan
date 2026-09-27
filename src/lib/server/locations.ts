@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { getSql } from "@/lib/db";
 import { ensureSeedData } from "./seed";
+import { parseSeoIntent, seoIntentSlugs, SEO_INTENT_MIN_INDEXABLE } from "@/lib/seo-intent";
 
 const PROVINCE_SLUG_ALIASES: Record<string, string> = {
   islamabad: "islamabad-capital-territory",
@@ -103,6 +104,66 @@ export async function listSeoAreas(opts: {
     having count(*) > 0
     order by count(*) desc, a.name asc
   `;
+}
+
+export type SeoIntentSummary = {
+  slug: string;
+  label: string;
+  kind: "budget" | "bedrooms" | "size";
+  count: number;
+};
+
+export async function listSeoIntents(opts: {
+  provinceSlug: string;
+  districtSlug: string;
+  purpose: "RENT" | "SALE";
+  type: string;
+}): Promise<SeoIntentSummary[]> {
+  await ensureSeedData();
+  const sql = await getSql();
+  const intentDefinitions = seoIntentSlugs(opts.purpose).map((slug) => {
+    const intent = parseSeoIntent(slug, opts.purpose);
+    if (!intent) return null;
+    return {
+      slug,
+      kind: intent.kind,
+      value: intent.kind === "budget" ? intent.max : intent.kind === "bedrooms" ? intent.bedrooms : intent.size,
+      unit: intent.kind === "size" ? intent.unit : null,
+      label: intent.label,
+    };
+  }).filter((item): item is NonNullable<typeof item> => Boolean(item));
+  const params: unknown[] = [];
+  const values = intentDefinitions.map((item) => {
+    const start = params.length + 1;
+    params.push(item.slug, item.kind, item.value, item.unit);
+    return `(${start}, ${start + 1}, ${start + 2}, ${start + 3})`;
+  }).join(", ");
+  const rows = await sql.query<{ slug: string; kind: SeoIntentSummary["kind"]; count: number }>(
+    `select i.slug, i.kind, count(*)::int as count
+     from properties p
+     join provinces pr on pr.id = p.province_id
+     join districts d on d.id = p.district_id
+     cross join (values ${values}) as i(slug, kind, value, unit)
+     where p.status = 'PUBLISHED'
+       and p.deleted_at is null
+       and p.is_sample = false
+       and p.listing_purpose = ${params.length + 1}
+       and pr.slug = ${params.length + 2}
+       and d.slug = ${params.length + 3}
+       and p.property_type = ${params.length + 4}
+       and (
+         (i.kind = 'budget' and p.monthly_rent <= i.value::numeric)
+         or (i.kind = 'bedrooms' and p.bedrooms = i.value::int)
+         or (i.kind = 'size' and p.property_size = i.value::numeric and p.size_unit = i.unit)
+       )
+     group by i.slug, i.kind
+     having count(*) >= ${SEO_INTENT_MIN_INDEXABLE}`,
+    [...params, opts.purpose, opts.provinceSlug, opts.districtSlug, opts.type],
+  );
+  const labels = new Map(intentDefinitions.map((item) => [item.slug, item.label]));
+  return rows
+    .map((row) => ({ ...row, label: labels.get(row.slug) ?? row.slug }))
+    .sort((a, b) => b.count - a.count || a.slug.localeCompare(b.slug));
 }
 
 export async function getSeoArea(opts: {

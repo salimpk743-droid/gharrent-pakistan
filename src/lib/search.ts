@@ -13,9 +13,11 @@ export type SearchFilters = {
   minRent?: number;
   maxRent?: number;
   bedrooms?: number;
+  bedroomsExact?: number;
   bathrooms?: number;
   minSize?: number;
   maxSize?: number;
+  sizeUnit?: "MARLA" | "KANAL" | "SQFT" | "SQYARD";
   furnished?: string;
   parking?: boolean;
   family?: boolean;
@@ -47,6 +49,7 @@ export function normalizeSearchFilters(raw: SearchFilters): SearchFilters {
     q: raw.q?.trim() || undefined,
     area: raw.area?.trim() || undefined,
     areaSlug: raw.areaSlug?.trim() || undefined,
+    sizeUnit: raw.sizeUnit,
   };
 }
 
