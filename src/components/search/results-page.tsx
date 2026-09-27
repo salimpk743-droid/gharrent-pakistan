@@ -24,6 +24,7 @@ export function ResultsPage({
   title,
   description,
   intents = [],
+  typeSummaries = [],
 }: {
   items: PublicProperty[];
   total: number;
@@ -37,6 +38,7 @@ export function ResultsPage({
   areaName?: string;
   areas?: { slug: string; name: string; count: number }[];
   intents?: { slug: string; label: string; kind: "budget" | "bedrooms" | "size"; count: number }[];
+  typeSummaries?: { slug: string; plural: string; count: number }[];
   purpose?: ListingPurpose;
   title?: string;
   description?: string;
@@ -230,7 +232,27 @@ export function ResultsPage({
                 </div>
               </section>
             ) : null}
-            {intents.length > 0 && provinceSlug && districtSlug && typeSlug ? (
+            {typeSummaries.length > 0 && provinceSlug && districtSlug && !typeSlug ? (
+              <section className="mb-6 rounded-xl border border-line bg-white p-5">
+                <h2 className="font-display text-xl text-ink">
+                  {purpose === "SALE" ? "Property types for sale" : "Property types for rent"} in {locationLabel}
+                </h2>
+                <p className="mt-1 text-sm text-muted">Browse live published inventory by property type.</p>
+                <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                  {typeSummaries.map((item) => (
+                    <Link
+                      key={item.slug}
+                      to={purpose === "SALE" ? "/sale/$province/$district/$type" : "/rent/$province/$district/$type"}
+                      params={{ province: provinceSlug, district: districtSlug, type: item.slug }}
+                      className="flex items-center justify-between rounded-lg border border-line px-3 py-2 text-sm font-semibold text-forest no-underline hover:border-forest"
+                    >
+                      <span>{item.plural}</span><span className="text-xs text-muted">{item.count}</span>
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            ) : null}
+                        {intents.length > 0 && provinceSlug && districtSlug && typeSlug ? (
               <section className="mb-6 rounded-xl border border-line bg-white p-5">
                 <h2 className="font-display text-xl text-ink">Popular ways to search {typeName?.toLowerCase() ?? "properties"}</h2>
                 <p className="mt-1 text-sm text-muted">Browse live inventory by budget, bedrooms and property size.</p>
@@ -366,6 +388,46 @@ export function ResultsPage({
                   Read the Pakistan rental guide
                 </Link>
               ) : null}
+            </div>
+          </section>
+        ) : null}
+        {provinceSlug && districtSlug && ( 
+          <section className="mt-10 max-w-4xl rounded-xl border border-line bg-white p-6">
+            <h2 className="font-display text-2xl text-ink">
+              {areaName ? `About ${areaName}` : `About properties in ${locationLabel}`}
+            </h2>
+            <div className="mt-5 space-y-5">
+              <div>
+                <h3 className="font-semibold text-ink">What property types can I find here?</h3>
+                <p className="mt-1 text-sm leading-6 text-muted">
+                  Apna Ghar groups published listings by property type, so you can move from this location page into live houses, apartments, portions, plots and other available categories.
+                </p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-ink">{purpose === "SALE" ? "How should I compare properties for sale?" : "How should I compare rental properties?"}</h3>
+                <p className="mt-1 text-sm leading-6 text-muted">
+                  Compare the asking price or monthly rent, property size, bedrooms where available, location and listing details before contacting the advertiser.
+                </p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-ink">Where can I get practical property guidance?</h3>
+                <p className="mt-1 text-sm leading-6 text-muted">
+                  {purpose === "SALE"
+                    ? "Use the property-buying checklist for search, document checks, agreement, payment, registration and handover."
+                    : "Use the rental guides for budgeting, choosing between houses, flats and portions, rental agreements and practical safety checks."}
+                </p>
+                <div className="mt-3 flex flex-wrap gap-3 text-sm">
+                  {purpose === "SALE" ? (
+                    <Link to="/guides/buying/how-to-buy-property-in-pakistan" className="font-semibold text-forest underline">Property-buying checklist</Link>
+                  ) : (
+                    <>
+                      <Link to="/guides/renting/rental-budget-and-costs-pakistan" className="font-semibold text-forest underline">Rental budget guide</Link>
+                      <Link to="/guides/renting/house-vs-flat-vs-portion-pakistan" className="font-semibold text-forest underline">House vs flat vs portion</Link>
+                      <Link to="/how-to-rent-a-house-in-pakistan" className="font-semibold text-forest underline">How to rent a house</Link>
+                    </>
+                  )}
+                </div>
+              </div>
             </div>
           </section>
         ) : null}
