@@ -169,6 +169,51 @@ export async function listSeoIntents(opts: {
     .sort((a, b) => b.count - a.count || a.slug.localeCompare(b.slug));
 }
 
+export type SeoTypeSummary = {
+  type: import("@/lib/constants").PropertyType;
+  slug: string;
+  plural: string;
+  count: number;
+};
+
+export async function listSeoTypeSummaries(opts: {
+  provinceSlug: string;
+  districtSlug: string;
+  purpose: "RENT" | "SALE";
+  areaSlug?: string;
+}): Promise<SeoTypeSummary[]> {
+  await ensureSeedData();
+  const sql = await getSql();
+  const rows = await sql<{
+    property_type: import("@/lib/constants").PropertyType;
+    count: number;
+  }>`
+    select p.property_type, count(*)::int as count
+    from properties p
+    join provinces pr on pr.id = p.province_id
+    join districts d on d.id = p.district_id
+    left join areas a on a.id = p.area_id
+    where p.status = 'PUBLISHED'
+      and p.deleted_at is null
+      and p.is_sample = false
+      and p.listing_purpose = ${opts.purpose}
+      and pr.slug = ${opts.provinceSlug}
+      and d.slug = ${opts.districtSlug}
+      ${opts.areaSlug ? sql`and a.slug = ${opts.areaSlug}` : sql``}
+    group by p.property_type
+    order by count(*) desc
+  `;
+  const { PROPERTY_TYPE_META } = await import("@/lib/constants");
+  return rows
+    .filter((row) => PROPERTY_TYPE_META[row.property_type])
+    .map((row) => ({
+      type: row.property_type,
+      slug: PROPERTY_TYPE_META[row.property_type].slug,
+      plural: PROPERTY_TYPE_META[row.property_type].plural,
+      count: row.count,
+    }));
+}
+
 export async function getSeoArea(opts: {
   provinceSlug: string;
   districtSlug: string;
