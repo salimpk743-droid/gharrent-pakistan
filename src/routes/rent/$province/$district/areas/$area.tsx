@@ -35,7 +35,8 @@ export const Route = createFileRoute("/rent/$province/$district/areas/$area")({
         purpose: "RENT",
       },
     });
-    return { data, area };
+    const typeSummaries = await listSeoTypeSummaries({ provinceSlug: params.province, districtSlug: params.district, purpose: "RENT", areaSlug: params.area });
+    return { data, area, typeSummaries };
   },
   head: ({ loaderData, params }) =>
     areaRouteSeo({
@@ -64,6 +65,7 @@ function Page() {
       areaSlug={area.slug}
       areaName={area.name}
       purpose="RENT"
+      typeSummaries={typeSummaries}
       title={`Property for Rent in ${area.name}`}
       description={`Browse current properties for rent in ${area.name}. Compare monthly rent, size and location on Apna Ghar.`}
     />
