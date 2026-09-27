@@ -24,7 +24,6 @@ export function ResultsPage({
   title,
   description,
   intents = [],
-  typeSummaries = [],
 }: {
   items: PublicProperty[];
   total: number;
@@ -38,7 +37,6 @@ export function ResultsPage({
   areaName?: string;
   areas?: { slug: string; name: string; count: number }[];
   intents?: { slug: string; label: string; kind: "budget" | "bedrooms" | "size"; count: number }[];
-  typeSummaries?: { slug: string; plural: string; count: number }[];
   purpose?: ListingPurpose;
   title?: string;
   description?: string;
@@ -232,38 +230,7 @@ export function ResultsPage({
                 </div>
               </section>
             ) : null}
-            {typeSummaries.length > 0 && provinceSlug && districtSlug && !typeSlug ? (
-              <section className="mb-6 rounded-xl border border-line bg-white p-5">
-                <h2 className="font-display text-xl text-ink">
-                  {purpose === "SALE" ? "Property types for sale" : "Property types for rent"} in {locationLabel}
-                </h2>
-                <p className="mt-1 text-sm text-muted">Browse live published inventory by property type.</p>
-                <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                  {typeSummaries.map((item) => (
-                    purpose === "SALE" ? (
-                      <Link
-                        key={item.slug}
-                        to="/sale/$province/$district/$type"
-                        params={{ province: provinceSlug, district: districtSlug, type: item.slug }}
-                        className="flex items-center justify-between rounded-lg border border-line px-3 py-2 text-sm font-semibold text-forest no-underline hover:border-forest"
-                      >
-                        <span>{item.plural}</span><span className="text-xs text-muted">{item.count}</span>
-                      </Link>
-                    ) : (
-                      <Link
-                        key={item.slug}
-                        to="/rent/$province/$district/$type"
-                        params={{ province: provinceSlug, district: districtSlug, type: item.slug }}
-                        className="flex items-center justify-between rounded-lg border border-line px-3 py-2 text-sm font-semibold text-forest no-underline hover:border-forest"
-                      >
-                        <span>{item.plural}</span><span className="text-xs text-muted">{item.count}</span>
-                      </Link>
-                    )
-                  ))}
-                </div>
-              </section>
-            ) : null}
-                        {intents.length > 0 && provinceSlug && districtSlug && typeSlug ? (
+            {intents.length > 0 && provinceSlug && districtSlug && typeSlug ? (
               <section className="mb-6 rounded-xl border border-line bg-white p-5">
                 <h2 className="font-display text-xl text-ink">Popular ways to search {typeName?.toLowerCase() ?? "properties"}</h2>
                 <p className="mt-1 text-sm text-muted">Browse live inventory by budget, bedrooms and property size.</p>
@@ -402,7 +369,7 @@ export function ResultsPage({
             </div>
           </section>
         ) : null}
-        {provinceSlug && districtSlug && ( 
+        {provinceSlug && districtSlug && (
           <section className="mt-10 max-w-4xl rounded-xl border border-line bg-white p-6">
             <h2 className="font-display text-2xl text-ink">
               {areaName ? `About ${areaName}` : `About properties in ${locationLabel}`}
