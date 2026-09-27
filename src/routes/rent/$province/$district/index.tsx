@@ -1,7 +1,7 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { ResultsPage } from "@/components/search/results-page";
 import { searchProperties } from "@/lib/server/properties";
-import { listSeoAreas } from "@/lib/server/locations";
+import { listSeoAreas, listSeoTypeSummaries } from "@/lib/server/locations";
 import { typeToSlug } from "@/lib/constants";
 import { parseRentSearch } from "@/lib/rent-search";
 import { assertCanonicalMarketplacePath, searchRouteSeo } from "@/lib/seo";
@@ -21,8 +21,11 @@ export const Route = createFileRoute("/rent/$province/$district/")({
       data: { ...deps, provinceSlug: params.province, districtSlug: params.district, purpose: "RENT" },
     });
     if (!data.province || !data.district) throw notFound();
-    const areas = await listSeoAreas({ provinceSlug: params.province, districtSlug: params.district, purpose: "RENT" });
-    return { ...data, areas };
+    const [areas, typeSummaries] = await Promise.all([
+      listSeoAreas({ provinceSlug: params.province, districtSlug: params.district, purpose: "RENT" }),
+      listSeoTypeSummaries({ provinceSlug: params.province, districtSlug: params.district, purpose: "RENT" }),
+    ]);
+    return { ...data, areas, typeSummaries };
   },
   head: ({ loaderData, params }) =>
     searchRouteSeo({
