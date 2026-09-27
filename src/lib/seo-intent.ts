@@ -105,7 +105,7 @@ export function parseSeoIntent(slug: string, purpose: ListingPurpose): SeoIntent
 
 export function seoIntentFilters(intent: SeoIntent) {
   if (intent.kind === "budget") return { maxRent: intent.max };
-  if (intent.kind === "bedrooms") return { bedrooms: intent.bedrooms };
+  if (intent.kind === "bedrooms") return { bedroomsExact: intent.bedrooms };
   return { minSize: intent.size, maxSize: intent.size, sizeUnit: intent.unit };
 }
 
