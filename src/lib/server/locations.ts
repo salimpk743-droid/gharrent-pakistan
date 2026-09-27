@@ -3,6 +3,7 @@ import { z } from "zod";
 import { getSql } from "@/lib/db";
 import { ensureSeedData } from "./seed";
 import { parseSeoIntent, seoIntentSlugs, SEO_INTENT_MIN_INDEXABLE, SEO_AREA_INTENT_MIN_INDEXABLE } from "@/lib/seo-intent";
+import { PROPERTY_TYPE_META, type PropertyType } from "@/lib/constants";
 
 const PROVINCE_SLUG_ALIASES: Record<string, string> = {
   islamabad: "islamabad-capital-territory",
@@ -170,7 +171,7 @@ export async function listSeoIntents(opts: {
 }
 
 export type SeoTypeSummary = {
-  type: import("@/lib/constants").PropertyType;
+  type: PropertyType;
   slug: string;
   plural: string;
   count: number;
@@ -185,7 +186,7 @@ export async function listSeoTypeSummaries(opts: {
   await ensureSeedData();
   const sql = await getSql();
   const rows = await sql<{
-    property_type: import("@/lib/constants").PropertyType;
+    property_type: PropertyType;
     count: number;
   }>`
     select p.property_type, count(*)::int as count
@@ -203,7 +204,6 @@ export async function listSeoTypeSummaries(opts: {
     group by p.property_type
     order by count(*) desc
   `;
-  const { PROPERTY_TYPE_META } = await import("@/lib/constants");
   return rows
     .filter((row) => PROPERTY_TYPE_META[row.property_type])
     .map((row) => ({
