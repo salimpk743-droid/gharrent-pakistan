@@ -127,7 +127,7 @@ export async function sitemapLocationEntries(): Promise<SitemapEntry[]> {
   const intentValues = intentDefinitions.map((item) => {
     const start = intentParams.length + 1;
     intentParams.push(item.purpose, item.slug, item.kind, item.value, item.unit);
-    return `(${start}, ${start + 1}, ${start + 2}, ${start + 3}, ${start + 4})`;
+    return "(" + [start, start + 1, start + 2, start + 3, start + 4].map((n) => "$" + n).join(", ") + ")";
   }).join(", ");
   const intentRows = await sql.query<{
     pslug: string;
