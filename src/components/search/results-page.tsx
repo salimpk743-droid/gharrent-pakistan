@@ -17,6 +17,9 @@ export function ResultsPage({
   provinceSlug,
   districtSlug,
   typeSlug,
+  areaSlug,
+  areaName,
+  areas = [],
   purpose = "RENT",
   title,
   description,
@@ -29,6 +32,9 @@ export function ResultsPage({
   provinceSlug?: string;
   districtSlug?: string;
   typeSlug?: string;
+  areaSlug?: string;
+  areaName?: string;
+  areas?: { slug: string; name: string; count: number }[];
   purpose?: ListingPurpose;
   title?: string;
   description?: string;
@@ -59,6 +65,8 @@ export function ResultsPage({
           districtName,
           typeSlug,
           typeName,
+          areaSlug,
+          areaName,
         })}
       />
       {items.length > 0 ? <JsonLd data={resultsItemListJsonLd(items)} /> : null}
