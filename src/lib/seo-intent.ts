@@ -1,6 +1,7 @@
 import { PROPERTY_TYPE_META, type ListingPurpose, type PropertyType } from "@/lib/constants";
 
 export const SEO_INTENT_MIN_INDEXABLE = 3;
+export const SEO_AREA_INTENT_MIN_INDEXABLE = 5;
 
 type BudgetIntent = {
   kind: "budget";
@@ -137,6 +138,18 @@ export function seoIntentDescription(opts: {
     return `Browse ${opts.intent.label} ${typeName} for ${purpose} in ${opts.place}. Compare current listings, price, size and location on Apna Ghar.`;
   }
   return `Browse ${opts.intent.label} ${typeName} for ${purpose} in ${opts.place}. Compare current listings, price, size and location on Apna Ghar.`;
+}
+
+export function seoAreaIntentPath(opts: {
+  purpose: ListingPurpose;
+  province: string;
+  district: string;
+  area: string;
+  type: string;
+  intent: string;
+}) {
+  const base = opts.purpose === "SALE" ? "sale" : "rent";
+  return `/${base}/${opts.province}/${opts.district}/areas/${opts.area}/${opts.type}/${opts.intent}`;
 }
 
 export function seoIntentPath(opts: {
