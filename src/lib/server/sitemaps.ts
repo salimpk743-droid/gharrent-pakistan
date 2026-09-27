@@ -67,6 +67,8 @@ export async function sitemapLocationEntries(): Promise<SitemapEntry[]> {
   `;
   const city = new Map<string, string | Date | null>();
   const type = new Map<string, string | Date | null>();
+  const area = new Map<string, string | Date | null>();
+  const areaType = new Map<string, string | Date | null>();
   for (const row of rows) {
     const purposePath = row.purpose === "SALE" ? "sale" : "rent";
     const cityPath = `/${purposePath}/${row.pslug}/${row.dslug}`;
@@ -75,9 +77,43 @@ export async function sitemapLocationEntries(): Promise<SitemapEntry[]> {
     const typeSlug = PROPERTY_TYPE_META[row.ptype as PropertyType]?.slug;
     if (typeSlug) type.set(`${cityPath}/${typeSlug}`, row.lastmod);
   }
+
+  const areaRows = await sql<{
+    pslug: string;
+    dslug: string;
+    aslug: string;
+    purpose: string;
+    ptype: string;
+    lastmod: string | Date | null;
+  }>`
+    select
+      pr.slug as pslug,
+      d.slug as dslug,
+      a.slug as aslug,
+      p.listing_purpose as purpose,
+      p.property_type as ptype,
+      max(p.updated_at::date) as lastmod
+    from properties p
+    join districts d on d.id = p.district_id
+    join provinces pr on pr.id = d.province_id
+    join areas a on a.id = p.area_id
+    where p.status = 'PUBLISHED' and p.deleted_at is null and p.is_sample = false
+    group by pr.slug, d.slug, a.slug, p.listing_purpose, p.property_type
+  `;
+  for (const row of areaRows) {
+    const purposePath = row.purpose === "SALE" ? "sale" : "rent";
+    const areaPath = `/${purposePath}/${row.pslug}/${row.dslug}/areas/${row.aslug}`;
+    const prevArea = area.get(areaPath);
+    if (!prevArea) area.set(areaPath, row.lastmod);
+    const typeSlug = PROPERTY_TYPE_META[row.ptype as PropertyType]?.slug;
+    if (typeSlug) areaType.set(`${areaPath}/${typeSlug}`, row.lastmod);
+  }
+
   return [
     ...[...city.entries()].map(([path, lastmod]) => ({ path, lastmod })),
     ...[...type.entries()].map(([path, lastmod]) => ({ path, lastmod })),
+    ...[...area.entries()].map(([path, lastmod]) => ({ path, lastmod })),
+    ...[...areaType.entries()].map(([path, lastmod]) => ({ path, lastmod })),
   ];
 }
 
