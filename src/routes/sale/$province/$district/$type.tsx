@@ -2,7 +2,7 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { ResultsPage } from "@/components/search/results-page";
 import { searchProperties } from "@/lib/server/properties";
 import { typeFromSlug } from "@/lib/constants";
-import { listSeoAreas } from "@/lib/server/locations";
+import { listSeoAreas, listSeoIntents } from "@/lib/server/locations";
 import { parseMarketplaceSearch } from "@/lib/rent-search";
 import { assertCanonicalMarketplacePath, searchRouteSeo } from "@/lib/seo";
 
@@ -28,8 +28,10 @@ export const Route = createFileRoute("/sale/$province/$district/$type")({
       },
     });
     if (!data.province || !data.district) throw notFound();
-    const areas = await listSeoAreas({ provinceSlug: params.province, districtSlug: params.district, purpose: "SALE", type: typeFromSlug(params.type) });
-    return { ...data, areas };
+    const type = typeFromSlug(params.type);
+    const areas = await listSeoAreas({ provinceSlug: params.province, districtSlug: params.district, purpose: "SALE", type });
+    const intents = type ? await listSeoIntents({ provinceSlug: params.province, districtSlug: params.district, purpose: "SALE", type }) : [];
+    return { ...data, areas, intents };
   },
   head: ({ loaderData, params }) =>
     searchRouteSeo({
@@ -55,6 +57,7 @@ function Page() {
       typeSlug={type}
       purpose="SALE"
       areas={data.areas}
+      intents={data.intents}
     />
   );
 }
