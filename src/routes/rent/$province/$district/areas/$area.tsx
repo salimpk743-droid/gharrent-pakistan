@@ -93,7 +93,7 @@ function Page() {
             <><a href="/guides/renting/rental-budget-and-costs-pakistan" className="font-semibold text-forest underline">Rental budget guide</a><a href="/guides/renting/house-vs-flat-vs-portion-pakistan" className="font-semibold text-forest underline">House vs flat vs portion</a><a href="/how-to-rent-a-house-in-pakistan" className="font-semibold text-forest underline">How to rent a house</a></>
           </div>
         </div>
-        <div><a href="/rent/${province}/${district}" className="font-semibold text-forest underline">View all properties for rent in {district}</a></div>
+        <div><a href={`/rent/${province}/${district}`} className="font-semibold text-forest underline">View all properties for rent in {district}</a></div>
       </div>
     </section>
     </div>

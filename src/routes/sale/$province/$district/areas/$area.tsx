@@ -79,7 +79,7 @@ function Page() {
             <a href="/guides/buying/how-to-buy-property-in-pakistan" className="font-semibold text-forest underline">Property-buying checklist</a>
           </div>
         </div>
-        <div><a href="/sale/${province}/${district}" className="font-semibold text-forest underline">View all properties for sale in {district}</a></div>
+        <div><a href={`/sale/${province}/${district}`} className="font-semibold text-forest underline">View all properties for sale in {district}</a></div>
       </div>
     </section>
     </div>
