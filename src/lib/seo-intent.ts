@@ -1,4 +1,4 @@
-import { PROPERTY_TYPE_META, type ListingPurpose, type PropertyType, typeFromSlug } from "@/lib/constants";
+import { PROPERTY_TYPE_META, type ListingPurpose, type PropertyType } from "@/lib/constants";
 
 export const SEO_INTENT_MIN_INDEXABLE = 3;
 
@@ -81,7 +81,7 @@ export function parseSeoIntent(slug: string, purpose: ListingPurpose): SeoIntent
     };
   }
 
-  const bedroomMatch = /^(\\d+)-bedrooms$/.exec(slug);
+  const bedroomMatch = /^(\d+)-bedrooms$/.exec(slug);
   if (bedroomMatch) {
     const bedrooms = Number(bedroomMatch[1]);
     if (BEDROOMS.includes(bedrooms as (typeof BEDROOMS)[number])) {
@@ -150,11 +150,3 @@ export function seoIntentPath(opts: {
   return `/${base}/${opts.province}/${opts.district}/${opts.type}/${opts.intent}`;
 }
 
-export function seoIntentAllowedType(intent: SeoIntent): boolean {
-  if (intent.kind === "size") return true;
-  return true;
-}
-
-export function seoIntentCanonicalType(typeSlug: string | undefined) {
-  return typeFromSlug(typeSlug);
-}
