@@ -77,7 +77,7 @@ export type SeoArea = {
   lastmod: string | Date | null;
 };
 
-export async function listSeoAreas(opts: {
+async function listSeoAreasQuery(opts: {
   provinceSlug: string;
   districtSlug: string;
   purpose: "RENT" | "SALE";
@@ -114,6 +114,30 @@ export async function listSeoAreas(opts: {
   );
 }
 
+// Route loaders also run in the browser. These must be server functions so a
+// city click does not call getSql() from client code.
+const listSeoAreasFn = createServerFn({ method: "GET" })
+  .validator((data: unknown) =>
+    z
+      .object({
+        provinceSlug: z.string().min(1),
+        districtSlug: z.string().min(1),
+        purpose: z.enum(["RENT", "SALE"]),
+        type: z.string().nullable().optional(),
+      })
+      .parse(data),
+  )
+  .handler(async ({ data }) => listSeoAreasQuery(data));
+
+export function listSeoAreas(opts: {
+  provinceSlug: string;
+  districtSlug: string;
+  purpose: "RENT" | "SALE";
+  type?: string | null;
+}) {
+  return listSeoAreasFn({ data: opts });
+}
+
 export type SeoIntentSummary = {
   slug: string;
   label: string;
@@ -121,7 +145,7 @@ export type SeoIntentSummary = {
   count: number;
 };
 
-export async function listSeoIntents(opts: {
+async function listSeoIntentsQuery(opts: {
   provinceSlug: string;
   districtSlug: string;
   purpose: "RENT" | "SALE";
@@ -160,7 +184,7 @@ export async function listSeoIntents(opts: {
        and p.listing_purpose = $${params.length + 1}
        and pr.slug = $${params.length + 2}
        and d.slug = $${params.length + 3}
-       and p.property_type = ${params.length + 4}
+       and p.property_type = $${params.length + 4}
        ${opts.areaSlug ? "and a.slug = $" + (params.length + 5) : ""}
        and (
          (i.kind = 'budget' and p.monthly_rent <= i.value::numeric)
@@ -177,7 +201,31 @@ export async function listSeoIntents(opts: {
     .sort((a, b) => b.count - a.count || a.slug.localeCompare(b.slug));
 }
 
-export async function getSeoArea(opts: {
+const listSeoIntentsFn = createServerFn({ method: "GET" })
+  .validator((data: unknown) =>
+    z
+      .object({
+        provinceSlug: z.string().min(1),
+        districtSlug: z.string().min(1),
+        purpose: z.enum(["RENT", "SALE"]),
+        type: z.string().min(1),
+        areaSlug: z.string().optional(),
+      })
+      .parse(data),
+  )
+  .handler(async ({ data }) => listSeoIntentsQuery(data));
+
+export function listSeoIntents(opts: {
+  provinceSlug: string;
+  districtSlug: string;
+  purpose: "RENT" | "SALE";
+  type: string;
+  areaSlug?: string;
+}) {
+  return listSeoIntentsFn({ data: opts });
+}
+
+async function getSeoAreaQuery(opts: {
   provinceSlug: string;
   districtSlug: string;
   areaSlug: string;
@@ -195,6 +243,26 @@ export async function getSeoArea(opts: {
     limit 1
   `;
   return rows[0] ?? null;
+}
+
+const getSeoAreaFn = createServerFn({ method: "GET" })
+  .validator((data: unknown) =>
+    z
+      .object({
+        provinceSlug: z.string().min(1),
+        districtSlug: z.string().min(1),
+        areaSlug: z.string().min(1),
+      })
+      .parse(data),
+  )
+  .handler(async ({ data }) => getSeoAreaQuery(data));
+
+export function getSeoArea(opts: {
+  provinceSlug: string;
+  districtSlug: string;
+  areaSlug: string;
+}) {
+  return getSeoAreaFn({ data: opts });
 }
 
 export async function resolveLocation(slugs: {
