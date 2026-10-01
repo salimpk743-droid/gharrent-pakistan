@@ -8,8 +8,8 @@ export function Footer() {
         <div>
           <Brand />
           <p className="mt-3 max-w-xs text-xs leading-relaxed text-muted">
-            A property marketplace that helps people discover homes to rent or buy across Pakistan. Listings are
-            posted by advertisers. Always inspect a property before you pay.
+            A private property marketplace for homes to rent or buy across Pakistan. Not the government housing-loan
+            scheme. Listings are posted by advertisers. Always inspect a property before you pay.
           </p>
         </div>
         <div>
@@ -22,6 +22,7 @@ export function Footer() {
         </div>
         <div>
           <b className="mb-3 block text-[11px]">Help</b>
+          <FooterLink to="/guides">Guides</FooterLink>
           <FooterLink to="/safety">Safer buying & renting</FooterLink>
           <FooterLink to="/how-to-rent-a-house-in-pakistan">How to rent a house</FooterLink>
           <FooterLink to="/contact">Contact us</FooterLink>

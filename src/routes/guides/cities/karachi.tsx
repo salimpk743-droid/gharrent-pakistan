@@ -133,6 +133,13 @@ function Page() {
         </div>
 
         <p>
+          For reported 2026 asking rents and sale ranges, see{" "}
+          <a href="/guides/where-can-i-rent-an-affordable-home-in-karachi">where you can rent an affordable home in Karachi</a>
+          {" "}and{" "}
+          <a href="/guides/where-can-i-buy-an-affordable-home-in-karachi">where you can buy an affordable home in Karachi</a>.
+        </p>
+
+        <p>
           Karachi needs a more detailed guide than a simple list of neighbourhoods. The city has major apartment,
           house and portion markets, established central areas, premium coastal districts and large planned
           developments. The right comparison depends on your budget, property type, commute, household needs and the

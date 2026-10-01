@@ -39,6 +39,9 @@ function HomePage() {
           <p className="mt-3 max-w-xl text-[15px] text-[#e5efea]">
             {APP_TAGLINE} Pick a province, city and area, then narrow it down by property type and budget.
           </p>
+          <p className="mt-2 max-w-xl text-[12px] text-[#d5e4dc]">
+            Apna Ghar is a private marketplace. It is not the government housing-loan scheme at apnaghar.gov.pk.
+          </p>
           <div className="mt-6 min-w-0 max-w-[900px]">
             <SearchBox />
           </div>
@@ -54,6 +57,27 @@ function HomePage() {
                 {c.label}
               </Link>
             ))}
+          </div>
+          <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2 text-[11px] text-[#e8f0ec]">
+            <strong>Guides:</strong>
+            <a href="/guides/where-can-i-rent-an-affordable-home-in-lahore" className="border-b border-white/45 text-white no-underline">
+              Rent in Lahore
+            </a>
+            <a href="/guides/where-can-i-rent-an-affordable-home-in-karachi" className="border-b border-white/45 text-white no-underline">
+              Rent in Karachi
+            </a>
+            <a href="/guides/where-can-i-rent-an-affordable-home-in-islamabad" className="border-b border-white/45 text-white no-underline">
+              Rent in Islamabad
+            </a>
+            <a href="/guides/where-can-i-rent-an-affordable-home-in-rawalpindi" className="border-b border-white/45 text-white no-underline">
+              Rent in Rawalpindi
+            </a>
+            <a href="/guides/where-can-i-buy-an-affordable-home-in-pakistan" className="border-b border-white/45 text-white no-underline">
+              Buy a home
+            </a>
+            <a href="/guides" className="border-b border-white/45 text-white no-underline">
+              All guides
+            </a>
           </div>
         </div>
         <div className="absolute bottom-4 right-6 hidden text-[10px] text-[#d9e8e0] md:block">
@@ -97,11 +121,21 @@ function HomePage() {
           <p className="text-[10px] font-extrabold tracking-[0.16em] text-forest">LATEST HOMES</p>
           <h2 className="font-display mt-1 text-3xl tracking-tight">Homes to explore</h2>
           <p className="mt-1 text-xs text-muted">Latest published rent and sale listings from across Pakistan.</p>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {data.latest.map((p) => (
-              <PropertyCard key={p.id} property={p} />
-            ))}
-          </div>
+          {data.latest.length === 0 ? (
+            <p className="mt-6 text-sm text-muted">
+              No homes are published yet. Landlords can post a property, or read the{" "}
+              <a className="font-semibold text-forest" href="/guides">
+                rent and sale guides
+              </a>
+              .
+            </p>
+          ) : (
+            <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {data.latest.map((p) => (
+                <PropertyCard key={p.id} property={p} />
+              ))}
+            </div>
+          )}
           <div className="mt-8 text-center">
             <Link
               to="/rent"

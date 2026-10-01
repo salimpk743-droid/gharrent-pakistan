@@ -53,6 +53,12 @@ function Page() {
           requirements can change, so confirm current details before signing an agreement or paying money.
         </div>
         <p>
+          For where to look, and which prices this site will not invent, see{" "}
+          <a href="/guides/where-can-i-rent-an-affordable-home-in-rawalpindi">where you can rent an affordable home in Rawalpindi</a>
+          {" "}and{" "}
+          <a href="/guides/where-can-i-buy-an-affordable-home-in-rawalpindi">where you can buy an affordable home in Rawalpindi</a>.
+        </p>
+        <p>
           Rawalpindi is one of Pakistan’s major urban rental markets and is closely connected to Islamabad. For a
           renter, the useful starting points are the part of the city you need, the property type, the size of home,
           and the total monthly budget rather than rent alone.

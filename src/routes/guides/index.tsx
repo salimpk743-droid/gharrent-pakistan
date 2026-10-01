@@ -11,6 +11,22 @@ export const Route = createFileRoute("/guides/")({
 
 const groups = [
   {
+    title: "Affordable homes",
+    description: "Question-and-answer guides with reported 2026 asking ranges. Figures are labelled by source. They are not quotes.",
+    links: [
+      { label: "Where can I rent an affordable home in Pakistan?", to: "/guides/where-can-i-rent-an-affordable-home-in-pakistan" },
+      { label: "Where can I rent an affordable home in Lahore?", to: "/guides/where-can-i-rent-an-affordable-home-in-lahore" },
+      { label: "Where can I rent an affordable home in Karachi?", to: "/guides/where-can-i-rent-an-affordable-home-in-karachi" },
+      { label: "Where can I rent an affordable home in Islamabad?", to: "/guides/where-can-i-rent-an-affordable-home-in-islamabad" },
+      { label: "Where can I rent an affordable home in Rawalpindi?", to: "/guides/where-can-i-rent-an-affordable-home-in-rawalpindi" },
+      { label: "Where can I buy an affordable home in Pakistan?", to: "/guides/where-can-i-buy-an-affordable-home-in-pakistan" },
+      { label: "Where can I buy an affordable home in Lahore?", to: "/guides/where-can-i-buy-an-affordable-home-in-lahore" },
+      { label: "Where can I buy an affordable home in Karachi?", to: "/guides/where-can-i-buy-an-affordable-home-in-karachi" },
+      { label: "Where can I buy an affordable home in Islamabad?", to: "/guides/where-can-i-buy-an-affordable-home-in-islamabad" },
+      { label: "Where can I buy an affordable home in Rawalpindi?", to: "/guides/where-can-i-buy-an-affordable-home-in-rawalpindi" },
+    ],
+  },
+  {
     title: "Renting",
     description: "Practical help for finding, checking and renting a home in Pakistan.",
     links: [
@@ -69,7 +85,8 @@ function Page() {
       <LegalPage eyebrow="PROPERTY & RENTAL GUIDES" title="Property & Rental Guides in Pakistan">
         <p>
           Practical information for renters, property owners and people researching the Pakistan property market.
-          These guides are designed to answer useful questions, explain practical and legal considerations, and connect you with live Apna Ghar property listings.
+          These guides answer common rent and sale questions with sourced figures, then connect you to live Apna Ghar
+          listings when a landlord has published one.
         </p>
         <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
           {groups.map((group) => (

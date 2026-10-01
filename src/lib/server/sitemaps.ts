@@ -1,5 +1,6 @@
 import { getSql } from "@/lib/db";
 import { PROPERTY_TYPE_META, type PropertyType } from "@/lib/constants";
+import { QUESTION_GUIDE_PATHS } from "@/lib/question-guides";
 import {
   LISTING_SITEMAP_CHUNK,
   listingSitemapPages,
@@ -15,13 +16,23 @@ async function readySql() {
 
 export async function sitemapStaticEntries(): Promise<SitemapEntry[]> {
   const sql = await readySql();
-  const provinces = await sql<{ slug: string }>`select slug from provinces order by sort_order`;
+  const live = await sql<{ purpose: string; slug: string }>`
+    select distinct p.listing_purpose as purpose, pr.slug as slug
+    from properties p
+    join provinces pr on pr.id = p.province_id
+    where p.status = 'PUBLISHED'
+      and p.deleted_at is null
+      and p.is_sample = false
+  `;
+  const rentProvinces = [...new Set(live.filter((row) => row.purpose === "RENT").map((row) => row.slug))];
+  const saleProvinces = [...new Set(live.filter((row) => row.purpose === "SALE").map((row) => row.slug))];
   return [
     { path: "/" },
-    { path: "/rent" },
-    { path: "/sale" },
+    ...(rentProvinces.length > 0 ? [{ path: "/rent" }] : []),
+    ...(saleProvinces.length > 0 ? [{ path: "/sale" }] : []),
     { path: "/locations" },
     { path: "/guides" },
+    ...QUESTION_GUIDE_PATHS.map((path) => ({ path })),
     { path: "/guides/cities/rawalpindi" },
     { path: "/guides/cities/lahore" },
     { path: "/guides/cities/karachi" },
@@ -35,16 +46,17 @@ export async function sitemapStaticEntries(): Promise<SitemapEntry[]> {
     { path: "/guides/renting/rental-budget-and-costs-pakistan" },
     { path: "/guides/renting/house-vs-flat-vs-portion-pakistan" },
     { path: "/guides/buying/how-to-buy-property-in-pakistan" },
-    // Empty city/type result pages are excluded from the static sitemap.
-    // They enter the location sitemap automatically when real published
-    // inventory exists.
+    // Empty rent and sale URLs are soft 404s. A province enters this sitemap
+    // only when it has a real published listing. City and area URLs are added
+    // by sitemapLocationEntries on the same rule.
     { path: "/safety" },
     { path: "/privacy" },
     { path: "/terms" },
     { path: "/disclaimer" },
     { path: "/contact" },
     { path: "/account-deletion" },
-    ...provinces.flatMap((p) => [{ path: `/rent/${p.slug}` }, { path: `/sale/${p.slug}` }]),
+    ...rentProvinces.map((slug) => ({ path: `/rent/${slug}` })),
+    ...saleProvinces.map((slug) => ({ path: `/sale/${slug}` })),
   ];
 }
 

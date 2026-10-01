@@ -26,7 +26,11 @@ describe("pakistan area hierarchy", () => {
     assert.ok(lahore.includes("Johar Town"));
     assert.ok(lahore.includes("Gulberg"));
     assert.ok(lahore.includes("DHA Phase 5"));
+    assert.ok(lahore.includes("DHA"));
+    assert.ok(lahore.includes("DHA Phase 9"));
+    assert.ok(lahore.includes("Jubilee Town"));
     assert.ok(karachi.includes("Clifton"));
+    assert.ok(karachi.includes("DHA"));
     assert.ok(karachi.includes("Gulshan-e-Iqbal"));
     assert.ok(!lahore.includes("F-10"));
     assert.ok(!karachi.includes("Johar Town"));

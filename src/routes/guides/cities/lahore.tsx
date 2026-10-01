@@ -54,6 +54,13 @@ function Page() {
         </div>
 
         <p>
+          For reported 2026 asking rents and sale ranges, see{" "}
+          <a href="/guides/where-can-i-rent-an-affordable-home-in-lahore">where you can rent an affordable home in Lahore</a>
+          {" "}and{" "}
+          <a href="/guides/where-can-i-buy-an-affordable-home-in-lahore">where you can buy an affordable home in Lahore</a>.
+        </p>
+
+        <p>
           Lahore has a large and varied residential market, from established neighbourhoods and central areas to
           gated communities and newer developments. For a renter, compare the area, property type, size, commute and
           total monthly cost rather than looking at rent alone.

@@ -106,6 +106,7 @@ const CITY_AREAS: Record<string, AreaDef[]> = {
     { name: "Jinnah Garden" },
   ],
   "punjab-lahore": [
+    { name: "DHA", aliases: ["DHA Lahore", "Defence Housing Authority", "Defence Lahore"] },
     { name: "DHA Phase 1", aliases: ["DHA 1", "DHA Phase-I", "DHA Phase I"] },
     { name: "DHA Phase 2", aliases: ["DHA 2", "DHA Phase-II"] },
     { name: "DHA Phase 3", aliases: ["DHA 3", "DHA Phase-III"] },
@@ -114,6 +115,7 @@ const CITY_AREAS: Record<string, AreaDef[]> = {
     { name: "DHA Phase 6", aliases: ["DHA 6", "DHA Phase-VI"] },
     { name: "DHA Phase 7", aliases: ["DHA 7"] },
     { name: "DHA Phase 8", aliases: ["DHA 8"] },
+    { name: "DHA Phase 9", aliases: ["DHA 9", "DHA Phase 9 Town"] },
     { name: "DHA Rahbar" },
     { name: "Gulberg", aliases: ["Gulberg II", "Gulberg III", "Gulberg II/III"] },
     { name: "Johar Town" },
@@ -145,6 +147,7 @@ const CITY_AREAS: Record<string, AreaDef[]> = {
     { name: "Askari 11" },
     { name: "Bedian Road" },
     { name: "Raiwind Road" },
+    { name: "Jubilee Town" },
     { name: "Multan Road" },
     { name: "Ferozepur Road" },
     { name: "Wahdat Road" },
@@ -179,6 +182,7 @@ const CITY_AREAS: Record<string, AreaDef[]> = {
     { name: "Fatehgarh" },
   ],
   "sindh-karachi": [
+    { name: "DHA", aliases: ["DHA Karachi", "Defence Housing Authority Karachi", "Defence Karachi"] },
     { name: "Clifton", aliases: ["Clifton Block 2", "Clifton Block 5", "Clifton Block 8", "Clifton Block 9"] },
     { name: "DHA Phase 1", aliases: ["DHA 1", "DHA Phase-I"] },
     { name: "DHA Phase 2", aliases: ["DHA 2"] },

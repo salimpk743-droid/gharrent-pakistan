@@ -81,29 +81,37 @@ export async function listSeoAreas(opts: {
   provinceSlug: string;
   districtSlug: string;
   purpose: "RENT" | "SALE";
-  type?: string;
+  type?: string | null;
 }): Promise<SeoArea[]> {
   await ensureSeedData();
   const sql = await getSql();
-  const typeCondition = opts.type ? sql`and p.property_type = ${opts.type}` : sql``;
-  return sql<SeoArea>`
-    select a.id, a.slug, a.name, count(*)::int as count,
-           max(p.updated_at::date) as lastmod
-    from properties p
-    join provinces pr on pr.id = p.province_id
-    join districts d on d.id = p.district_id
-    join areas a on a.id = p.area_id
-    where p.status = 'PUBLISHED'
-      and p.deleted_at is null
-      and p.is_sample = false
-      and p.listing_purpose = ${opts.purpose}
-      and pr.slug = ${opts.provinceSlug}
-      and d.slug = ${opts.districtSlug}
-      ${typeCondition}
-    group by a.id, a.slug, a.name
-    having count(*) > 0
-    order by count(*) desc, a.name asc
-  `;
+  const params: unknown[] = [opts.purpose, opts.provinceSlug, opts.districtSlug];
+  let typeSql = "";
+  if (opts.type) {
+    params.push(opts.type);
+    typeSql = `and p.property_type = $${params.length}`;
+  }
+  // Do not nest sql`` fragments here. This driver treats every tagged call as a
+  // query, so interpolating one turns the city page into invalid SQL and a 500.
+  return sql.query<SeoArea>(
+    `select a.id, a.slug, a.name, count(*)::int as count,
+            max(p.updated_at::date) as lastmod
+     from properties p
+     join provinces pr on pr.id = p.province_id
+     join districts d on d.id = p.district_id
+     join areas a on a.id = p.area_id
+     where p.status = 'PUBLISHED'
+       and p.deleted_at is null
+       and p.is_sample = false
+       and p.listing_purpose = $1
+       and pr.slug = $2
+       and d.slug = $3
+       ${typeSql}
+     group by a.id, a.slug, a.name
+     having count(*) > 0
+     order by count(*) desc, a.name asc`,
+    params,
+  );
 }
 
 export type SeoIntentSummary = {

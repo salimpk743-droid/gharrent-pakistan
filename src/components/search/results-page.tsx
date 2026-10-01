@@ -5,6 +5,7 @@ import { PROPERTY_TYPE_META, PROPERTY_TYPES, type ListingPurpose, typeFromSlug }
 import type { PublicProperty } from "@/lib/types";
 import { searchHeading } from "@/lib/search";
 import { searchPageCopy } from "@/lib/search-copy";
+import { affordableGuideLabel, affordableGuidePath } from "@/lib/question-guides";
 import { resultsBreadcrumbJsonLd, resultsItemListJsonLd } from "@/lib/seo";
 import { JsonLd } from "@/components/seo/json-ld";
 
@@ -320,6 +321,13 @@ export function ResultsPage({
               {copy
                 ? "The page remains available as a permanent location and property-type landing page. Broaden the search above, explore the main location page, or check again after advertisers publish new properties."
                 : "Try a broader location, property type or budget."}
+            </p>
+            <p className="mt-3 text-sm leading-6 text-muted">
+              For reported 2026 ranges, read{" "}
+              <a className="font-semibold text-forest underline" href={affordableGuidePath(districtSlug, purpose)}>
+                {affordableGuideLabel(districtSlug, purpose)}
+              </a>
+              .
             </p>
           </div>
         ) : (

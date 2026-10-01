@@ -104,7 +104,7 @@ describe("canonical URLs", () => {
 
 describe("titles", () => {
   it("uses the approved homepage title", () => {
-    assert.equal(HOME_SEO_TITLE, "Apna Ghar | Rent, Buy & Sell Properties in Pakistan");
+    assert.equal(HOME_SEO_TITLE, "Houses for Rent and Sale in Pakistan | Apna Ghar");
   });
 
   it("uses a clear title for the renting guide", () => {
@@ -171,9 +171,17 @@ describe("titles", () => {
 });
 
 describe("index / noindex", () => {
-  it("indexes hubs and curated SEO city pages even when empty, while skipping other empty cities", () => {
+  it("does not index empty search pages, including national and province hubs", () => {
     const national = searchRouteSeo({ purpose: "RENT", params: {}, data: { total: 0 } });
-    assert.ok(national.meta.some((m) => m.name === "robots" && m.content === "index, follow"));
+    assert.ok(national.meta.some((m) => m.name === "robots" && m.content === "noindex, follow"));
+    const nationalLive = searchRouteSeo({ purpose: "RENT", params: {}, data: { total: 2 } });
+    assert.ok(nationalLive.meta.some((m) => m.name === "robots" && m.content === "index, follow"));
+    const emptyProvince = searchRouteSeo({
+      purpose: "RENT",
+      params: { province: "punjab" },
+      data: { total: 0, province: { slug: "punjab", name: "Punjab" } },
+    });
+    assert.ok(emptyProvince.meta.some((m) => m.name === "robots" && m.content === "noindex, follow"));
     const emptyCity = searchRouteSeo({
       purpose: "RENT",
       params: { province: "punjab", district: "chiniot" },

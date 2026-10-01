@@ -16,9 +16,9 @@ const PROVINCE_SLUG_ALIASES: Record<string, string> = {
   islamabad: "islamabad-capital-territory",
 };
 
-export const HOME_SEO_TITLE = `${APP_NAME} | Rent, Buy & Sell Properties in Pakistan`;
+export const HOME_SEO_TITLE = `Houses for Rent and Sale in Pakistan | ${APP_NAME}`;
 export const HOME_SEO_DESCRIPTION =
-  "Find houses, flats, plots and commercial properties for rent, buy and sale across Pakistan. Search by province, city, area, type and budget on Apna Ghar.";
+  "Search houses, flats, portions and rooms for rent or sale in Lahore, Karachi, Islamabad and Rawalpindi. Apna Ghar is a private marketplace, not the government housing-loan scheme.";
 
 export const GUIDE_HOW_TO_RENT_PATH = "/how-to-rent-a-house-in-pakistan";
 export const GUIDE_HOW_TO_RENT_TITLE = "How to Rent a House in Pakistan | Apna Ghar";
@@ -28,7 +28,7 @@ export const GUIDE_HOW_TO_RENT_DESCRIPTION =
 export const GUIDES_PATH = "/guides";
 export const GUIDES_TITLE = "Property & Rental Guides in Pakistan | Apna Ghar";
 export const GUIDES_DESCRIPTION =
-  "Practical property and rental guides for Pakistan: renting, buying, safety, landlords, and city-specific housing information from Apna Ghar.";
+  "Where to rent or buy an affordable home in Lahore, Karachi, Islamabad and Rawalpindi, plus practical renting, buying and landlord guides from Apna Ghar.";
 
 export const RAWALPINDI_GUIDE_PATH = "/guides/cities/rawalpindi";
 export const RAWALPINDI_GUIDE_TITLE = "Rawalpindi Property & Rental Guide | Apna Ghar";
@@ -370,6 +370,14 @@ export function areaPath(opts: {
     : `/${base}/${opts.province}/${opts.district}/areas/${opts.area}`;
 }
 
+function labelFromSlug(slug: string): string {
+  return slug
+    .split("-")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
 export function areaRouteSeo(opts: {
   purpose: ListingPurpose;
   provinceSlug: string;
@@ -380,7 +388,7 @@ export function areaRouteSeo(opts: {
   typeName?: string;
   total: number;
 }): HeadSnippet {
-  const city = opts.districtSlug.replaceAll("-", " ");
+  const city = labelFromSlug(opts.districtSlug);
   const type = opts.typeName;
   const title = type
     ? `${type} for ${opts.purpose === "SALE" ? "Sale" : "Rent"} in ${opts.areaName}, ${city} | ${APP_NAME}`
@@ -412,7 +420,6 @@ export function searchRouteSeo(opts: {
   });
   const type = opts.data?.type ?? null;
   const place = locationPlaceName(opts.data);
-  const hub = !params.district && !params.type;
   const total = opts.data?.total ?? 0;
   const copy = searchPageCopy({
     purpose: opts.purpose,
@@ -424,17 +431,9 @@ export function searchRouteSeo(opts: {
     title: copy?.title || locationSeoTitle({ purpose: opts.purpose, place, type }),
     description: copy?.description || locationSeoDescription({ purpose: opts.purpose, place, type }),
     path,
-    // Index canonical marketplace landing pages when they have inventory,
-    // or when they are curated city pages. Empty type-specific result pages
-    // are intentionally noindex so Google does not classify them as soft 404s.
-    index:
-      !unknownType &&
-      (
-        (!params.province && !params.district && !params.type) ||
-        (Boolean(params.province) && !params.district && !params.type) ||
-        (Boolean(params.province) && Boolean(params.district) && !params.type && total > 0) ||
-        (Boolean(params.province) && Boolean(params.district) && Boolean(params.type) && total > 0)
-      ),
+    // Empty result pages are soft 404s. Index a rent or sale URL only when it
+    // has at least one real published listing. Guides carry the keywords until then.
+    index: !unknownType && total > 0,
   });
 }
 
