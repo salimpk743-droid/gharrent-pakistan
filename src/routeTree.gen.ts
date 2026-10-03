@@ -50,7 +50,6 @@ import { Route as GuidesCitiesKarachiRouteImport } from './routes/guides/cities/
 import { Route as GuidesCitiesLahoreRouteImport } from './routes/guides/cities/lahore'
 import { Route as GuidesCitiesRawalpindiRouteImport } from './routes/guides/cities/rawalpindi'
 import { Route as GuidesLandlordsLandlordResponsibilitiesPakistanRouteImport } from './routes/guides/landlords/landlord-responsibilities-pakistan'
-import { Route as GuidesLandlordsRentalAgreementLegalChecklistRouteImport } from './routes/guides/landlords/rental-agreement-legal-checklist'
 import { Route as GuidesLandlordsSecurityDepositRentTermsPakistanRouteImport } from './routes/guides/landlords/security-deposit-rent-terms-pakistan'
 import { Route as GuidesRentingHouseVsFlatVsPortionPakistanRouteImport } from './routes/guides/renting/house-vs-flat-vs-portion-pakistan'
 import { Route as GuidesRentingRentalBudgetAndCostsPakistanRouteImport } from './routes/guides/renting/rental-budget-and-costs-pakistan'
@@ -280,12 +279,6 @@ const GuidesLandlordsLandlordResponsibilitiesPakistanRoute =
     path: '/guides/landlords/landlord-responsibilities-pakistan',
     getParentRoute: () => rootRouteImport,
   } as any)
-const GuidesLandlordsRentalAgreementLegalChecklistRoute =
-  GuidesLandlordsRentalAgreementLegalChecklistRouteImport.update({
-    id: '/guides/landlords/rental-agreement-legal-checklist',
-    path: '/guides/landlords/rental-agreement-legal-checklist',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const GuidesLandlordsSecurityDepositRentTermsPakistanRoute =
   GuidesLandlordsSecurityDepositRentTermsPakistanRouteImport.update({
     id: '/guides/landlords/security-deposit-rent-terms-pakistan',
@@ -429,7 +422,6 @@ export interface FileRoutesByFullPath {
   '/guides/cities/lahore': typeof GuidesCitiesLahoreRoute
   '/guides/cities/rawalpindi': typeof GuidesCitiesRawalpindiRoute
   '/guides/landlords/landlord-responsibilities-pakistan': typeof GuidesLandlordsLandlordResponsibilitiesPakistanRoute
-  '/guides/landlords/rental-agreement-legal-checklist': typeof GuidesLandlordsRentalAgreementLegalChecklistRoute
   '/guides/landlords/security-deposit-rent-terms-pakistan': typeof GuidesLandlordsSecurityDepositRentTermsPakistanRoute
   '/guides/renting/house-vs-flat-vs-portion-pakistan': typeof GuidesRentingHouseVsFlatVsPortionPakistanRoute
   '/guides/renting/rental-budget-and-costs-pakistan': typeof GuidesRentingRentalBudgetAndCostsPakistanRoute
@@ -490,7 +482,6 @@ export interface FileRoutesByTo {
   '/guides/cities/lahore': typeof GuidesCitiesLahoreRoute
   '/guides/cities/rawalpindi': typeof GuidesCitiesRawalpindiRoute
   '/guides/landlords/landlord-responsibilities-pakistan': typeof GuidesLandlordsLandlordResponsibilitiesPakistanRoute
-  '/guides/landlords/rental-agreement-legal-checklist': typeof GuidesLandlordsRentalAgreementLegalChecklistRoute
   '/guides/landlords/security-deposit-rent-terms-pakistan': typeof GuidesLandlordsSecurityDepositRentTermsPakistanRoute
   '/guides/renting/house-vs-flat-vs-portion-pakistan': typeof GuidesRentingHouseVsFlatVsPortionPakistanRoute
   '/guides/renting/rental-budget-and-costs-pakistan': typeof GuidesRentingRentalBudgetAndCostsPakistanRoute
@@ -552,7 +543,6 @@ export interface FileRoutesById {
   '/guides/cities/lahore': typeof GuidesCitiesLahoreRoute
   '/guides/cities/rawalpindi': typeof GuidesCitiesRawalpindiRoute
   '/guides/landlords/landlord-responsibilities-pakistan': typeof GuidesLandlordsLandlordResponsibilitiesPakistanRoute
-  '/guides/landlords/rental-agreement-legal-checklist': typeof GuidesLandlordsRentalAgreementLegalChecklistRoute
   '/guides/landlords/security-deposit-rent-terms-pakistan': typeof GuidesLandlordsSecurityDepositRentTermsPakistanRoute
   '/guides/renting/house-vs-flat-vs-portion-pakistan': typeof GuidesRentingHouseVsFlatVsPortionPakistanRoute
   '/guides/renting/rental-budget-and-costs-pakistan': typeof GuidesRentingRentalBudgetAndCostsPakistanRoute
@@ -615,7 +605,6 @@ export interface FileRouteTypes {
     | '/guides/cities/lahore'
     | '/guides/cities/rawalpindi'
     | '/guides/landlords/landlord-responsibilities-pakistan'
-    | '/guides/landlords/rental-agreement-legal-checklist'
     | '/guides/landlords/security-deposit-rent-terms-pakistan'
     | '/guides/renting/house-vs-flat-vs-portion-pakistan'
     | '/guides/renting/rental-budget-and-costs-pakistan'
@@ -676,7 +665,6 @@ export interface FileRouteTypes {
     | '/guides/cities/lahore'
     | '/guides/cities/rawalpindi'
     | '/guides/landlords/landlord-responsibilities-pakistan'
-    | '/guides/landlords/rental-agreement-legal-checklist'
     | '/guides/landlords/security-deposit-rent-terms-pakistan'
     | '/guides/renting/house-vs-flat-vs-portion-pakistan'
     | '/guides/renting/rental-budget-and-costs-pakistan'
@@ -737,7 +725,6 @@ export interface FileRouteTypes {
     | '/guides/cities/lahore'
     | '/guides/cities/rawalpindi'
     | '/guides/landlords/landlord-responsibilities-pakistan'
-    | '/guides/landlords/rental-agreement-legal-checklist'
     | '/guides/landlords/security-deposit-rent-terms-pakistan'
     | '/guides/renting/house-vs-flat-vs-portion-pakistan'
     | '/guides/renting/rental-budget-and-costs-pakistan'
@@ -799,7 +786,6 @@ export interface RootRouteChildren {
   GuidesCitiesLahoreRoute: typeof GuidesCitiesLahoreRoute
   GuidesCitiesRawalpindiRoute: typeof GuidesCitiesRawalpindiRoute
   GuidesLandlordsLandlordResponsibilitiesPakistanRoute: typeof GuidesLandlordsLandlordResponsibilitiesPakistanRoute
-  GuidesLandlordsRentalAgreementLegalChecklistRoute: typeof GuidesLandlordsRentalAgreementLegalChecklistRoute
   GuidesLandlordsSecurityDepositRentTermsPakistanRoute: typeof GuidesLandlordsSecurityDepositRentTermsPakistanRoute
   GuidesRentingHouseVsFlatVsPortionPakistanRoute: typeof GuidesRentingHouseVsFlatVsPortionPakistanRoute
   GuidesRentingRentalBudgetAndCostsPakistanRoute: typeof GuidesRentingRentalBudgetAndCostsPakistanRoute
@@ -1102,13 +1088,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GuidesLandlordsLandlordResponsibilitiesPakistanRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/guides/landlords/rental-agreement-legal-checklist': {
-      id: '/guides/landlords/rental-agreement-legal-checklist'
-      path: '/guides/landlords/rental-agreement-legal-checklist'
-      fullPath: '/guides/landlords/rental-agreement-legal-checklist'
-      preLoaderRoute: typeof GuidesLandlordsRentalAgreementLegalChecklistRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/guides/landlords/security-deposit-rent-terms-pakistan': {
       id: '/guides/landlords/security-deposit-rent-terms-pakistan'
       path: '/guides/landlords/security-deposit-rent-terms-pakistan'
@@ -1366,8 +1345,6 @@ const rootRouteChildren: RootRouteChildren = {
   GuidesCitiesRawalpindiRoute: GuidesCitiesRawalpindiRoute,
   GuidesLandlordsLandlordResponsibilitiesPakistanRoute:
     GuidesLandlordsLandlordResponsibilitiesPakistanRoute,
-  GuidesLandlordsRentalAgreementLegalChecklistRoute:
-    GuidesLandlordsRentalAgreementLegalChecklistRoute,
   GuidesLandlordsSecurityDepositRentTermsPakistanRoute:
     GuidesLandlordsSecurityDepositRentTermsPakistanRoute,
   GuidesRentingHouseVsFlatVsPortionPakistanRoute:

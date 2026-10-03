@@ -5,9 +5,9 @@ import { APP_NAME, PUBLIC_SITE_ORIGIN } from "@/lib/constants";
 import { breadcrumbJsonLd, canonicalUrl, guideSeo } from "@/lib/seo";
 
 const PATH = "/guides/landlords/security-deposit-rent-terms-pakistan";
-const TITLE = "Security Deposit, Advance Rent and Rent Terms in Pakistan | Apna Ghar";
+const TITLE = "Security Deposit and Advance Rent in Pakistan: Rules & Terms | Apna Ghar";
 const DESCRIPTION =
-  "What landlords and tenants should put in writing about security deposits, advance rent, rent increases, receipts and payment terms in Pakistan.";
+  "Security deposit and advance rent in Pakistan: what to write into the agreement, rent increases, payment receipts, the end of the tenancy, and the Punjab and Islamabad laws to check.";
 
 export const Route = createFileRoute("/guides/landlords/security-deposit-rent-terms-pakistan")({
   head: () => guideSeo({ title: TITLE, description: DESCRIPTION, path: PATH }),
@@ -21,7 +21,7 @@ function Page() {
       <JsonLd data={breadcrumbJsonLd([
         { name: "Home", path: "/" },
         { name: "Guides", path: "/guides" },
-        { name: "Landlords", path: "/guides/landlords/rental-agreement-legal-checklist" },
+        { name: "Landlords", path: "/guides/how-to-rent-out-your-house-in-pakistan" },
         { name: "Security Deposit & Rent Terms", path: PATH },
       ])} />
       <JsonLd data={{
@@ -31,13 +31,13 @@ function Page() {
         description: DESCRIPTION,
         inLanguage: "en-PK",
         datePublished: "2026-09-22",
-        dateModified: "2026-09-22",
+        dateModified: "2026-10-03",
         mainEntityOfPage: url,
         url,
         author: { "@type": "Organization", name: APP_NAME, url: PUBLIC_SITE_ORIGIN + "/" },
         publisher: { "@type": "Organization", name: APP_NAME, url: PUBLIC_SITE_ORIGIN + "/" },
       }} />
-      <LegalPage eyebrow="LANDLORD • RENT TERMS" title="Security Deposit, Advance Rent and Rent Terms in Pakistan" updated="22 September 2026">
+      <LegalPage eyebrow="LANDLORD • RENT TERMS" title="Security deposit and advance rent in Pakistan: rules and terms" updated="3 October 2026">
         <div className="rounded-lg border border-line bg-cream p-4 text-ink">
           Deposit and rent rules vary by jurisdiction and agreement. This guide deliberately avoids claiming one
           nationwide deposit limit or notice period. Check the law that applies to the property and put the agreed
@@ -98,6 +98,10 @@ function Page() {
           <li><a href="https://www.punjabcode.punjab.gov.pk/">Punjab Code — Punjab laws portal</a></li>
         </ul>
 
+        <p>
+          Write each amount into the agreement — see the{" "}
+          <a href="/guides/rent-agreement-format-pakistan">rent agreement format in Pakistan</a>.
+        </p>
         <p className="mt-8">
           <Link to="/post">Advertise a rental property on Apna Ghar</Link>.
         </p>

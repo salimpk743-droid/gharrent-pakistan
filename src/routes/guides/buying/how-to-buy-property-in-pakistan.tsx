@@ -5,8 +5,9 @@ import { APP_NAME, PUBLIC_SITE_ORIGIN } from "@/lib/constants";
 import { breadcrumbJsonLd, canonicalUrl, guideSeo } from "@/lib/seo";
 
 const PATH = "/guides/buying/how-to-buy-property-in-pakistan";
-const TITLE = "How to Buy Property in Pakistan: Practical Checklist | Apna Ghar";
-const DESCRIPTION = "A practical property-buying checklist for Pakistan covering search, title and document checks, agreement, payment, registration and handover.";
+const TITLE = "How to Buy Property in Pakistan: Step-by-Step Process | Apna Ghar";
+const DESCRIPTION =
+  "The step-by-step process of buying property in Pakistan: define the purchase, inspect, verify documents, agree in writing, budget for taxes, register the transfer and take handover.";
 
 export const Route = createFileRoute("/guides/buying/how-to-buy-property-in-pakistan")({
   head: () => guideSeo({ title: TITLE, description: DESCRIPTION, path: PATH }),
@@ -18,8 +19,8 @@ function Page() {
   return (
     <>
       <JsonLd data={breadcrumbJsonLd([{ name: "Home", path: "/" }, { name: "Guides", path: "/guides" }, { name: "How to Buy Property", path: PATH }])} />
-      <JsonLd data={{ "@context": "https://schema.org", "@type": "Article", headline: TITLE, description: DESCRIPTION, inLanguage: "en-PK", mainEntityOfPage: url, url, author: { "@type": "Organization", name: APP_NAME, url: PUBLIC_SITE_ORIGIN + "/" }, publisher: { "@type": "Organization", name: APP_NAME, url: PUBLIC_SITE_ORIGIN + "/" } }} />
-      <LegalPage eyebrow="BUYING PROPERTY IN PAKISTAN" title="How to Buy Property in Pakistan: Practical Checklist">
+      <JsonLd data={{ "@context": "https://schema.org", "@type": "Article", headline: "How to buy property in Pakistan: the step-by-step process", description: DESCRIPTION, inLanguage: "en-PK", mainEntityOfPage: url, url, author: { "@type": "Organization", name: APP_NAME, url: PUBLIC_SITE_ORIGIN + "/" }, publisher: { "@type": "Organization", name: APP_NAME, url: PUBLIC_SITE_ORIGIN + "/" } }} />
+      <LegalPage eyebrow="BUYING PROPERTY IN PAKISTAN" title="How to buy property in Pakistan: the step-by-step process" updated="3 October 2026">
         <div className="rounded-lg border border-line bg-cream p-4 text-ink">This is general information, not legal or financial advice. Property law, taxes, fees and registration procedures can differ by province, authority and transaction, so obtain professional advice for a specific purchase.</div>
         <h2>1. Define the purchase</h2>
         <p>Decide whether you are looking for a house, apartment, plot, commercial property or another type. Set a realistic budget that includes transaction costs, taxes or fees and any immediate work the property needs.</p>
@@ -47,6 +48,12 @@ function Page() {
           <li>Confirm applicable taxes, fees and registration requirements.</li>
           <li>Keep a complete transaction file.</li>
         </ul>
+        <p>
+          Budget for taxes as well as the price: see{" "}
+          <a href="/guides/property-tax-on-buying-and-selling-property-pakistan">property tax on buying and selling (2026-27)</a>.
+          For the document checks, see{" "}
+          <a href="/guides/buying/property-buying-due-diligence-pakistan">how to verify property documents</a>.
+        </p>
         <section className="mt-10 rounded-xl border border-line bg-cream p-5">
           <h2 className="mt-0! text-xl!">Browse current properties for sale</h2>
           <p>Use <Link className="font-semibold text-forest no-underline hover:underline" to="/sale">live sale listings</Link> for current inventory, then use the due-diligence guides before committing money.</p>

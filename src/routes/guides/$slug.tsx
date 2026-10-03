@@ -1,5 +1,6 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { LegalPage } from "@/components/layout/legal-page";
+import { PostPropertyCta } from "@/components/guides/post-property-cta";
 import { JsonLd } from "@/components/seo/json-ld";
 import { APP_NAME, PUBLIC_SITE_ORIGIN } from "@/lib/constants";
 import { questionGuideBySlug, type Inline, type QuestionGuide } from "@/lib/question-guides";
@@ -72,8 +73,8 @@ function GuideBody({ guide }: { guide: QuestionGuide }) {
       />
       <LegalPage eyebrow={guide.eyebrow} title={guide.h1} updated={guide.updatedLabel}>
         <div className="rounded-lg border border-line bg-cream p-4 text-ink">
-          Reported asking ranges from the publishers named below. They are not a quote, a valuation, or a promise that a
-          home is available at that price. Rents and sale prices change by street, size and condition.
+          {guide.notice ??
+            "Reported asking ranges from the publishers named below. They are not a quote, a valuation, or a promise that a home is available at that price. Rents and sale prices change by street, size and condition."}
         </div>
         {guide.direct.map((paragraph, index) => (
           <p key={`direct-${index}`}>
@@ -99,6 +100,7 @@ function GuideBody({ guide }: { guide: QuestionGuide }) {
             ) : null}
           </section>
         ))}
+        <PostPropertyCta />
         <h2>Questions people ask</h2>
         {guide.faqs.map((faq) => (
           <section key={faq.q}>

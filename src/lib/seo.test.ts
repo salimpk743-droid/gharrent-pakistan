@@ -108,7 +108,7 @@ describe("titles", () => {
   });
 
   it("uses a clear title for the renting guide", () => {
-    assert.equal(GUIDE_HOW_TO_RENT_TITLE, "How to Rent a House in Pakistan | Apna Ghar");
+    assert.equal(GUIDE_HOW_TO_RENT_TITLE, "How to Rent a House in Pakistan: Step-by-Step Guide | Apna Ghar");
     assert.equal(GUIDE_HOW_TO_RENT_PATH, "/how-to-rent-a-house-in-pakistan");
     assert.match(GUIDE_HOW_TO_RENT_DESCRIPTION, /renting a house in Pakistan/i);
     assert.doesNotMatch(GUIDE_HOW_TO_RENT_TITLE, /Pakistan Punjab/);

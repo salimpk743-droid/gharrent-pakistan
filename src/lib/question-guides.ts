@@ -1,3 +1,5 @@
+import { HOWTO_GUIDES } from "./howto-guides.ts";
+
 export type Inline = string | { href: string; label: string; external?: boolean };
 
 export type GuideSection = {
@@ -12,6 +14,8 @@ export type QuestionGuide = {
   h1: string;
   description: string;
   eyebrow: string;
+  /** Box shown above the answer. Defaults to the reported-prices disclaimer. */
+  notice?: string;
   updatedLabel: string;
   updatedIso: string;
   direct: Inline[][];
@@ -21,8 +25,8 @@ export type QuestionGuide = {
   related: { href: string; label: string }[];
 };
 
-const UPDATED_LABEL = "1 October 2026";
-const UPDATED_ISO = "2026-10-01";
+const UPDATED_LABEL = "3 October 2026";
+const UPDATED_ISO = "2026-10-03";
 
 const PROFIT = {
   label: "Profit by Pakistan Today, 14 July 2026 — Lahore house rents by March 2026",
@@ -107,10 +111,10 @@ function notTheScheme(): Inline[] {
 
 const lahoreRent: QuestionGuide = {
   slug: "where-can-i-rent-an-affordable-home-in-lahore",
-  title: "Where Can I Rent an Affordable Home in Lahore? | Apna Ghar",
-  h1: "Where can I rent an affordable home in Lahore?",
+  title: "Cheap House for Rent in Lahore: 2026 Budget Areas & Rents | Apna Ghar",
+  h1: "Where can I find a cheap house for rent in Lahore?",
   description:
-    "House for rent in Lahore in 2026: reported asking ranges for 2 marla, 3 marla and 5 marla homes in Johar Town, DHA, Bahria Town, Wapda Town and smaller central areas. Not a price quote.",
+    "Low-budget houses for rent in Lahore: reported 2026 rents for 2, 3 and 5 marla homes in Faisal Town, Iqbal Town, Johar Town and more, with sources. Not a price quote.",
   eyebrow: "QUESTION GUIDE",
   updatedLabel: UPDATED_LABEL,
   updatedIso: UPDATED_ISO,
@@ -122,7 +126,7 @@ const lahoreRent: QuestionGuide = {
   ],
   sections: [
     {
-      heading: "House for rent in Lahore: what “affordable” means in 2026",
+      heading: "Cheap house for rent in Lahore: what “affordable” means in 2026",
       paragraphs: [
         [
           "There is no official affordable-rent line for Lahore. A 2-marla or 3-marla house, or a portion of a house, is what people on a lower budget usually search. A full house in DHA or Gulberg is a different market. Compare size, street and what the rent includes before you treat two ads as the same home.",
@@ -225,10 +229,10 @@ const lahoreRent: QuestionGuide = {
 
 const karachiRent: QuestionGuide = {
   slug: "where-can-i-rent-an-affordable-home-in-karachi",
-  title: "Where Can I Rent an Affordable Home in Karachi? | Apna Ghar",
-  h1: "Where can I rent an affordable home in Karachi?",
+  title: "Cheap Flat for Rent in Karachi: Low-Budget Areas (2026) | Apna Ghar",
+  h1: "Where can I find a cheap flat or house for rent in Karachi?",
   description:
-    "Flat for rent in Karachi and lower-cost houses in 2026: reported asking ranges outside the city centre, in the city centre, and for DHA and Clifton houses. One publisher’s ranges, not a quote.",
+    "Low-budget flats and houses for rent in Karachi: reported 2026 asking ranges outside and inside the city centre, versus DHA and Clifton. One publisher’s figures, not a quote.",
   eyebrow: "QUESTION GUIDE",
   updatedLabel: UPDATED_LABEL,
   updatedIso: UPDATED_ISO,
@@ -240,7 +244,7 @@ const karachiRent: QuestionGuide = {
   ],
   sections: [
     {
-      heading: "Flat for rent in Karachi",
+      heading: "Cheap flat for rent in Karachi: reported ranges",
       paragraphs: [
         [
           "The April blog did not pin the Rs 25,000–50,000 band to one neighbourhood. It said “outside the city centre”. Do not assume Gulistan-e-Johar, North Nazimabad or Scheme 33 all cost the same. Use the band only as a starting point, then compare the building, the floor, parking, water and the generator bill.",
@@ -268,7 +272,7 @@ const karachiRent: QuestionGuide = {
       ],
     },
     {
-      heading: "House for rent in Karachi versus a portion",
+      heading: "Cheap house or portion in Karachi?",
       paragraphs: [
         [
           "A full house in DHA or Clifton was reported far above a 1-bedroom flat. A portion can sit between the two, but this page will not invent a portion rent. Read ",
@@ -325,10 +329,10 @@ const karachiRent: QuestionGuide = {
 
 const islamabadRent: QuestionGuide = {
   slug: "where-can-i-rent-an-affordable-home-in-islamabad",
-  title: "Where Can I Rent an Affordable Home in Islamabad? | Apna Ghar",
-  h1: "Where can I rent an affordable home in Islamabad?",
+  title: "Cheap House & Portion for Rent in Islamabad (2026) | Apna Ghar",
+  h1: "Where can I find a cheap house or portion for rent in Islamabad?",
   description:
-    "House for rent in Islamabad in 2026: reported rents for Bahria Town 5 marla houses, G-11 and G-13 portions, PWD, and the higher F-6 and F-7 bands. Sources named. Not a quote.",
+    "Low-budget rent in Islamabad: reported 2026 rents for G-11 and G-13 portions, Bahria Town 5 marla houses and PWD, versus F-6 and F-7. Sources named. Not a quote.",
   eyebrow: "QUESTION GUIDE",
   updatedLabel: UPDATED_LABEL,
   updatedIso: UPDATED_ISO,
@@ -340,7 +344,7 @@ const islamabadRent: QuestionGuide = {
   ],
   sections: [
     {
-      heading: "House for rent in Islamabad: reported 2026 bands",
+      heading: "Cheap house for rent in Islamabad: reported 2026 bands",
       paragraphs: [
         [
           "time2rent.net described these as 2026 market rents and said they vary with the exact location, construction and furnishing. The page said furnishing can add about 25–40%. They are not Apna Ghar quotes.",
@@ -421,10 +425,10 @@ const islamabadRent: QuestionGuide = {
 
 const rawalpindiRent: QuestionGuide = {
   slug: "where-can-i-rent-an-affordable-home-in-rawalpindi",
-  title: "Where Can I Rent an Affordable Home in Rawalpindi? | Apna Ghar",
-  h1: "Where can I rent an affordable home in Rawalpindi?",
+  title: "Cheap House for Rent in Rawalpindi: Where to Look | Apna Ghar",
+  h1: "Where can I find a cheap house for rent in Rawalpindi?",
   description:
-    "House for rent in Rawalpindi: Satellite Town, Bahria Town, Chaklala, Saddar and DHA. Where a 2026 Islamabad rent table applies, and where this site will not invent a rupee figure.",
+    "Low-budget house for rent in Rawalpindi: Satellite Town, Chaklala, Saddar, Bahria Town and DHA compared, and why this page will not invent a rupee figure.",
   eyebrow: "QUESTION GUIDE",
   updatedLabel: UPDATED_LABEL,
   updatedIso: UPDATED_ISO,
@@ -436,7 +440,7 @@ const rawalpindiRent: QuestionGuide = {
   ],
   sections: [
     {
-      heading: "House for rent in Rawalpindi: where to look",
+      heading: "Cheap house for rent in Rawalpindi: where to look",
       bullets: [
         ["Satellite Town and Chaklala for established residential streets."],
         ["Saddar and the cantonment side when the commute into central Rawalpindi matters."],
@@ -509,7 +513,7 @@ const rawalpindiRent: QuestionGuide = {
 
 const pakistanRent: QuestionGuide = {
   slug: "where-can-i-rent-an-affordable-home-in-pakistan",
-  title: "Where Can I Rent an Affordable Home in Pakistan? | Apna Ghar",
+  title: "Affordable Homes for Rent in Pakistan: City by City (2026) | Apna Ghar",
   h1: "Where can I rent an affordable home in Pakistan?",
   description:
     "Where to rent a lower-cost house, flat or portion in Lahore, Karachi, Islamabad and Rawalpindi, with 2026 asking ranges from named sources. No single Pakistan-wide rent.",
@@ -592,10 +596,10 @@ const pakistanRent: QuestionGuide = {
 
 const lahoreBuy: QuestionGuide = {
   slug: "where-can-i-buy-an-affordable-home-in-lahore",
-  title: "Where Can I Buy an Affordable Home in Lahore? | Apna Ghar",
-  h1: "Where can I buy an affordable home in Lahore?",
+  title: "Cheap House for Sale in Lahore: 2026 Reported Prices | Apna Ghar",
+  h1: "Where can I buy a cheap house in Lahore?",
   description:
-    "House for sale in Lahore in 2026: reported prices for a 5 marla DHA house, and why a DHA Phase 9 Town file is not a built home. Areas to search when DHA is out of reach.",
+    "Low-budget house for sale in Lahore: reported 2026 prices for a 5 marla DHA house, why a DHA Phase 9 Town file is not a built home, and areas to search instead.",
   eyebrow: "QUESTION GUIDE",
   updatedLabel: UPDATED_LABEL,
   updatedIso: UPDATED_ISO,
@@ -607,7 +611,7 @@ const lahoreBuy: QuestionGuide = {
   ],
   sections: [
     {
-      heading: "House for sale in Lahore: the published built-house band",
+      heading: "Cheap house for sale in Lahore: the published built-house band",
       paragraphs: [
         [
           "The April blog’s DHA built-house ranges, which are one publisher’s figures and not an official valuation, also included a 10 marla DHA house at Rs 3.5 crore to Rs 7 crore and a 1 kanal house in DHA Phase 5 or 6 at Rs 7 crore to Rs 14 crore. “Affordable” inside DHA still means a large sum. It is not the 2-marla rental market.",
@@ -671,10 +675,10 @@ const lahoreBuy: QuestionGuide = {
 
 const karachiBuy: QuestionGuide = {
   slug: "where-can-i-buy-an-affordable-home-in-karachi",
-  title: "Where Can I Buy an Affordable Home in Karachi? | Apna Ghar",
-  h1: "Where can I buy an affordable home in Karachi?",
+  title: "Cheap House for Sale in Karachi: 2026 Reported Prices | Apna Ghar",
+  h1: "Where can I buy a cheap house in Karachi?",
   description:
-    "House for sale in Karachi in 2026: a reported 5 marla range in middle-class areas, what DHA and Clifton cost, and why a Bahria Town plot is not a finished house.",
+    "Low-budget house for sale in Karachi: a reported 2026 5 marla range in middle-class areas, what DHA and Clifton cost, and why a Bahria Town plot is not a finished house.",
   eyebrow: "QUESTION GUIDE",
   updatedLabel: UPDATED_LABEL,
   updatedIso: UPDATED_ISO,
@@ -686,7 +690,7 @@ const karachiBuy: QuestionGuide = {
   ],
   sections: [
     {
-      heading: "House for sale in Karachi",
+      heading: "Cheap house for sale in Karachi",
       bullets: [
         ["5 marla house, middle-class areas: Rs 80 lakh to Rs 1.5 crore. The blog did not name every area inside that phrase."],
         ["10 marla house, DHA or Clifton-adjacent: Rs 2 crore to Rs 5 crore."],
@@ -754,10 +758,10 @@ const karachiBuy: QuestionGuide = {
 
 const islamabadBuy: QuestionGuide = {
   slug: "where-can-i-buy-an-affordable-home-in-islamabad",
-  title: "Where Can I Buy an Affordable Home in Islamabad? | Apna Ghar",
-  h1: "Where can I buy an affordable home in Islamabad?",
+  title: "Cheap House for Sale in Islamabad: 2026 Reported Prices | Apna Ghar",
+  h1: "Where can I buy a cheap house in Islamabad?",
   description:
-    "House for sale in Islamabad in 2026: reported ranges for G-11 and G-13 versus F-6 and F-7. What this page will not invent for Bahria Town or PWD.",
+    "Low-budget house for sale in Islamabad: reported 2026 ranges for G-11 and G-13 versus F-6 and F-7, and what this page will not invent for Bahria Town or PWD.",
   eyebrow: "QUESTION GUIDE",
   updatedLabel: UPDATED_LABEL,
   updatedIso: UPDATED_ISO,
@@ -769,7 +773,7 @@ const islamabadBuy: QuestionGuide = {
   ],
   sections: [
     {
-      heading: "House for sale in Islamabad",
+      heading: "Cheap house for sale in Islamabad",
       bullets: [
         ["G-11 and G-13 houses: Rs 2.5 crore to Rs 8 crore."],
         ["F-6 and F-7 houses: Rs 8 crore to Rs 40 crore."],
@@ -832,10 +836,10 @@ const islamabadBuy: QuestionGuide = {
 
 const rawalpindiBuy: QuestionGuide = {
   slug: "where-can-i-buy-an-affordable-home-in-rawalpindi",
-  title: "Where Can I Buy an Affordable Home in Rawalpindi? | Apna Ghar",
-  h1: "Where can I buy an affordable home in Rawalpindi?",
+  title: "Cheap House for Sale in Rawalpindi: Where to Search | Apna Ghar",
+  h1: "Where can I buy a cheap house in Rawalpindi?",
   description:
-    "Where to search for a house for sale in Rawalpindi — Satellite Town, Bahria Town, Chaklala, Saddar and DHA — without an invented price. How the Islamabad ranges do and do not apply.",
+    "Where to search for a low-budget house for sale in Rawalpindi — Satellite Town, Bahria Town, Chaklala, Saddar and DHA — without an invented price.",
   eyebrow: "QUESTION GUIDE",
   updatedLabel: UPDATED_LABEL,
   updatedIso: UPDATED_ISO,
@@ -847,7 +851,7 @@ const rawalpindiBuy: QuestionGuide = {
   ],
   sections: [
     {
-      heading: "House for sale in Rawalpindi: search names",
+      heading: "Cheap house for sale in Rawalpindi: search names",
       bullets: [
         ["Satellite Town and Chaklala for established houses."],
         ["Saddar and cantonment areas when location inside the city is the point."],
@@ -912,7 +916,7 @@ const rawalpindiBuy: QuestionGuide = {
 
 const pakistanBuy: QuestionGuide = {
   slug: "where-can-i-buy-an-affordable-home-in-pakistan",
-  title: "Where Can I Buy an Affordable Home in Pakistan? | Apna Ghar",
+  title: "Affordable Houses for Sale in Pakistan: City by City (2026) | Apna Ghar",
   h1: "Where can I buy an affordable home in Pakistan?",
   description:
     "Where lower-cost houses are being searched in Lahore, Karachi, Islamabad and Rawalpindi, with 2026 reported sale ranges. A DHA file is not a built house. No invented prices.",
@@ -1002,6 +1006,7 @@ export const QUESTION_GUIDES: QuestionGuide[] = [
   karachiBuy,
   islamabadBuy,
   rawalpindiBuy,
+  ...HOWTO_GUIDES,
 ];
 
 const BY_SLUG = new Map(QUESTION_GUIDES.map((guide) => [guide.slug, guide]));

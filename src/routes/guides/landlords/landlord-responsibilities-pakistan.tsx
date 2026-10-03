@@ -5,7 +5,7 @@ import { APP_NAME, PUBLIC_SITE_ORIGIN } from "@/lib/constants";
 import { breadcrumbJsonLd, canonicalUrl, guideSeo } from "@/lib/seo";
 
 const PATH = "/guides/landlords/landlord-responsibilities-pakistan";
-const TITLE = "Landlord Responsibilities for Rental Property in Pakistan | Apna Ghar";
+const TITLE = "Landlord Responsibilities in Pakistan: Repairs, Utilities & Records | Apna Ghar";
 const DESCRIPTION =
   "Practical landlord guidance on repairs, utilities, access, tenant records and rental-property responsibilities, with Punjab and Islamabad legal references.";
 
@@ -31,13 +31,13 @@ function Page() {
         description: DESCRIPTION,
         inLanguage: "en-PK",
         datePublished: "2026-09-22",
-        dateModified: "2026-09-22",
+        dateModified: "2026-10-03",
         mainEntityOfPage: url,
         url,
         author: { "@type": "Organization", name: APP_NAME, url: PUBLIC_SITE_ORIGIN + "/" },
         publisher: { "@type": "Organization", name: APP_NAME, url: PUBLIC_SITE_ORIGIN + "/" },
       }} />
-      <LegalPage eyebrow="LANDLORD GUIDE" title="Landlord Responsibilities for Rental Property in Pakistan" updated="22 September 2026">
+      <LegalPage eyebrow="LANDLORD GUIDE" title="Landlord responsibilities in Pakistan: repairs, utilities and records" updated="3 October 2026">
         <div className="rounded-lg border border-line bg-cream p-4 text-ink">
           This guide gives general information. Exact duties depend on the applicable provincial or territorial law,
           the tenancy agreement and the property itself.
@@ -99,6 +99,13 @@ function Page() {
           <li><a href="https://www.punjabcode.punjab.gov.pk/">Punjab Code — Punjab laws portal</a></li>
         </ul>
 
+        <p>
+          Still looking for a tenant? Start with{" "}
+          <a href="/guides/how-to-rent-out-your-house-in-pakistan">how to rent out your house</a>, then sign the{" "}
+          <a href="/guides/rent-agreement-format-pakistan">rent agreement</a> and complete{" "}
+          <a href="/guides/tenant-registration-punjab-police">tenant registration with Punjab Police</a> if the property
+          is in Punjab.
+        </p>
         <p className="mt-8">
           <Link to="/post">List your property on Apna Ghar</Link> after preparing the property information and
           documents.

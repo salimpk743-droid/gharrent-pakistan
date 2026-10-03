@@ -1,5 +1,7 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { LegalPage } from "@/components/layout/legal-page";
+import { GuideFaq } from "@/components/guides/guide-faq";
+import { PostPropertyCta } from "@/components/guides/post-property-cta";
 import { JsonLd } from "@/components/seo/json-ld";
 import { APP_NAME, PUBLIC_SITE_ORIGIN } from "@/lib/constants";
 import {
@@ -114,18 +116,18 @@ function Page() {
         data={{
           "@context": "https://schema.org",
           "@type": "Article",
-          headline: "Karachi Property & Rental Guide",
+          headline: "How to find a flat for rent in Karachi",
           description: KARACHI_GUIDE_DESCRIPTION,
           inLanguage: "en-PK",
           datePublished: "2026-09-22",
-          dateModified: "2026-09-22",
+          dateModified: "2026-10-03",
           mainEntityOfPage: url,
           url,
           author: { "@type": "Organization", name: APP_NAME, url: PUBLIC_SITE_ORIGIN + "/" },
           publisher: { "@type": "Organization", name: APP_NAME, url: PUBLIC_SITE_ORIGIN + "/" },
         }}
       />
-      <LegalPage eyebrow="CITY PROPERTY GUIDE" title="Karachi Property & Rental Guide" updated="22 September 2026">
+      <LegalPage eyebrow="RENTING IN KARACHI" title="How to find a flat for rent in Karachi" updated="3 October 2026">
         <div className="rounded-lg border border-line bg-cream p-4 text-ink">
           This guide is practical property information, not legal or financial advice. Karachi is a very large and
           varied market, so area-level conditions, rents, availability and local requirements can change. Confirm
@@ -134,9 +136,9 @@ function Page() {
 
         <p>
           For reported 2026 asking rents and sale ranges, see{" "}
-          <a href="/guides/where-can-i-rent-an-affordable-home-in-karachi">where you can rent an affordable home in Karachi</a>
+          <a href="/guides/where-can-i-rent-an-affordable-home-in-karachi">cheap homes for rent in Karachi (reported 2026 ranges)</a>
           {" "}and{" "}
-          <a href="/guides/where-can-i-buy-an-affordable-home-in-karachi">where you can buy an affordable home in Karachi</a>.
+          <a href="/guides/where-can-i-buy-an-affordable-home-in-karachi">cheap houses for sale in Karachi</a>.
         </p>
 
         <p>
@@ -145,6 +147,43 @@ function Page() {
           developments. The right comparison depends on your budget, property type, commute, household needs and the
           condition of the specific building or house.
         </p>
+
+        <h2>How to find a flat for rent in Karachi, step by step</h2>
+        <ol className="my-3 list-decimal ps-5 [&_li]:my-1.5">
+          <li>Pick areas by your daily commute first; Karachi distances and traffic change what a “good” area is.</li>
+          <li>
+            Decide flat, portion or house — see{" "}
+            <a href="/guides/renting/house-vs-flat-vs-portion-pakistan">house vs flat vs portion</a> — and the size in
+            square yards or square feet.
+          </li>
+          <li>
+            Search{" "}
+            <Link to="/rent/$province/$district" params={{ province: "sindh", district: "karachi" }}>
+              flats and houses for rent in Karachi
+            </Link>
+            . New ads appear there as soon as owners publish them.
+          </li>
+          <li>
+            For a flat, ask about monthly maintenance, water supply (line water or tanker), lift, parking and backup power
+            before you compare rents.
+          </li>
+          <li>Visit, and confirm who owns the flat or is authorised to rent it, before paying a deposit.</li>
+          <li>
+            Put the deal in a written agreement — use the{" "}
+            <a href="/guides/rent-agreement-format-pakistan">rent agreement format</a>.
+          </li>
+          <li>
+            Register the tenancy with the police within forty-eight hours of getting possession (Sindh Information of
+            Temporary Residents Act 2015). Karachi Police says it is free at the police station or a facilitation centre,
+            with the owner&apos;s and tenant&apos;s CNICs, the rent agreement, an affidavit and the tenant&apos;s photograph, or
+            online on the{" "}
+            <a href="http://tenantregister.sindhpolice.gov.pk/" target="_blank" rel="noopener noreferrer">
+              Sindh Police TRUST portal
+            </a>
+            .
+          </li>
+          <li>Record the flat&apos;s condition and meter readings, and keep receipts for every payment.</li>
+        </ol>
 
         <h2>Find current rental properties in Karachi</h2>
         <p>
@@ -321,6 +360,40 @@ function Page() {
             .
           </p>
         </section>
+              <h2>Sources</h2>
+        <ul>
+          <li>
+            <a href="https://www.pas.gov.pk/uploads/acts/Sindh%20Act%20No.XXI%20of%202015.pdf" target="_blank" rel="noopener noreferrer">
+              The Sindh Information of Temporary Residents Act 2015 (Sindh Act XXI of 2015)
+            </a>
+          </li>
+          <li>
+            <a href="https://karachipolice.gov.pk/services/how-to-apply-for-tenant-registration-process/" target="_blank" rel="noopener noreferrer">
+              Karachi Police — How to apply for tenant registration
+            </a>
+          </li>
+        </ul>
+        <PostPropertyCta city="Karachi" />
+        <GuideFaq
+          faqs={[
+            {
+              q: "How do I find a flat for rent in Karachi?",
+              a: "Choose areas by commute, decide flat, portion or house, search the Karachi rental page on Apna Ghar, ask about maintenance, water, lift and parking, visit, sign a written agreement and register the tenancy with the police within 48 hours.",
+            },
+            {
+              q: "Is tenant registration compulsory in Karachi?",
+              a: "Yes. The Sindh Information of Temporary Residents Act 2015 requires the landlord, tenant or property dealer to inform the police within forty-eight hours of possession. If one of them does it, the others are not liable.",
+            },
+            {
+              q: "How much does tenant registration cost in Karachi?",
+              a: "Karachi Police lists the processing fee as free, with on-the-spot registration at the police station or facilitation centre. It can also be done online on the Sindh Police TRUST portal.",
+            },
+            {
+              q: "What documents are needed for tenant registration in Karachi?",
+              a: "Karachi Police lists the original and a copy of the owner's CNIC, the tenant's CNIC and the rent agreement, an affidavit and a photograph of the tenant.",
+            },
+          ]}
+        />
       </LegalPage>
     </>
   );
