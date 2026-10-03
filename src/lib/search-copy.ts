@@ -19,7 +19,8 @@ function copyKey(opts: {
 }
 
 /**
- * Keyword copy for live city/type pages with real inventory.
+ * Keyword copy for city/type pages. Copy must stay true whether or not the
+ * page has inventory: never name a specific listing that may not exist.
  * Other marketplace pages keep the generic title/H1 builders.
  */
 const SEARCH_PAGE_COPY: Record<string, SearchPageCopy> = {
@@ -74,57 +75,57 @@ const SEARCH_PAGE_COPY: Record<string, SearchPageCopy> = {
     title: `Houses for Rent in Islamabad | ${APP_NAME}`,
     h1: "Houses for Rent in Islamabad",
     description:
-      "Find houses for rent in Islamabad, including a 1 kanal home in F-7. Compare rent and size on Apna Ghar, then contact the advertiser.",
+      "Find houses for rent in Islamabad. Compare monthly rent, size and sector on Apna Ghar, then contact the advertiser.",
     intro:
-      "Search houses for rent in Islamabad, including family homes in the city's sectors. There is currently a 1 kanal house listed in F-7. Compare rent and size, then contact the advertiser to arrange a viewing.",
+      "Search houses for rent in Islamabad by sector, size and monthly rent. Published inventory changes as advertisers add and remove properties, so check back or broaden your search if nothing matches yet.",
   },
   "RENT|khyber-pakhtunkhwa|peshawar|": {
     title: `Property for Rent in Peshawar | ${APP_NAME}`,
     h1: "Property for Rent in Peshawar",
     description:
-      "Browse property for rent in Peshawar, including a 10 marla family house in University Town. Compare monthly rent, size and location on Apna Ghar, then contact the advertiser.",
+      "Browse property for rent in Peshawar. Compare monthly rent, size and location on Apna Ghar, then contact the advertiser.",
     intro:
-      "Browse property for rent in Peshawar. There is currently a 10 marla family house listed in University Town. Compare monthly rent, size and location, then contact the advertiser to arrange a visit.",
+      "Browse houses and other property for rent in Peshawar. Compare monthly rent, size and location, then contact the advertiser to arrange a visit.",
   },
   "RENT|khyber-pakhtunkhwa|peshawar|houses": {
     title: `Houses for Rent in Peshawar | ${APP_NAME}`,
     h1: "Houses for Rent in Peshawar",
     description:
-      "Find houses for rent in Peshawar, including a 10 marla home in University Town. Compare rent and size on Apna Ghar, then contact the advertiser.",
+      "Find houses for rent in Peshawar. Compare rent and size on Apna Ghar, then contact the advertiser.",
     intro:
-      "Search houses for rent in Peshawar. There is currently a 10 marla family house listed in University Town. Compare rent and size, then contact the advertiser to visit.",
+      "Search houses for rent in Peshawar by size, location and monthly rent, then contact the advertiser to visit.",
   },
   "RENT|punjab|faisalabad|": {
     title: `Property for Rent in Faisalabad | ${APP_NAME}`,
     h1: "Property for Rent in Faisalabad",
     description:
-      "Browse property for rent in Faisalabad, including a first-floor portion in Madina Town. Compare monthly rent, size and location on Apna Ghar, then contact the advertiser.",
+      "Browse property for rent in Faisalabad. Compare monthly rent, size and location on Apna Ghar, then contact the advertiser.",
     intro:
-      "Browse property for rent in Faisalabad. There is currently a 5 marla first-floor portion listed in Madina Town. Compare monthly rent, size and location, then contact the advertiser to arrange a visit.",
+      "Browse portions and other property for rent in Faisalabad. Compare monthly rent, size and location, then contact the advertiser to arrange a visit.",
   },
   "RENT|punjab|faisalabad|portions": {
     title: `Portions for Rent in Faisalabad | ${APP_NAME}`,
     h1: "Portions for Rent in Faisalabad",
     description:
-      "Find portions for rent in Faisalabad, including a first-floor portion in Madina Town. Compare rent and size on Apna Ghar, then contact the advertiser.",
+      "Find portions for rent in Faisalabad. Compare rent and size on Apna Ghar, then contact the advertiser.",
     intro:
-      "Search portions for rent in Faisalabad. There is currently a 5 marla first-floor portion listed in Madina Town. Compare rent and size, then contact the advertiser to visit.",
+      "Search upper and lower portions for rent in Faisalabad by size, location and monthly rent, then contact the advertiser to visit.",
   },
   "RENT|punjab|multan|": {
     title: `Property for Rent in Multan | ${APP_NAME}`,
     h1: "Property for Rent in Multan",
     description:
-      "Browse property for rent in Multan, including a 7 marla family house in Gulgasht Colony. Compare monthly rent, size and location on Apna Ghar, then contact the advertiser.",
+      "Browse property for rent in Multan. Compare monthly rent, size and location on Apna Ghar, then contact the advertiser.",
     intro:
-      "Browse property for rent in Multan. There is currently a 7 marla family house listed in Gulgasht Colony. Compare monthly rent, size and location, then contact the advertiser to arrange a visit.",
+      "Browse houses and other property for rent in Multan. Compare monthly rent, size and location, then contact the advertiser to arrange a visit.",
   },
   "RENT|punjab|multan|houses": {
     title: `Houses for Rent in Multan | ${APP_NAME}`,
     h1: "Houses for Rent in Multan",
     description:
-      "Find houses for rent in Multan, including a 7 marla home in Gulgasht Colony. Compare rent and size on Apna Ghar, then contact the advertiser.",
+      "Find houses for rent in Multan. Compare rent and size on Apna Ghar, then contact the advertiser.",
     intro:
-      "Search houses for rent in Multan. There is currently a 7 marla family house listed in Gulgasht Colony. Compare rent and size, then contact the advertiser to visit.",
+      "Search houses for rent in Multan by size, location and monthly rent, then contact the advertiser to visit.",
   },
 };
 

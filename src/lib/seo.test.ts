@@ -452,7 +452,7 @@ describe("robots and sitemap", () => {
     assert.match(xml, /<loc>https:\/\/apnaaghar\.pk\/sitemap-listings\/1<\/loc>/);
     assert.equal((xml.match(/sitemap-listings\/1<\/loc>/g) || []).length, 1);
     assert.doesNotMatch(xml, /vercel\.app/);
-    assert.equal(listingSitemapPages(0), 1);
+    assert.equal(listingSitemapPages(0), 0); // no empty listing sitemap when there are no live listings
     assert.equal(listingSitemapPages(LISTING_SITEMAP_CHUNK), 1);
     assert.equal(listingSitemapPages(LISTING_SITEMAP_CHUNK + 1), 2);
     assert.ok(LISTING_SITEMAP_CHUNK > 5000);
@@ -548,7 +548,7 @@ describe("structured data", () => {
     });
     assert.ok(head.links?.some((l) => l.rel === "canonical" && l.href === "https://apnaaghar.pk/"));
     assert.ok(head.meta.some((m) => m.property === "og:url" && m.content === "https://apnaaghar.pk/"));
-    assert.ok(head.meta.some((m) => m.property === "og:image" && m.content === "https://apnaaghar.pk/og.jpg"));
+    assert.ok(head.meta.some((m) => m.property === "og:image" && /^https:\/\/apnaaghar\.pk\/apna-ghar-facebook\.jpg/.test(m.content)));
     const guide = publicSeo({
       title: GUIDE_HOW_TO_RENT_TITLE,
       description: GUIDE_HOW_TO_RENT_DESCRIPTION,

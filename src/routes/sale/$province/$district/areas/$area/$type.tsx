@@ -6,7 +6,7 @@ import { typeFromSlug, PROPERTY_TYPE_META } from "@/lib/constants";
 import { areaRouteSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/sale/$province/$district/areas/$area/$type")({
-  validateSearch: ({}) => ({}),
+  validateSearch: () => ({}),
   loader: async ({ params }) => {
     const type = typeFromSlug(params.type);
     if (!type) throw notFound();
@@ -43,7 +43,7 @@ export const Route = createFileRoute("/sale/$province/$district/areas/$area/$typ
 });
 
 function Page() {
-  const { data, area, type } = Route.useLoaderData();
+  const { data, area, type, intents } = Route.useLoaderData();
   const { province, district } = Route.useParams();
   const typeName = PROPERTY_TYPE_META[type].plural;
   return (
@@ -61,6 +61,7 @@ function Page() {
       purpose="SALE"
       title={`${typeName} for Sale in ${area.name}`}
       description={`Find ${typeName.toLowerCase()} for sale in ${area.name}. Compare current listings, asking price, size and location on Apna Ghar.`}
+      intents={intents}
     />
   );
 }

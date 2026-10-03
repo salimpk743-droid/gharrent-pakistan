@@ -54,7 +54,7 @@ export const Route = createFileRoute("/sale/$province/$district/areas/$area/$typ
 
 function Page() {
   const data = Route.useLoaderData();
-  const { province, district, area, type } = Route.useParams();
+  const { province, district, area } = Route.useParams();
   return (
     <ResultsPage
       items={data.data.items}
@@ -66,7 +66,7 @@ function Page() {
       districtSlug={district}
       areaSlug={area}
       areaName={data.area.name}
-      typeSlug={PROPERTY_TYPE_META[type].slug}
+      typeSlug={PROPERTY_TYPE_META[data.type].slug}
       purpose="SALE"
       title={seoIntentTitle({ purpose: "SALE", place: data.area.name, type: data.type, intent: data.intent })}
       description={seoIntentDescription({ purpose: "SALE", place: data.area.name, type: data.type, intent: data.intent })}

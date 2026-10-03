@@ -24,7 +24,6 @@ import { Route as SitemapLocationsDotxmlRouteImport } from './routes/sitemap-loc
 import { Route as SitemapPagesDotxmlRouteImport } from './routes/sitemap-pages[.]xml'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
-import { Route as DotwellKnownAssetlinksDotjsonRouteImport } from './routes/[.]well-known/assetlinks[.]json'
 import { Route as AccountIndexRouteImport } from './routes/account/index'
 import { Route as AccountListingsRouteImport } from './routes/account/listings'
 import { Route as AccountSavedRouteImport } from './routes/account/saved'
@@ -32,6 +31,8 @@ import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminListingsRouteImport } from './routes/admin/listings'
 import { Route as AdminReportsRouteImport } from './routes/admin/reports'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
+import { Route as GuidesIndexRouteImport } from './routes/guides/index'
+import { Route as GuidesSlugRouteImport } from './routes/guides/$slug'
 import { Route as PostIndexRouteImport } from './routes/post/index'
 import { Route as PostIdRouteImport } from './routes/post/$id'
 import { Route as PropertySlugRouteImport } from './routes/property/$slug'
@@ -40,14 +41,8 @@ import { Route as SaleIndexRouteImport } from './routes/sale/index'
 import { Route as SitemapListingsPageRouteImport } from './routes/sitemap-listings/$page'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiImagesIdRouteImport } from './routes/api/images/$id'
-import { Route as RentProvinceIndexRouteImport } from './routes/rent/$province/index'
-import { Route as SaleProvinceIndexRouteImport } from './routes/sale/$province/index'
-import { Route as RentProvinceDistrictIndexRouteImport } from './routes/rent/$province/$district/index'
-import { Route as RentProvinceDistrictTypeRouteImport } from './routes/rent/$province/$district/$type'
-import { Route as SaleProvinceDistrictIndexRouteImport } from './routes/sale/$province/$district/index'
-import { Route as SaleProvinceDistrictTypeRouteImport } from './routes/sale/$province/$district/$type'
-import { Route as GuidesIndexRouteImport } from './routes/guides/index'
 import { Route as GuidesBuyingFardRegistryIntiqalPunjabRouteImport } from './routes/guides/buying/fard-registry-intiqal-punjab'
+import { Route as GuidesBuyingHowToBuyPropertyInPakistanRouteImport } from './routes/guides/buying/how-to-buy-property-in-pakistan'
 import { Route as GuidesBuyingPropertyBuyingDueDiligencePakistanRouteImport } from './routes/guides/buying/property-buying-due-diligence-pakistan'
 import { Route as GuidesBuyingSaleAgreementRegistrationPakistanRouteImport } from './routes/guides/buying/sale-agreement-registration-pakistan'
 import { Route as GuidesCitiesKarachiRouteImport } from './routes/guides/cities/karachi'
@@ -56,6 +51,22 @@ import { Route as GuidesCitiesRawalpindiRouteImport } from './routes/guides/citi
 import { Route as GuidesLandlordsLandlordResponsibilitiesPakistanRouteImport } from './routes/guides/landlords/landlord-responsibilities-pakistan'
 import { Route as GuidesLandlordsRentalAgreementLegalChecklistRouteImport } from './routes/guides/landlords/rental-agreement-legal-checklist'
 import { Route as GuidesLandlordsSecurityDepositRentTermsPakistanRouteImport } from './routes/guides/landlords/security-deposit-rent-terms-pakistan'
+import { Route as GuidesRentingHouseVsFlatVsPortionPakistanRouteImport } from './routes/guides/renting/house-vs-flat-vs-portion-pakistan'
+import { Route as GuidesRentingRentalBudgetAndCostsPakistanRouteImport } from './routes/guides/renting/rental-budget-and-costs-pakistan'
+import { Route as RentProvinceIndexRouteImport } from './routes/rent/$province/index'
+import { Route as SaleProvinceIndexRouteImport } from './routes/sale/$province/index'
+import { Route as RentProvinceDistrictIndexRouteImport } from './routes/rent/$province/$district/index'
+import { Route as RentProvinceDistrictTypeRouteImport } from './routes/rent/$province/$district/$type'
+import { Route as SaleProvinceDistrictIndexRouteImport } from './routes/sale/$province/$district/index'
+import { Route as SaleProvinceDistrictTypeRouteImport } from './routes/sale/$province/$district/$type'
+import { Route as RentProvinceDistrictTypeIntentRouteImport } from './routes/rent/$province/$district/$type/$intent'
+import { Route as RentProvinceDistrictAreasAreaRouteImport } from './routes/rent/$province/$district/areas/$area'
+import { Route as SaleProvinceDistrictTypeIntentRouteImport } from './routes/sale/$province/$district/$type/$intent'
+import { Route as SaleProvinceDistrictAreasAreaRouteImport } from './routes/sale/$province/$district/areas/$area'
+import { Route as RentProvinceDistrictAreasAreaTypeRouteImport } from './routes/rent/$province/$district/areas/$area/$type'
+import { Route as SaleProvinceDistrictAreasAreaTypeRouteImport } from './routes/sale/$province/$district/areas/$area/$type'
+import { Route as RentProvinceDistrictAreasAreaTypeIntentRouteImport } from './routes/rent/$province/$district/areas/$area/$type/$intent'
+import { Route as SaleProvinceDistrictAreasAreaTypeIntentRouteImport } from './routes/sale/$province/$district/areas/$area/$type/$intent'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -133,12 +144,6 @@ const TermsRoute = TermsRouteImport.update({
   path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DotwellKnownAssetlinksDotjsonRoute =
-  DotwellKnownAssetlinksDotjsonRouteImport.update({
-    id: '/.well-known/assetlinks.json',
-    path: '/.well-known/assetlinks.json',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const AccountIndexRoute = AccountIndexRouteImport.update({
   id: '/account/',
   path: '/account/',
@@ -172,6 +177,16 @@ const AdminReportsRoute = AdminReportsRouteImport.update({
 const AdminUsersRoute = AdminUsersRouteImport.update({
   id: '/admin/users',
   path: '/admin/users',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GuidesIndexRoute = GuidesIndexRouteImport.update({
+  id: '/guides/',
+  path: '/guides/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GuidesSlugRoute = GuidesSlugRouteImport.update({
+  id: '/guides/$slug',
+  path: '/guides/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PostIndexRoute = PostIndexRouteImport.update({
@@ -214,6 +229,75 @@ const ApiImagesIdRoute = ApiImagesIdRouteImport.update({
   path: '/api/images/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GuidesBuyingFardRegistryIntiqalPunjabRoute =
+  GuidesBuyingFardRegistryIntiqalPunjabRouteImport.update({
+    id: '/guides/buying/fard-registry-intiqal-punjab',
+    path: '/guides/buying/fard-registry-intiqal-punjab',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const GuidesBuyingHowToBuyPropertyInPakistanRoute =
+  GuidesBuyingHowToBuyPropertyInPakistanRouteImport.update({
+    id: '/guides/buying/how-to-buy-property-in-pakistan',
+    path: '/guides/buying/how-to-buy-property-in-pakistan',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const GuidesBuyingPropertyBuyingDueDiligencePakistanRoute =
+  GuidesBuyingPropertyBuyingDueDiligencePakistanRouteImport.update({
+    id: '/guides/buying/property-buying-due-diligence-pakistan',
+    path: '/guides/buying/property-buying-due-diligence-pakistan',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const GuidesBuyingSaleAgreementRegistrationPakistanRoute =
+  GuidesBuyingSaleAgreementRegistrationPakistanRouteImport.update({
+    id: '/guides/buying/sale-agreement-registration-pakistan',
+    path: '/guides/buying/sale-agreement-registration-pakistan',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const GuidesCitiesKarachiRoute = GuidesCitiesKarachiRouteImport.update({
+  id: '/guides/cities/karachi',
+  path: '/guides/cities/karachi',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GuidesCitiesLahoreRoute = GuidesCitiesLahoreRouteImport.update({
+  id: '/guides/cities/lahore',
+  path: '/guides/cities/lahore',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GuidesCitiesRawalpindiRoute = GuidesCitiesRawalpindiRouteImport.update({
+  id: '/guides/cities/rawalpindi',
+  path: '/guides/cities/rawalpindi',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GuidesLandlordsLandlordResponsibilitiesPakistanRoute =
+  GuidesLandlordsLandlordResponsibilitiesPakistanRouteImport.update({
+    id: '/guides/landlords/landlord-responsibilities-pakistan',
+    path: '/guides/landlords/landlord-responsibilities-pakistan',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const GuidesLandlordsRentalAgreementLegalChecklistRoute =
+  GuidesLandlordsRentalAgreementLegalChecklistRouteImport.update({
+    id: '/guides/landlords/rental-agreement-legal-checklist',
+    path: '/guides/landlords/rental-agreement-legal-checklist',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const GuidesLandlordsSecurityDepositRentTermsPakistanRoute =
+  GuidesLandlordsSecurityDepositRentTermsPakistanRouteImport.update({
+    id: '/guides/landlords/security-deposit-rent-terms-pakistan',
+    path: '/guides/landlords/security-deposit-rent-terms-pakistan',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const GuidesRentingHouseVsFlatVsPortionPakistanRoute =
+  GuidesRentingHouseVsFlatVsPortionPakistanRouteImport.update({
+    id: '/guides/renting/house-vs-flat-vs-portion-pakistan',
+    path: '/guides/renting/house-vs-flat-vs-portion-pakistan',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const GuidesRentingRentalBudgetAndCostsPakistanRoute =
+  GuidesRentingRentalBudgetAndCostsPakistanRouteImport.update({
+    id: '/guides/renting/rental-budget-and-costs-pakistan',
+    path: '/guides/renting/rental-budget-and-costs-pakistan',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const RentProvinceIndexRoute = RentProvinceIndexRouteImport.update({
   id: '/rent/$province/',
   path: '/rent/$province/',
@@ -248,68 +332,56 @@ const SaleProvinceDistrictTypeRoute =
     path: '/sale/$province/$district/$type',
     getParentRoute: () => rootRouteImport,
   } as any)
-const GuidesIndexRoute = GuidesIndexRouteImport.update({
-  id: '/guides/',
-  path: '/guides',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GuidesBuyingFardRegistryIntiqalPunjabRoute = GuidesBuyingFardRegistryIntiqalPunjabRouteImport.update({
-  id: '/guides/buying/fard-registry-intiqal-punjab',
-  path: '/guides/buying/fard-registry-intiqal-punjab',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GuidesBuyingPropertyBuyingDueDiligencePakistanRoute = GuidesBuyingPropertyBuyingDueDiligencePakistanRouteImport.update({
-  id: '/guides/buying/property-buying-due-diligence-pakistan',
-  path: '/guides/buying/property-buying-due-diligence-pakistan',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GuidesBuyingSaleAgreementRegistrationPakistanRoute = GuidesBuyingSaleAgreementRegistrationPakistanRouteImport.update({
-  id: '/guides/buying/sale-agreement-registration-pakistan',
-  path: '/guides/buying/sale-agreement-registration-pakistan',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GuidesCitiesKarachiRoute = GuidesCitiesKarachiRouteImport.update({
-  id: '/guides/cities/karachi',
-  path: '/guides/cities/karachi',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GuidesCitiesLahoreRoute = GuidesCitiesLahoreRouteImport.update({
-  id: '/guides/cities/lahore',
-  path: '/guides/cities/lahore',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GuidesCitiesRawalpindiRoute = GuidesCitiesRawalpindiRouteImport.update({
-  id: '/guides/cities/rawalpindi',
-  path: '/guides/cities/rawalpindi',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GuidesLandlordsLandlordResponsibilitiesPakistanRoute = GuidesLandlordsLandlordResponsibilitiesPakistanRouteImport.update({
-  id: '/guides/landlords/landlord-responsibilities-pakistan',
-  path: '/guides/landlords/landlord-responsibilities-pakistan',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GuidesLandlordsRentalAgreementLegalChecklistRoute = GuidesLandlordsRentalAgreementLegalChecklistRouteImport.update({
-  id: '/guides/landlords/rental-agreement-legal-checklist',
-  path: '/guides/landlords/rental-agreement-legal-checklist',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GuidesLandlordsSecurityDepositRentTermsPakistanRoute = GuidesLandlordsSecurityDepositRentTermsPakistanRouteImport.update({
-  id: '/guides/landlords/security-deposit-rent-terms-pakistan',
-  path: '/guides/landlords/security-deposit-rent-terms-pakistan',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const RentProvinceDistrictTypeIntentRoute =
+  RentProvinceDistrictTypeIntentRouteImport.update({
+    id: '/$intent',
+    path: '/$intent',
+    getParentRoute: () => RentProvinceDistrictTypeRoute,
+  } as any)
+const RentProvinceDistrictAreasAreaRoute =
+  RentProvinceDistrictAreasAreaRouteImport.update({
+    id: '/rent/$province/$district/areas/$area',
+    path: '/rent/$province/$district/areas/$area',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const SaleProvinceDistrictTypeIntentRoute =
+  SaleProvinceDistrictTypeIntentRouteImport.update({
+    id: '/$intent',
+    path: '/$intent',
+    getParentRoute: () => SaleProvinceDistrictTypeRoute,
+  } as any)
+const SaleProvinceDistrictAreasAreaRoute =
+  SaleProvinceDistrictAreasAreaRouteImport.update({
+    id: '/sale/$province/$district/areas/$area',
+    path: '/sale/$province/$district/areas/$area',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const RentProvinceDistrictAreasAreaTypeRoute =
+  RentProvinceDistrictAreasAreaTypeRouteImport.update({
+    id: '/$type',
+    path: '/$type',
+    getParentRoute: () => RentProvinceDistrictAreasAreaRoute,
+  } as any)
+const SaleProvinceDistrictAreasAreaTypeRoute =
+  SaleProvinceDistrictAreasAreaTypeRouteImport.update({
+    id: '/$type',
+    path: '/$type',
+    getParentRoute: () => SaleProvinceDistrictAreasAreaRoute,
+  } as any)
+const RentProvinceDistrictAreasAreaTypeIntentRoute =
+  RentProvinceDistrictAreasAreaTypeIntentRouteImport.update({
+    id: '/$intent',
+    path: '/$intent',
+    getParentRoute: () => RentProvinceDistrictAreasAreaTypeRoute,
+  } as any)
+const SaleProvinceDistrictAreasAreaTypeIntentRoute =
+  SaleProvinceDistrictAreasAreaTypeIntentRouteImport.update({
+    id: '/$intent',
+    path: '/$intent',
+    getParentRoute: () => SaleProvinceDistrictAreasAreaTypeRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/guides/': typeof GuidesIndexRoute
-  '/guides/buying/fard-registry-intiqal-punjab': typeof GuidesBuyingFardRegistryIntiqalPunjabRoute
-  '/guides/buying/property-buying-due-diligence-pakistan': typeof GuidesBuyingPropertyBuyingDueDiligencePakistanRoute
-  '/guides/buying/sale-agreement-registration-pakistan': typeof GuidesBuyingSaleAgreementRegistrationPakistanRoute
-  '/guides/cities/karachi': typeof GuidesCitiesKarachiRoute
-  '/guides/cities/lahore': typeof GuidesCitiesLahoreRoute
-  '/guides/cities/rawalpindi': typeof GuidesCitiesRawalpindiRoute
-  '/guides/landlords/landlord-responsibilities-pakistan': typeof GuidesLandlordsLandlordResponsibilitiesPakistanRoute
-  '/guides/landlords/rental-agreement-legal-checklist': typeof GuidesLandlordsRentalAgreementLegalChecklistRoute
-  '/guides/landlords/security-deposit-rent-terms-pakistan': typeof GuidesLandlordsSecurityDepositRentTermsPakistanRoute
   '/': typeof IndexRoute
   '/account-deletion': typeof AccountDeletionRoute
   '/contact': typeof ContactRoute
@@ -325,32 +397,25 @@ export interface FileRoutesByFullPath {
   '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
-  '/.well-known/assetlinks.json': typeof DotwellKnownAssetlinksDotjsonRoute
   '/account/listings': typeof AccountListingsRoute
   '/account/saved': typeof AccountSavedRoute
   '/admin/listings': typeof AdminListingsRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/users': typeof AdminUsersRoute
+  '/guides/$slug': typeof GuidesSlugRoute
   '/post/$id': typeof PostIdRoute
   '/property/$slug': typeof PropertySlugRoute
   '/sitemap-listings/$page': typeof SitemapListingsPageRoute
   '/account/': typeof AccountIndexRoute
   '/admin/': typeof AdminIndexRoute
+  '/guides/': typeof GuidesIndexRoute
   '/post/': typeof PostIndexRoute
   '/rent/': typeof RentIndexRoute
   '/sale/': typeof SaleIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/images/$id': typeof ApiImagesIdRoute
-  '/rent/$province/': typeof RentProvinceIndexRoute
-  '/sale/$province/': typeof SaleProvinceIndexRoute
-  '/rent/$province/$district/$type': typeof RentProvinceDistrictTypeRoute
-  '/sale/$province/$district/$type': typeof SaleProvinceDistrictTypeRoute
-  '/rent/$province/$district/': typeof RentProvinceDistrictIndexRoute
-  '/sale/$province/$district/': typeof SaleProvinceDistrictIndexRoute
-}
-export interface FileRoutesByTo {
-  '/guides': typeof GuidesIndexRoute
   '/guides/buying/fard-registry-intiqal-punjab': typeof GuidesBuyingFardRegistryIntiqalPunjabRoute
+  '/guides/buying/how-to-buy-property-in-pakistan': typeof GuidesBuyingHowToBuyPropertyInPakistanRoute
   '/guides/buying/property-buying-due-diligence-pakistan': typeof GuidesBuyingPropertyBuyingDueDiligencePakistanRoute
   '/guides/buying/sale-agreement-registration-pakistan': typeof GuidesBuyingSaleAgreementRegistrationPakistanRoute
   '/guides/cities/karachi': typeof GuidesCitiesKarachiRoute
@@ -359,6 +424,24 @@ export interface FileRoutesByTo {
   '/guides/landlords/landlord-responsibilities-pakistan': typeof GuidesLandlordsLandlordResponsibilitiesPakistanRoute
   '/guides/landlords/rental-agreement-legal-checklist': typeof GuidesLandlordsRentalAgreementLegalChecklistRoute
   '/guides/landlords/security-deposit-rent-terms-pakistan': typeof GuidesLandlordsSecurityDepositRentTermsPakistanRoute
+  '/guides/renting/house-vs-flat-vs-portion-pakistan': typeof GuidesRentingHouseVsFlatVsPortionPakistanRoute
+  '/guides/renting/rental-budget-and-costs-pakistan': typeof GuidesRentingRentalBudgetAndCostsPakistanRoute
+  '/rent/$province/': typeof RentProvinceIndexRoute
+  '/sale/$province/': typeof SaleProvinceIndexRoute
+  '/rent/$province/$district/$type': typeof RentProvinceDistrictTypeRouteWithChildren
+  '/sale/$province/$district/$type': typeof SaleProvinceDistrictTypeRouteWithChildren
+  '/rent/$province/$district/': typeof RentProvinceDistrictIndexRoute
+  '/sale/$province/$district/': typeof SaleProvinceDistrictIndexRoute
+  '/rent/$province/$district/$type/$intent': typeof RentProvinceDistrictTypeIntentRoute
+  '/rent/$province/$district/areas/$area': typeof RentProvinceDistrictAreasAreaRouteWithChildren
+  '/sale/$province/$district/$type/$intent': typeof SaleProvinceDistrictTypeIntentRoute
+  '/sale/$province/$district/areas/$area': typeof SaleProvinceDistrictAreasAreaRouteWithChildren
+  '/rent/$province/$district/areas/$area/$type': typeof RentProvinceDistrictAreasAreaTypeRouteWithChildren
+  '/sale/$province/$district/areas/$area/$type': typeof SaleProvinceDistrictAreasAreaTypeRouteWithChildren
+  '/rent/$province/$district/areas/$area/$type/$intent': typeof RentProvinceDistrictAreasAreaTypeIntentRoute
+  '/sale/$province/$district/areas/$area/$type/$intent': typeof SaleProvinceDistrictAreasAreaTypeIntentRoute
+}
+export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/account-deletion': typeof AccountDeletionRoute
   '/contact': typeof ContactRoute
@@ -374,40 +457,51 @@ export interface FileRoutesByTo {
   '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
-  '/.well-known/assetlinks.json': typeof DotwellKnownAssetlinksDotjsonRoute
   '/account/listings': typeof AccountListingsRoute
   '/account/saved': typeof AccountSavedRoute
   '/admin/listings': typeof AdminListingsRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/users': typeof AdminUsersRoute
+  '/guides/$slug': typeof GuidesSlugRoute
   '/post/$id': typeof PostIdRoute
   '/property/$slug': typeof PropertySlugRoute
   '/sitemap-listings/$page': typeof SitemapListingsPageRoute
   '/account': typeof AccountIndexRoute
   '/admin': typeof AdminIndexRoute
+  '/guides': typeof GuidesIndexRoute
   '/post': typeof PostIndexRoute
   '/rent': typeof RentIndexRoute
   '/sale': typeof SaleIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/images/$id': typeof ApiImagesIdRoute
+  '/guides/buying/fard-registry-intiqal-punjab': typeof GuidesBuyingFardRegistryIntiqalPunjabRoute
+  '/guides/buying/how-to-buy-property-in-pakistan': typeof GuidesBuyingHowToBuyPropertyInPakistanRoute
+  '/guides/buying/property-buying-due-diligence-pakistan': typeof GuidesBuyingPropertyBuyingDueDiligencePakistanRoute
+  '/guides/buying/sale-agreement-registration-pakistan': typeof GuidesBuyingSaleAgreementRegistrationPakistanRoute
+  '/guides/cities/karachi': typeof GuidesCitiesKarachiRoute
+  '/guides/cities/lahore': typeof GuidesCitiesLahoreRoute
+  '/guides/cities/rawalpindi': typeof GuidesCitiesRawalpindiRoute
+  '/guides/landlords/landlord-responsibilities-pakistan': typeof GuidesLandlordsLandlordResponsibilitiesPakistanRoute
+  '/guides/landlords/rental-agreement-legal-checklist': typeof GuidesLandlordsRentalAgreementLegalChecklistRoute
+  '/guides/landlords/security-deposit-rent-terms-pakistan': typeof GuidesLandlordsSecurityDepositRentTermsPakistanRoute
+  '/guides/renting/house-vs-flat-vs-portion-pakistan': typeof GuidesRentingHouseVsFlatVsPortionPakistanRoute
+  '/guides/renting/rental-budget-and-costs-pakistan': typeof GuidesRentingRentalBudgetAndCostsPakistanRoute
   '/rent/$province': typeof RentProvinceIndexRoute
   '/sale/$province': typeof SaleProvinceIndexRoute
-  '/rent/$province/$district/$type': typeof RentProvinceDistrictTypeRoute
-  '/sale/$province/$district/$type': typeof SaleProvinceDistrictTypeRoute
+  '/rent/$province/$district/$type': typeof RentProvinceDistrictTypeRouteWithChildren
+  '/sale/$province/$district/$type': typeof SaleProvinceDistrictTypeRouteWithChildren
   '/rent/$province/$district': typeof RentProvinceDistrictIndexRoute
   '/sale/$province/$district': typeof SaleProvinceDistrictIndexRoute
+  '/rent/$province/$district/$type/$intent': typeof RentProvinceDistrictTypeIntentRoute
+  '/rent/$province/$district/areas/$area': typeof RentProvinceDistrictAreasAreaRouteWithChildren
+  '/sale/$province/$district/$type/$intent': typeof SaleProvinceDistrictTypeIntentRoute
+  '/sale/$province/$district/areas/$area': typeof SaleProvinceDistrictAreasAreaRouteWithChildren
+  '/rent/$province/$district/areas/$area/$type': typeof RentProvinceDistrictAreasAreaTypeRouteWithChildren
+  '/sale/$province/$district/areas/$area/$type': typeof SaleProvinceDistrictAreasAreaTypeRouteWithChildren
+  '/rent/$province/$district/areas/$area/$type/$intent': typeof RentProvinceDistrictAreasAreaTypeIntentRoute
+  '/sale/$province/$district/areas/$area/$type/$intent': typeof SaleProvinceDistrictAreasAreaTypeIntentRoute
 }
 export interface FileRoutesById {
-    '/guides/': typeof GuidesIndexRoute
-    '/guides/buying/fard-registry-intiqal-punjab': typeof GuidesBuyingFardRegistryIntiqalPunjabRoute
-    '/guides/buying/property-buying-due-diligence-pakistan': typeof GuidesBuyingPropertyBuyingDueDiligencePakistanRoute
-    '/guides/buying/sale-agreement-registration-pakistan': typeof GuidesBuyingSaleAgreementRegistrationPakistanRoute
-    '/guides/cities/karachi': typeof GuidesCitiesKarachiRoute
-    '/guides/cities/lahore': typeof GuidesCitiesLahoreRoute
-    '/guides/cities/rawalpindi': typeof GuidesCitiesRawalpindiRoute
-    '/guides/landlords/landlord-responsibilities-pakistan': typeof GuidesLandlordsLandlordResponsibilitiesPakistanRoute
-    '/guides/landlords/rental-agreement-legal-checklist': typeof GuidesLandlordsRentalAgreementLegalChecklistRoute
-    '/guides/landlords/security-deposit-rent-terms-pakistan': typeof GuidesLandlordsSecurityDepositRentTermsPakistanRoute
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/account-deletion': typeof AccountDeletionRoute
@@ -424,42 +518,53 @@ export interface FileRoutesById {
   '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
-  '/.well-known/assetlinks.json': typeof DotwellKnownAssetlinksDotjsonRoute
   '/account/listings': typeof AccountListingsRoute
   '/account/saved': typeof AccountSavedRoute
   '/admin/listings': typeof AdminListingsRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/users': typeof AdminUsersRoute
+  '/guides/$slug': typeof GuidesSlugRoute
   '/post/$id': typeof PostIdRoute
   '/property/$slug': typeof PropertySlugRoute
   '/sitemap-listings/$page': typeof SitemapListingsPageRoute
   '/account/': typeof AccountIndexRoute
   '/admin/': typeof AdminIndexRoute
+  '/guides/': typeof GuidesIndexRoute
   '/post/': typeof PostIndexRoute
   '/rent/': typeof RentIndexRoute
   '/sale/': typeof SaleIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/images/$id': typeof ApiImagesIdRoute
+  '/guides/buying/fard-registry-intiqal-punjab': typeof GuidesBuyingFardRegistryIntiqalPunjabRoute
+  '/guides/buying/how-to-buy-property-in-pakistan': typeof GuidesBuyingHowToBuyPropertyInPakistanRoute
+  '/guides/buying/property-buying-due-diligence-pakistan': typeof GuidesBuyingPropertyBuyingDueDiligencePakistanRoute
+  '/guides/buying/sale-agreement-registration-pakistan': typeof GuidesBuyingSaleAgreementRegistrationPakistanRoute
+  '/guides/cities/karachi': typeof GuidesCitiesKarachiRoute
+  '/guides/cities/lahore': typeof GuidesCitiesLahoreRoute
+  '/guides/cities/rawalpindi': typeof GuidesCitiesRawalpindiRoute
+  '/guides/landlords/landlord-responsibilities-pakistan': typeof GuidesLandlordsLandlordResponsibilitiesPakistanRoute
+  '/guides/landlords/rental-agreement-legal-checklist': typeof GuidesLandlordsRentalAgreementLegalChecklistRoute
+  '/guides/landlords/security-deposit-rent-terms-pakistan': typeof GuidesLandlordsSecurityDepositRentTermsPakistanRoute
+  '/guides/renting/house-vs-flat-vs-portion-pakistan': typeof GuidesRentingHouseVsFlatVsPortionPakistanRoute
+  '/guides/renting/rental-budget-and-costs-pakistan': typeof GuidesRentingRentalBudgetAndCostsPakistanRoute
   '/rent/$province/': typeof RentProvinceIndexRoute
   '/sale/$province/': typeof SaleProvinceIndexRoute
-  '/rent/$province/$district/$type': typeof RentProvinceDistrictTypeRoute
-  '/sale/$province/$district/$type': typeof SaleProvinceDistrictTypeRoute
+  '/rent/$province/$district/$type': typeof RentProvinceDistrictTypeRouteWithChildren
+  '/sale/$province/$district/$type': typeof SaleProvinceDistrictTypeRouteWithChildren
   '/rent/$province/$district/': typeof RentProvinceDistrictIndexRoute
   '/sale/$province/$district/': typeof SaleProvinceDistrictIndexRoute
+  '/rent/$province/$district/$type/$intent': typeof RentProvinceDistrictTypeIntentRoute
+  '/rent/$province/$district/areas/$area': typeof RentProvinceDistrictAreasAreaRouteWithChildren
+  '/sale/$province/$district/$type/$intent': typeof SaleProvinceDistrictTypeIntentRoute
+  '/sale/$province/$district/areas/$area': typeof SaleProvinceDistrictAreasAreaRouteWithChildren
+  '/rent/$province/$district/areas/$area/$type': typeof RentProvinceDistrictAreasAreaTypeRouteWithChildren
+  '/sale/$province/$district/areas/$area/$type': typeof SaleProvinceDistrictAreasAreaTypeRouteWithChildren
+  '/rent/$province/$district/areas/$area/$type/$intent': typeof RentProvinceDistrictAreasAreaTypeIntentRoute
+  '/sale/$province/$district/areas/$area/$type/$intent': typeof SaleProvinceDistrictAreasAreaTypeIntentRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/guides/'
-    | '/guides/buying/fard-registry-intiqal-punjab'
-    | '/guides/buying/property-buying-due-diligence-pakistan'
-    | '/guides/buying/sale-agreement-registration-pakistan'
-    | '/guides/cities/karachi'
-    | '/guides/cities/lahore'
-    | '/guides/cities/rawalpindi'
-    | '/guides/landlords/landlord-responsibilities-pakistan'
-    | '/guides/landlords/rental-agreement-legal-checklist'
-    | '/guides/landlords/security-deposit-rent-terms-pakistan'
     | '/'
     | '/account-deletion'
     | '/contact'
@@ -475,40 +580,51 @@ export interface FileRouteTypes {
     | '/sitemap-pages.xml'
     | '/sitemap.xml'
     | '/terms'
-    | '/.well-known/assetlinks.json'
     | '/account/listings'
     | '/account/saved'
     | '/admin/listings'
     | '/admin/reports'
     | '/admin/users'
+    | '/guides/$slug'
     | '/post/$id'
     | '/property/$slug'
     | '/sitemap-listings/$page'
     | '/account/'
     | '/admin/'
+    | '/guides/'
     | '/post/'
     | '/rent/'
     | '/sale/'
     | '/api/auth/$'
     | '/api/images/$id'
+    | '/guides/buying/fard-registry-intiqal-punjab'
+    | '/guides/buying/how-to-buy-property-in-pakistan'
+    | '/guides/buying/property-buying-due-diligence-pakistan'
+    | '/guides/buying/sale-agreement-registration-pakistan'
+    | '/guides/cities/karachi'
+    | '/guides/cities/lahore'
+    | '/guides/cities/rawalpindi'
+    | '/guides/landlords/landlord-responsibilities-pakistan'
+    | '/guides/landlords/rental-agreement-legal-checklist'
+    | '/guides/landlords/security-deposit-rent-terms-pakistan'
+    | '/guides/renting/house-vs-flat-vs-portion-pakistan'
+    | '/guides/renting/rental-budget-and-costs-pakistan'
     | '/rent/$province/'
     | '/sale/$province/'
     | '/rent/$province/$district/$type'
     | '/sale/$province/$district/$type'
     | '/rent/$province/$district/'
     | '/sale/$province/$district/'
+    | '/rent/$province/$district/$type/$intent'
+    | '/rent/$province/$district/areas/$area'
+    | '/sale/$province/$district/$type/$intent'
+    | '/sale/$province/$district/areas/$area'
+    | '/rent/$province/$district/areas/$area/$type'
+    | '/sale/$province/$district/areas/$area/$type'
+    | '/rent/$province/$district/areas/$area/$type/$intent'
+    | '/sale/$province/$district/areas/$area/$type/$intent'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/guides'
-    | '/guides/buying/fard-registry-intiqal-punjab'
-    | '/guides/buying/property-buying-due-diligence-pakistan'
-    | '/guides/buying/sale-agreement-registration-pakistan'
-    | '/guides/cities/karachi'
-    | '/guides/cities/lahore'
-    | '/guides/cities/rawalpindi'
-    | '/guides/landlords/landlord-responsibilities-pakistan'
-    | '/guides/landlords/rental-agreement-legal-checklist'
-    | '/guides/landlords/security-deposit-rent-terms-pakistan'
     | '/'
     | '/account-deletion'
     | '/contact'
@@ -524,31 +640,25 @@ export interface FileRouteTypes {
     | '/sitemap-pages.xml'
     | '/sitemap.xml'
     | '/terms'
-    | '/.well-known/assetlinks.json'
     | '/account/listings'
     | '/account/saved'
     | '/admin/listings'
     | '/admin/reports'
     | '/admin/users'
+    | '/guides/$slug'
     | '/post/$id'
     | '/property/$slug'
     | '/sitemap-listings/$page'
     | '/account'
     | '/admin'
+    | '/guides'
     | '/post'
     | '/rent'
     | '/sale'
     | '/api/auth/$'
     | '/api/images/$id'
-    | '/rent/$province'
-    | '/sale/$province'
-    | '/rent/$province/$district/$type'
-    | '/sale/$province/$district/$type'
-    | '/rent/$province/$district'
-    | '/sale/$province/$district'
-  id:
-    | '/guides/'
     | '/guides/buying/fard-registry-intiqal-punjab'
+    | '/guides/buying/how-to-buy-property-in-pakistan'
     | '/guides/buying/property-buying-due-diligence-pakistan'
     | '/guides/buying/sale-agreement-registration-pakistan'
     | '/guides/cities/karachi'
@@ -557,6 +667,23 @@ export interface FileRouteTypes {
     | '/guides/landlords/landlord-responsibilities-pakistan'
     | '/guides/landlords/rental-agreement-legal-checklist'
     | '/guides/landlords/security-deposit-rent-terms-pakistan'
+    | '/guides/renting/house-vs-flat-vs-portion-pakistan'
+    | '/guides/renting/rental-budget-and-costs-pakistan'
+    | '/rent/$province'
+    | '/sale/$province'
+    | '/rent/$province/$district/$type'
+    | '/sale/$province/$district/$type'
+    | '/rent/$province/$district'
+    | '/sale/$province/$district'
+    | '/rent/$province/$district/$type/$intent'
+    | '/rent/$province/$district/areas/$area'
+    | '/sale/$province/$district/$type/$intent'
+    | '/sale/$province/$district/areas/$area'
+    | '/rent/$province/$district/areas/$area/$type'
+    | '/sale/$province/$district/areas/$area/$type'
+    | '/rent/$province/$district/areas/$area/$type/$intent'
+    | '/sale/$province/$district/areas/$area/$type/$intent'
+  id:
     | '__root__'
     | '/'
     | '/account-deletion'
@@ -573,41 +700,52 @@ export interface FileRouteTypes {
     | '/sitemap-pages.xml'
     | '/sitemap.xml'
     | '/terms'
-    | '/.well-known/assetlinks.json'
     | '/account/listings'
     | '/account/saved'
     | '/admin/listings'
     | '/admin/reports'
     | '/admin/users'
+    | '/guides/$slug'
     | '/post/$id'
     | '/property/$slug'
     | '/sitemap-listings/$page'
     | '/account/'
     | '/admin/'
+    | '/guides/'
     | '/post/'
     | '/rent/'
     | '/sale/'
     | '/api/auth/$'
     | '/api/images/$id'
+    | '/guides/buying/fard-registry-intiqal-punjab'
+    | '/guides/buying/how-to-buy-property-in-pakistan'
+    | '/guides/buying/property-buying-due-diligence-pakistan'
+    | '/guides/buying/sale-agreement-registration-pakistan'
+    | '/guides/cities/karachi'
+    | '/guides/cities/lahore'
+    | '/guides/cities/rawalpindi'
+    | '/guides/landlords/landlord-responsibilities-pakistan'
+    | '/guides/landlords/rental-agreement-legal-checklist'
+    | '/guides/landlords/security-deposit-rent-terms-pakistan'
+    | '/guides/renting/house-vs-flat-vs-portion-pakistan'
+    | '/guides/renting/rental-budget-and-costs-pakistan'
     | '/rent/$province/'
     | '/sale/$province/'
     | '/rent/$province/$district/$type'
     | '/sale/$province/$district/$type'
     | '/rent/$province/$district/'
     | '/sale/$province/$district/'
+    | '/rent/$province/$district/$type/$intent'
+    | '/rent/$province/$district/areas/$area'
+    | '/sale/$province/$district/$type/$intent'
+    | '/sale/$province/$district/areas/$area'
+    | '/rent/$province/$district/areas/$area/$type'
+    | '/sale/$province/$district/areas/$area/$type'
+    | '/rent/$province/$district/areas/$area/$type/$intent'
+    | '/sale/$province/$district/areas/$area/$type/$intent'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  GuidesIndexRoute: typeof GuidesIndexRoute
-  GuidesBuyingFardRegistryIntiqalPunjabRoute: typeof GuidesBuyingFardRegistryIntiqalPunjabRoute
-  GuidesBuyingPropertyBuyingDueDiligencePakistanRoute: typeof GuidesBuyingPropertyBuyingDueDiligencePakistanRoute
-  GuidesBuyingSaleAgreementRegistrationPakistanRoute: typeof GuidesBuyingSaleAgreementRegistrationPakistanRoute
-  GuidesCitiesKarachiRoute: typeof GuidesCitiesKarachiRoute
-  GuidesCitiesLahoreRoute: typeof GuidesCitiesLahoreRoute
-  GuidesCitiesRawalpindiRoute: typeof GuidesCitiesRawalpindiRoute
-  GuidesLandlordsLandlordResponsibilitiesPakistanRoute: typeof GuidesLandlordsLandlordResponsibilitiesPakistanRoute
-  GuidesLandlordsRentalAgreementLegalChecklistRoute: typeof GuidesLandlordsRentalAgreementLegalChecklistRoute
-  GuidesLandlordsSecurityDepositRentTermsPakistanRoute: typeof GuidesLandlordsSecurityDepositRentTermsPakistanRoute
   IndexRoute: typeof IndexRoute
   AccountDeletionRoute: typeof AccountDeletionRoute
   ContactRoute: typeof ContactRoute
@@ -623,102 +761,47 @@ export interface RootRouteChildren {
   SitemapPagesDotxmlRoute: typeof SitemapPagesDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
-  DotwellKnownAssetlinksDotjsonRoute: typeof DotwellKnownAssetlinksDotjsonRoute
   AccountListingsRoute: typeof AccountListingsRoute
   AccountSavedRoute: typeof AccountSavedRoute
   AdminListingsRoute: typeof AdminListingsRoute
   AdminReportsRoute: typeof AdminReportsRoute
   AdminUsersRoute: typeof AdminUsersRoute
+  GuidesSlugRoute: typeof GuidesSlugRoute
   PostIdRoute: typeof PostIdRoute
   PropertySlugRoute: typeof PropertySlugRoute
   SitemapListingsPageRoute: typeof SitemapListingsPageRoute
   AccountIndexRoute: typeof AccountIndexRoute
   AdminIndexRoute: typeof AdminIndexRoute
+  GuidesIndexRoute: typeof GuidesIndexRoute
   PostIndexRoute: typeof PostIndexRoute
   RentIndexRoute: typeof RentIndexRoute
   SaleIndexRoute: typeof SaleIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiImagesIdRoute: typeof ApiImagesIdRoute
+  GuidesBuyingFardRegistryIntiqalPunjabRoute: typeof GuidesBuyingFardRegistryIntiqalPunjabRoute
+  GuidesBuyingHowToBuyPropertyInPakistanRoute: typeof GuidesBuyingHowToBuyPropertyInPakistanRoute
+  GuidesBuyingPropertyBuyingDueDiligencePakistanRoute: typeof GuidesBuyingPropertyBuyingDueDiligencePakistanRoute
+  GuidesBuyingSaleAgreementRegistrationPakistanRoute: typeof GuidesBuyingSaleAgreementRegistrationPakistanRoute
+  GuidesCitiesKarachiRoute: typeof GuidesCitiesKarachiRoute
+  GuidesCitiesLahoreRoute: typeof GuidesCitiesLahoreRoute
+  GuidesCitiesRawalpindiRoute: typeof GuidesCitiesRawalpindiRoute
+  GuidesLandlordsLandlordResponsibilitiesPakistanRoute: typeof GuidesLandlordsLandlordResponsibilitiesPakistanRoute
+  GuidesLandlordsRentalAgreementLegalChecklistRoute: typeof GuidesLandlordsRentalAgreementLegalChecklistRoute
+  GuidesLandlordsSecurityDepositRentTermsPakistanRoute: typeof GuidesLandlordsSecurityDepositRentTermsPakistanRoute
+  GuidesRentingHouseVsFlatVsPortionPakistanRoute: typeof GuidesRentingHouseVsFlatVsPortionPakistanRoute
+  GuidesRentingRentalBudgetAndCostsPakistanRoute: typeof GuidesRentingRentalBudgetAndCostsPakistanRoute
   RentProvinceIndexRoute: typeof RentProvinceIndexRoute
   SaleProvinceIndexRoute: typeof SaleProvinceIndexRoute
-  RentProvinceDistrictTypeRoute: typeof RentProvinceDistrictTypeRoute
-  SaleProvinceDistrictTypeRoute: typeof SaleProvinceDistrictTypeRoute
+  RentProvinceDistrictTypeRoute: typeof RentProvinceDistrictTypeRouteWithChildren
+  SaleProvinceDistrictTypeRoute: typeof SaleProvinceDistrictTypeRouteWithChildren
   RentProvinceDistrictIndexRoute: typeof RentProvinceDistrictIndexRoute
   SaleProvinceDistrictIndexRoute: typeof SaleProvinceDistrictIndexRoute
+  RentProvinceDistrictAreasAreaRoute: typeof RentProvinceDistrictAreasAreaRouteWithChildren
+  SaleProvinceDistrictAreasAreaRoute: typeof SaleProvinceDistrictAreasAreaRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/guides/': {
-      id: '/guides/',
-      path: '/guides',
-      fullPath: '/guides/',
-      preLoaderRoute: typeof GuidesIndexRouteImport,
-      parentRoute: typeof rootRouteImport
-    }
-    '/guides/buying/fard-registry-intiqal-punjab': {
-      id: '/guides/buying/fard-registry-intiqal-punjab',
-      path: '/guides/buying/fard-registry-intiqal-punjab',
-      fullPath: '/guides/buying/fard-registry-intiqal-punjab',
-      preLoaderRoute: typeof GuidesBuyingFardRegistryIntiqalPunjabRouteImport,
-      parentRoute: typeof rootRouteImport
-    }
-    '/guides/buying/property-buying-due-diligence-pakistan': {
-      id: '/guides/buying/property-buying-due-diligence-pakistan',
-      path: '/guides/buying/property-buying-due-diligence-pakistan',
-      fullPath: '/guides/buying/property-buying-due-diligence-pakistan',
-      preLoaderRoute: typeof GuidesBuyingPropertyBuyingDueDiligencePakistanRouteImport,
-      parentRoute: typeof rootRouteImport
-    }
-    '/guides/buying/sale-agreement-registration-pakistan': {
-      id: '/guides/buying/sale-agreement-registration-pakistan',
-      path: '/guides/buying/sale-agreement-registration-pakistan',
-      fullPath: '/guides/buying/sale-agreement-registration-pakistan',
-      preLoaderRoute: typeof GuidesBuyingSaleAgreementRegistrationPakistanRouteImport,
-      parentRoute: typeof rootRouteImport
-    }
-    '/guides/cities/karachi': {
-      id: '/guides/cities/karachi',
-      path: '/guides/cities/karachi',
-      fullPath: '/guides/cities/karachi',
-      preLoaderRoute: typeof GuidesCitiesKarachiRouteImport,
-      parentRoute: typeof rootRouteImport
-    }
-    '/guides/cities/lahore': {
-      id: '/guides/cities/lahore',
-      path: '/guides/cities/lahore',
-      fullPath: '/guides/cities/lahore',
-      preLoaderRoute: typeof GuidesCitiesLahoreRouteImport,
-      parentRoute: typeof rootRouteImport
-    }
-    '/guides/cities/rawalpindi': {
-      id: '/guides/cities/rawalpindi',
-      path: '/guides/cities/rawalpindi',
-      fullPath: '/guides/cities/rawalpindi',
-      preLoaderRoute: typeof GuidesCitiesRawalpindiRouteImport,
-      parentRoute: typeof rootRouteImport
-    }
-    '/guides/landlords/landlord-responsibilities-pakistan': {
-      id: '/guides/landlords/landlord-responsibilities-pakistan',
-      path: '/guides/landlords/landlord-responsibilities-pakistan',
-      fullPath: '/guides/landlords/landlord-responsibilities-pakistan',
-      preLoaderRoute: typeof GuidesLandlordsLandlordResponsibilitiesPakistanRouteImport,
-      parentRoute: typeof rootRouteImport
-    }
-    '/guides/landlords/rental-agreement-legal-checklist': {
-      id: '/guides/landlords/rental-agreement-legal-checklist',
-      path: '/guides/landlords/rental-agreement-legal-checklist',
-      fullPath: '/guides/landlords/rental-agreement-legal-checklist',
-      preLoaderRoute: typeof GuidesLandlordsRentalAgreementLegalChecklistRouteImport,
-      parentRoute: typeof rootRouteImport
-    }
-    '/guides/landlords/security-deposit-rent-terms-pakistan': {
-      id: '/guides/landlords/security-deposit-rent-terms-pakistan',
-      path: '/guides/landlords/security-deposit-rent-terms-pakistan',
-      fullPath: '/guides/landlords/security-deposit-rent-terms-pakistan',
-      preLoaderRoute: typeof GuidesLandlordsSecurityDepositRentTermsPakistanRouteImport,
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -824,13 +907,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/.well-known/assetlinks.json': {
-      id: '/.well-known/assetlinks.json'
-      path: '/.well-known/assetlinks.json'
-      fullPath: '/.well-known/assetlinks.json'
-      preLoaderRoute: typeof DotwellKnownAssetlinksDotjsonRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/account/': {
       id: '/account/'
       path: '/account'
@@ -878,6 +954,20 @@ declare module '@tanstack/react-router' {
       path: '/admin/users'
       fullPath: '/admin/users'
       preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guides/': {
+      id: '/guides/'
+      path: '/guides'
+      fullPath: '/guides/'
+      preLoaderRoute: typeof GuidesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guides/$slug': {
+      id: '/guides/$slug'
+      path: '/guides/$slug'
+      fullPath: '/guides/$slug'
+      preLoaderRoute: typeof GuidesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/post/': {
@@ -936,6 +1026,90 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiImagesIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/guides/buying/fard-registry-intiqal-punjab': {
+      id: '/guides/buying/fard-registry-intiqal-punjab'
+      path: '/guides/buying/fard-registry-intiqal-punjab'
+      fullPath: '/guides/buying/fard-registry-intiqal-punjab'
+      preLoaderRoute: typeof GuidesBuyingFardRegistryIntiqalPunjabRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guides/buying/how-to-buy-property-in-pakistan': {
+      id: '/guides/buying/how-to-buy-property-in-pakistan'
+      path: '/guides/buying/how-to-buy-property-in-pakistan'
+      fullPath: '/guides/buying/how-to-buy-property-in-pakistan'
+      preLoaderRoute: typeof GuidesBuyingHowToBuyPropertyInPakistanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guides/buying/property-buying-due-diligence-pakistan': {
+      id: '/guides/buying/property-buying-due-diligence-pakistan'
+      path: '/guides/buying/property-buying-due-diligence-pakistan'
+      fullPath: '/guides/buying/property-buying-due-diligence-pakistan'
+      preLoaderRoute: typeof GuidesBuyingPropertyBuyingDueDiligencePakistanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guides/buying/sale-agreement-registration-pakistan': {
+      id: '/guides/buying/sale-agreement-registration-pakistan'
+      path: '/guides/buying/sale-agreement-registration-pakistan'
+      fullPath: '/guides/buying/sale-agreement-registration-pakistan'
+      preLoaderRoute: typeof GuidesBuyingSaleAgreementRegistrationPakistanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guides/cities/karachi': {
+      id: '/guides/cities/karachi'
+      path: '/guides/cities/karachi'
+      fullPath: '/guides/cities/karachi'
+      preLoaderRoute: typeof GuidesCitiesKarachiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guides/cities/lahore': {
+      id: '/guides/cities/lahore'
+      path: '/guides/cities/lahore'
+      fullPath: '/guides/cities/lahore'
+      preLoaderRoute: typeof GuidesCitiesLahoreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guides/cities/rawalpindi': {
+      id: '/guides/cities/rawalpindi'
+      path: '/guides/cities/rawalpindi'
+      fullPath: '/guides/cities/rawalpindi'
+      preLoaderRoute: typeof GuidesCitiesRawalpindiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guides/landlords/landlord-responsibilities-pakistan': {
+      id: '/guides/landlords/landlord-responsibilities-pakistan'
+      path: '/guides/landlords/landlord-responsibilities-pakistan'
+      fullPath: '/guides/landlords/landlord-responsibilities-pakistan'
+      preLoaderRoute: typeof GuidesLandlordsLandlordResponsibilitiesPakistanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guides/landlords/rental-agreement-legal-checklist': {
+      id: '/guides/landlords/rental-agreement-legal-checklist'
+      path: '/guides/landlords/rental-agreement-legal-checklist'
+      fullPath: '/guides/landlords/rental-agreement-legal-checklist'
+      preLoaderRoute: typeof GuidesLandlordsRentalAgreementLegalChecklistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guides/landlords/security-deposit-rent-terms-pakistan': {
+      id: '/guides/landlords/security-deposit-rent-terms-pakistan'
+      path: '/guides/landlords/security-deposit-rent-terms-pakistan'
+      fullPath: '/guides/landlords/security-deposit-rent-terms-pakistan'
+      preLoaderRoute: typeof GuidesLandlordsSecurityDepositRentTermsPakistanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guides/renting/house-vs-flat-vs-portion-pakistan': {
+      id: '/guides/renting/house-vs-flat-vs-portion-pakistan'
+      path: '/guides/renting/house-vs-flat-vs-portion-pakistan'
+      fullPath: '/guides/renting/house-vs-flat-vs-portion-pakistan'
+      preLoaderRoute: typeof GuidesRentingHouseVsFlatVsPortionPakistanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guides/renting/rental-budget-and-costs-pakistan': {
+      id: '/guides/renting/rental-budget-and-costs-pakistan'
+      path: '/guides/renting/rental-budget-and-costs-pakistan'
+      fullPath: '/guides/renting/rental-budget-and-costs-pakistan'
+      preLoaderRoute: typeof GuidesRentingRentalBudgetAndCostsPakistanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/rent/$province/': {
       id: '/rent/$province/'
       path: '/rent/$province'
@@ -978,20 +1152,154 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SaleProvinceDistrictTypeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/rent/$province/$district/$type/$intent': {
+      id: '/rent/$province/$district/$type/$intent'
+      path: '/$intent'
+      fullPath: '/rent/$province/$district/$type/$intent'
+      preLoaderRoute: typeof RentProvinceDistrictTypeIntentRouteImport
+      parentRoute: typeof RentProvinceDistrictTypeRoute
+    }
+    '/rent/$province/$district/areas/$area': {
+      id: '/rent/$province/$district/areas/$area'
+      path: '/rent/$province/$district/areas/$area'
+      fullPath: '/rent/$province/$district/areas/$area'
+      preLoaderRoute: typeof RentProvinceDistrictAreasAreaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sale/$province/$district/$type/$intent': {
+      id: '/sale/$province/$district/$type/$intent'
+      path: '/$intent'
+      fullPath: '/sale/$province/$district/$type/$intent'
+      preLoaderRoute: typeof SaleProvinceDistrictTypeIntentRouteImport
+      parentRoute: typeof SaleProvinceDistrictTypeRoute
+    }
+    '/sale/$province/$district/areas/$area': {
+      id: '/sale/$province/$district/areas/$area'
+      path: '/sale/$province/$district/areas/$area'
+      fullPath: '/sale/$province/$district/areas/$area'
+      preLoaderRoute: typeof SaleProvinceDistrictAreasAreaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rent/$province/$district/areas/$area/$type': {
+      id: '/rent/$province/$district/areas/$area/$type'
+      path: '/$type'
+      fullPath: '/rent/$province/$district/areas/$area/$type'
+      preLoaderRoute: typeof RentProvinceDistrictAreasAreaTypeRouteImport
+      parentRoute: typeof RentProvinceDistrictAreasAreaRoute
+    }
+    '/sale/$province/$district/areas/$area/$type': {
+      id: '/sale/$province/$district/areas/$area/$type'
+      path: '/$type'
+      fullPath: '/sale/$province/$district/areas/$area/$type'
+      preLoaderRoute: typeof SaleProvinceDistrictAreasAreaTypeRouteImport
+      parentRoute: typeof SaleProvinceDistrictAreasAreaRoute
+    }
+    '/rent/$province/$district/areas/$area/$type/$intent': {
+      id: '/rent/$province/$district/areas/$area/$type/$intent'
+      path: '/$intent'
+      fullPath: '/rent/$province/$district/areas/$area/$type/$intent'
+      preLoaderRoute: typeof RentProvinceDistrictAreasAreaTypeIntentRouteImport
+      parentRoute: typeof RentProvinceDistrictAreasAreaTypeRoute
+    }
+    '/sale/$province/$district/areas/$area/$type/$intent': {
+      id: '/sale/$province/$district/areas/$area/$type/$intent'
+      path: '/$intent'
+      fullPath: '/sale/$province/$district/areas/$area/$type/$intent'
+      preLoaderRoute: typeof SaleProvinceDistrictAreasAreaTypeIntentRouteImport
+      parentRoute: typeof SaleProvinceDistrictAreasAreaTypeRoute
+    }
   }
 }
 
+interface RentProvinceDistrictTypeRouteChildren {
+  RentProvinceDistrictTypeIntentRoute: typeof RentProvinceDistrictTypeIntentRoute
+}
+
+const RentProvinceDistrictTypeRouteChildren: RentProvinceDistrictTypeRouteChildren =
+  {
+    RentProvinceDistrictTypeIntentRoute: RentProvinceDistrictTypeIntentRoute,
+  }
+
+const RentProvinceDistrictTypeRouteWithChildren =
+  RentProvinceDistrictTypeRoute._addFileChildren(
+    RentProvinceDistrictTypeRouteChildren,
+  )
+
+interface SaleProvinceDistrictTypeRouteChildren {
+  SaleProvinceDistrictTypeIntentRoute: typeof SaleProvinceDistrictTypeIntentRoute
+}
+
+const SaleProvinceDistrictTypeRouteChildren: SaleProvinceDistrictTypeRouteChildren =
+  {
+    SaleProvinceDistrictTypeIntentRoute: SaleProvinceDistrictTypeIntentRoute,
+  }
+
+const SaleProvinceDistrictTypeRouteWithChildren =
+  SaleProvinceDistrictTypeRoute._addFileChildren(
+    SaleProvinceDistrictTypeRouteChildren,
+  )
+
+interface RentProvinceDistrictAreasAreaTypeRouteChildren {
+  RentProvinceDistrictAreasAreaTypeIntentRoute: typeof RentProvinceDistrictAreasAreaTypeIntentRoute
+}
+
+const RentProvinceDistrictAreasAreaTypeRouteChildren: RentProvinceDistrictAreasAreaTypeRouteChildren =
+  {
+    RentProvinceDistrictAreasAreaTypeIntentRoute:
+      RentProvinceDistrictAreasAreaTypeIntentRoute,
+  }
+
+const RentProvinceDistrictAreasAreaTypeRouteWithChildren =
+  RentProvinceDistrictAreasAreaTypeRoute._addFileChildren(
+    RentProvinceDistrictAreasAreaTypeRouteChildren,
+  )
+
+interface RentProvinceDistrictAreasAreaRouteChildren {
+  RentProvinceDistrictAreasAreaTypeRoute: typeof RentProvinceDistrictAreasAreaTypeRouteWithChildren
+}
+
+const RentProvinceDistrictAreasAreaRouteChildren: RentProvinceDistrictAreasAreaRouteChildren =
+  {
+    RentProvinceDistrictAreasAreaTypeRoute:
+      RentProvinceDistrictAreasAreaTypeRouteWithChildren,
+  }
+
+const RentProvinceDistrictAreasAreaRouteWithChildren =
+  RentProvinceDistrictAreasAreaRoute._addFileChildren(
+    RentProvinceDistrictAreasAreaRouteChildren,
+  )
+
+interface SaleProvinceDistrictAreasAreaTypeRouteChildren {
+  SaleProvinceDistrictAreasAreaTypeIntentRoute: typeof SaleProvinceDistrictAreasAreaTypeIntentRoute
+}
+
+const SaleProvinceDistrictAreasAreaTypeRouteChildren: SaleProvinceDistrictAreasAreaTypeRouteChildren =
+  {
+    SaleProvinceDistrictAreasAreaTypeIntentRoute:
+      SaleProvinceDistrictAreasAreaTypeIntentRoute,
+  }
+
+const SaleProvinceDistrictAreasAreaTypeRouteWithChildren =
+  SaleProvinceDistrictAreasAreaTypeRoute._addFileChildren(
+    SaleProvinceDistrictAreasAreaTypeRouteChildren,
+  )
+
+interface SaleProvinceDistrictAreasAreaRouteChildren {
+  SaleProvinceDistrictAreasAreaTypeRoute: typeof SaleProvinceDistrictAreasAreaTypeRouteWithChildren
+}
+
+const SaleProvinceDistrictAreasAreaRouteChildren: SaleProvinceDistrictAreasAreaRouteChildren =
+  {
+    SaleProvinceDistrictAreasAreaTypeRoute:
+      SaleProvinceDistrictAreasAreaTypeRouteWithChildren,
+  }
+
+const SaleProvinceDistrictAreasAreaRouteWithChildren =
+  SaleProvinceDistrictAreasAreaRoute._addFileChildren(
+    SaleProvinceDistrictAreasAreaRouteChildren,
+  )
+
 const rootRouteChildren: RootRouteChildren = {
-  GuidesIndexRoute: GuidesIndexRoute,
-  GuidesBuyingFardRegistryIntiqalPunjabRoute: GuidesBuyingFardRegistryIntiqalPunjabRoute,
-  GuidesBuyingPropertyBuyingDueDiligencePakistanRoute: GuidesBuyingPropertyBuyingDueDiligencePakistanRoute,
-  GuidesBuyingSaleAgreementRegistrationPakistanRoute: GuidesBuyingSaleAgreementRegistrationPakistanRoute,
-  GuidesCitiesKarachiRoute: GuidesCitiesKarachiRoute,
-  GuidesCitiesLahoreRoute: GuidesCitiesLahoreRoute,
-  GuidesCitiesRawalpindiRoute: GuidesCitiesRawalpindiRoute,
-  GuidesLandlordsLandlordResponsibilitiesPakistanRoute: GuidesLandlordsLandlordResponsibilitiesPakistanRoute,
-  GuidesLandlordsRentalAgreementLegalChecklistRoute: GuidesLandlordsRentalAgreementLegalChecklistRoute,
-  GuidesLandlordsSecurityDepositRentTermsPakistanRoute: GuidesLandlordsSecurityDepositRentTermsPakistanRoute,
   IndexRoute: IndexRoute,
   AccountDeletionRoute: AccountDeletionRoute,
   ContactRoute: ContactRoute,
@@ -1007,28 +1315,54 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapPagesDotxmlRoute: SitemapPagesDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
-  DotwellKnownAssetlinksDotjsonRoute: DotwellKnownAssetlinksDotjsonRoute,
   AccountListingsRoute: AccountListingsRoute,
   AccountSavedRoute: AccountSavedRoute,
   AdminListingsRoute: AdminListingsRoute,
   AdminReportsRoute: AdminReportsRoute,
   AdminUsersRoute: AdminUsersRoute,
+  GuidesSlugRoute: GuidesSlugRoute,
   PostIdRoute: PostIdRoute,
   PropertySlugRoute: PropertySlugRoute,
   SitemapListingsPageRoute: SitemapListingsPageRoute,
   AccountIndexRoute: AccountIndexRoute,
   AdminIndexRoute: AdminIndexRoute,
+  GuidesIndexRoute: GuidesIndexRoute,
   PostIndexRoute: PostIndexRoute,
   RentIndexRoute: RentIndexRoute,
   SaleIndexRoute: SaleIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiImagesIdRoute: ApiImagesIdRoute,
+  GuidesBuyingFardRegistryIntiqalPunjabRoute:
+    GuidesBuyingFardRegistryIntiqalPunjabRoute,
+  GuidesBuyingHowToBuyPropertyInPakistanRoute:
+    GuidesBuyingHowToBuyPropertyInPakistanRoute,
+  GuidesBuyingPropertyBuyingDueDiligencePakistanRoute:
+    GuidesBuyingPropertyBuyingDueDiligencePakistanRoute,
+  GuidesBuyingSaleAgreementRegistrationPakistanRoute:
+    GuidesBuyingSaleAgreementRegistrationPakistanRoute,
+  GuidesCitiesKarachiRoute: GuidesCitiesKarachiRoute,
+  GuidesCitiesLahoreRoute: GuidesCitiesLahoreRoute,
+  GuidesCitiesRawalpindiRoute: GuidesCitiesRawalpindiRoute,
+  GuidesLandlordsLandlordResponsibilitiesPakistanRoute:
+    GuidesLandlordsLandlordResponsibilitiesPakistanRoute,
+  GuidesLandlordsRentalAgreementLegalChecklistRoute:
+    GuidesLandlordsRentalAgreementLegalChecklistRoute,
+  GuidesLandlordsSecurityDepositRentTermsPakistanRoute:
+    GuidesLandlordsSecurityDepositRentTermsPakistanRoute,
+  GuidesRentingHouseVsFlatVsPortionPakistanRoute:
+    GuidesRentingHouseVsFlatVsPortionPakistanRoute,
+  GuidesRentingRentalBudgetAndCostsPakistanRoute:
+    GuidesRentingRentalBudgetAndCostsPakistanRoute,
   RentProvinceIndexRoute: RentProvinceIndexRoute,
   SaleProvinceIndexRoute: SaleProvinceIndexRoute,
-  RentProvinceDistrictTypeRoute: RentProvinceDistrictTypeRoute,
-  SaleProvinceDistrictTypeRoute: SaleProvinceDistrictTypeRoute,
+  RentProvinceDistrictTypeRoute: RentProvinceDistrictTypeRouteWithChildren,
+  SaleProvinceDistrictTypeRoute: SaleProvinceDistrictTypeRouteWithChildren,
   RentProvinceDistrictIndexRoute: RentProvinceDistrictIndexRoute,
   SaleProvinceDistrictIndexRoute: SaleProvinceDistrictIndexRoute,
+  RentProvinceDistrictAreasAreaRoute:
+    RentProvinceDistrictAreasAreaRouteWithChildren,
+  SaleProvinceDistrictAreasAreaRoute:
+    SaleProvinceDistrictAreasAreaRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

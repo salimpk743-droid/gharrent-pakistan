@@ -8,9 +8,7 @@ describe("search page copy batch 1", () => {
     assert.equal(copy?.title, "Property for Rent in Lahore | Apna Ghar");
     assert.equal(copy?.h1, "Property for Rent in Lahore");
     assert.match(copy?.description || "", /houses, flats and rooms/i);
-    assert.match(copy?.intro || "", /Johar Town/);
-    assert.match(copy?.intro || "", /Gulberg/);
-    assert.match(copy?.intro || "", /DHA/);
+    assert.match(copy?.intro || "", /houses, flats and rooms/i);
     assert.doesNotMatch(copy?.intro || "", /portion/i);
     assert.doesNotMatch(copy?.title || "", /^Houses for Rent in Lahore/);
   });
@@ -19,8 +17,7 @@ describe("search page copy batch 1", () => {
     const copy = searchPageCopy({ purpose: "RENT", province: "punjab", district: "lahore", type: "houses" });
     assert.equal(copy?.title, "Houses for Rent in Lahore | Apna Ghar");
     assert.equal(copy?.h1, "Houses for Rent in Lahore");
-    assert.match(copy?.intro || "", /5 marla/i);
-    assert.match(copy?.intro || "", /Johar Town/);
+    assert.match(copy?.intro || "", /houses for rent in Lahore/i);
     assert.doesNotMatch(copy?.intro || "", /10 marla/i);
     assert.doesNotMatch(copy?.intro || "", /kanal/i);
     assert.equal(
@@ -34,7 +31,6 @@ describe("search page copy batch 1", () => {
     assert.equal(copy?.title, "Flats for Rent in Lahore | Apna Ghar");
     assert.equal(copy?.h1, "Flats for Rent in Lahore");
     assert.match(copy?.intro || "", /apartments/i);
-    assert.match(copy?.intro || "", /Gulberg/);
   });
 
   it("names Islamabad, not ICT, on Islamabad houses", () => {
@@ -46,12 +42,24 @@ describe("search page copy batch 1", () => {
     });
     assert.equal(copy?.title, "Houses for Rent in Islamabad | Apna Ghar");
     assert.equal(copy?.h1, "Houses for Rent in Islamabad");
-    assert.match(copy?.intro || "", /1 kanal/i);
-    assert.match(copy?.intro || "", /F-7/);
+    assert.doesNotMatch(copy?.intro || "", /There is currently/i);
     assert.doesNotMatch(copy?.title || "", /Capital Territory/);
     assert.doesNotMatch(copy?.h1 || "", /Capital Territory/);
     assert.doesNotMatch(copy?.intro || "", /Capital Territory/);
     assert.doesNotMatch(copy?.intro || "", /5 marla/i);
+  });
+
+  it("never claims a specific listing exists", () => {
+    const keys = [
+      { purpose: "RENT" as const, province: "islamabad-capital-territory", district: "islamabad", type: "houses" },
+      { purpose: "RENT" as const, province: "khyber-pakhtunkhwa", district: "peshawar" },
+      { purpose: "RENT" as const, province: "punjab", district: "faisalabad", type: "portions" },
+      { purpose: "RENT" as const, province: "punjab", district: "multan", type: "houses" },
+    ];
+    for (const opts of keys) {
+      const copy = searchPageCopy(opts);
+      assert.doesNotMatch(`${copy?.description} ${copy?.intro}`, /currently|including a/i, JSON.stringify(opts));
+    }
   });
 
   it("does not override other marketplace pages", () => {
@@ -71,8 +79,7 @@ describe("search page copy batch 2", () => {
     });
     assert.equal(copy?.title, "Property for Rent in Peshawar | Apna Ghar");
     assert.equal(copy?.h1, "Property for Rent in Peshawar");
-    assert.match(copy?.intro || "", /10 marla/i);
-    assert.match(copy?.intro || "", /University Town/);
+    assert.doesNotMatch(copy?.intro || "", /There is currently/i);
     assert.doesNotMatch(copy?.title || "", /^Houses for Rent in Peshawar/);
     assert.doesNotMatch(copy?.intro || "", /Hayatabad/);
     assert.doesNotMatch(copy?.intro || "", /flat|apartment|portion/i);
@@ -87,8 +94,7 @@ describe("search page copy batch 2", () => {
     });
     assert.equal(copy?.title, "Houses for Rent in Peshawar | Apna Ghar");
     assert.equal(copy?.h1, "Houses for Rent in Peshawar");
-    assert.match(copy?.intro || "", /10 marla/i);
-    assert.match(copy?.intro || "", /University Town/);
+    assert.doesNotMatch(copy?.intro || "", /There is currently/i);
     assert.doesNotMatch(copy?.h1 || "", /Khyber Pakhtunkhwa/);
   });
 
@@ -97,9 +103,7 @@ describe("search page copy batch 2", () => {
     assert.equal(copy?.title, "Property for Rent in Faisalabad | Apna Ghar");
     assert.equal(copy?.h1, "Property for Rent in Faisalabad");
     assert.match(copy?.intro || "", /portion/i);
-    assert.match(copy?.intro || "", /Madina Town/);
-    assert.match(copy?.intro || "", /5 marla/i);
-    assert.match(copy?.intro || "", /first-floor/i);
+    assert.doesNotMatch(copy?.intro || "", /There is currently/i);
     assert.doesNotMatch(copy?.title || "", /^Houses for Rent in Faisalabad/);
     assert.doesNotMatch(copy?.intro || "", /house|flat|apartment/i);
   });
@@ -113,17 +117,14 @@ describe("search page copy batch 2", () => {
     });
     assert.equal(copy?.title, "Portions for Rent in Faisalabad | Apna Ghar");
     assert.equal(copy?.h1, "Portions for Rent in Faisalabad");
-    assert.match(copy?.intro || "", /first-floor/i);
-    assert.match(copy?.intro || "", /Madina Town/);
-    assert.match(copy?.intro || "", /5 marla/i);
+    assert.doesNotMatch(copy?.intro || "", /There is currently/i);
   });
 
   it("uses property copy on the Multan rent city page", () => {
     const copy = searchPageCopy({ purpose: "RENT", province: "punjab", district: "multan" });
     assert.equal(copy?.title, "Property for Rent in Multan | Apna Ghar");
     assert.equal(copy?.h1, "Property for Rent in Multan");
-    assert.match(copy?.intro || "", /7 marla/i);
-    assert.match(copy?.intro || "", /Gulgasht Colony/);
+    assert.doesNotMatch(copy?.intro || "", /There is currently/i);
     assert.doesNotMatch(copy?.title || "", /^Houses for Rent in Multan/);
     assert.doesNotMatch(copy?.intro || "", /flat|apartment|portion/i);
   });
@@ -132,8 +133,7 @@ describe("search page copy batch 2", () => {
     const copy = searchPageCopy({ purpose: "RENT", province: "punjab", district: "multan", type: "houses" });
     assert.equal(copy?.title, "Houses for Rent in Multan | Apna Ghar");
     assert.equal(copy?.h1, "Houses for Rent in Multan");
-    assert.match(copy?.intro || "", /7 marla/i);
-    assert.match(copy?.intro || "", /Gulgasht Colony/);
+    assert.doesNotMatch(copy?.intro || "", /There is currently/i);
   });
 
   it("skips empty batch-2 city and type pages", () => {
