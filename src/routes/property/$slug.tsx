@@ -9,12 +9,12 @@ import { getPropertyBySlug, recordContactClick } from "@/lib/server/properties";
 import { reportProperty } from "@/lib/server/reports";
 import { toggleFavorite } from "@/lib/server/favorites";
 import { FURNISHED_LABEL, PURPOSE_KICKER, REPORT_REASONS, SIZE_UNIT_LABEL } from "@/lib/constants";
-import { listingBreadcrumbJsonLd, listingJsonLd, listingSeo } from "@/lib/seo";
+import { canonicalUrl, listingBreadcrumbJsonLd, listingJsonLd, listingSeo } from "@/lib/seo";
 import { JsonLd } from "@/components/seo/json-ld";
 import { formatListingPrice, formatLocation } from "@/lib/utils";
 import { telLink, whatsappLink } from "@/lib/phone";
 import { useAuthGate } from "@/components/auth/use-auth-gate";
-import { Bath, BedDouble, Flag, Heart, MapPin, Phone, Share2 } from "lucide-react";
+import { Bath, BedDouble, Flag, Heart, MapPin, MessageCircle, Phone, Share2 } from "lucide-react";
 import type { PublicProperty } from "@/lib/types";
 
 export const Route = createFileRoute("/property/$slug")({
@@ -50,6 +50,10 @@ function PropertyPage() {
     property.contactWhatsapp || property.contactPhone,
     `Assalamualaikum, I saw your Apna Ghar listing: ${property.title}`,
   );
+  const shareUrl = canonicalUrl(`/property/${property.slug}`);
+  const whatsappShare = `https://wa.me/?text=${encodeURIComponent(
+    `${property.title}${loc ? ` (${loc})` : ""} - ${price.amount}${price.suffix ? ` ${price.suffix}` : ""} on Apna Ghar: ${shareUrl}`,
+  )}`;
   const size =
     property.propertySize != null
       ? `${property.propertySize.toLocaleString("en-PK")} ${SIZE_UNIT_LABEL[property.sizeUnit]}`
@@ -243,10 +247,20 @@ function PropertyPage() {
                   rel="noreferrer"
                   onClick={() => void recordContactClick({ data: { propertyId: property.id, type: "whatsapp" } })}
                 >
-                  WhatsApp
+                  <MessageCircle className="size-4" /> WhatsApp the advertiser
                 </a>
               </Button>
             )}
+            <Button asChild variant="outline">
+              <a
+                href={whatsappShare}
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => void recordContactClick({ data: { propertyId: property.id, type: "share" } })}
+              >
+                <Share2 className="size-4" /> Share on WhatsApp
+              </a>
+            </Button>
             <Button type="button" variant="outline" onClick={() => void onShare()}>
               <Share2 className="size-4" /> Share
             </Button>

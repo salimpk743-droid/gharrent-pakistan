@@ -9,9 +9,26 @@ import { Building2, DoorOpen, Home, Hotel, LayoutGrid } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   loader: () => getHomeData(),
-  head: () => publicSeo({ title: HOME_SEO_TITLE, description: HOME_SEO_DESCRIPTION, path: "/" }),
+  head: () => {
+    const seo = publicSeo({ title: HOME_SEO_TITLE, description: HOME_SEO_DESCRIPTION, path: "/" });
+    return {
+      ...seo,
+      links: [
+        ...(seo.links ?? []),
+        // The hero photo is a CSS background, so the browser only finds it after
+        // styles.css loads. Preloading the exact same URL (same bytes, same look)
+        // lets it start downloading with the HTML and speeds up mobile LCP.
+        { rel: "preconnect", href: "https://images.unsplash.com" },
+        { rel: "preload", as: "image", href: HERO_IMAGE_URL, fetchPriority: "high" },
+      ],
+    };
+  },
   component: HomePage,
 });
+
+/** Must stay identical to the `.hero-photo` background URL in styles.css. */
+const HERO_IMAGE_URL =
+  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1800&q=85";
 
 const TYPE_ICONS = {
   House: Home,

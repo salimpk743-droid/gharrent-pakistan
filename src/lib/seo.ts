@@ -72,7 +72,7 @@ export type ListingSeoInput = {
   sizeUnit?: string | null;
   publishedAt?: string | null;
   address?: string | null;
-  coverImage?: { url: string } | null;
+  coverImage?: { url: string; width?: number | null; height?: number | null } | null;
   images?: { url: string }[];
   isSample?: boolean;
 };
@@ -243,14 +243,26 @@ export function xmlResponse(body: string, status = 200) {
   });
 }
 
+export type ShareImage = { url: string; width?: number | null; height?: number | null; type?: string };
+
+const DEFAULT_SHARE_IMAGE: ShareImage = { url: SHARE_IMAGE, width: 1200, height: 630, type: "image/jpeg" };
+
+function absoluteImageUrl(url: string): string {
+  if (/^https?:\/\//i.test(url)) return url;
+  return `${PUBLIC_SITE_ORIGIN}${url.startsWith("/") ? url : `/${url}`}`;
+}
+
 export function publicSeo(opts: {
   title: string;
   description: string;
   path: string;
   index?: boolean;
+  image?: ShareImage | null;
+  ogType?: string;
 }): HeadSnippet {
   const url = canonicalUrl(opts.path);
   const index = opts.index !== false;
+  const image = opts.image?.url ? { ...opts.image, url: absoluteImageUrl(opts.image.url) } : DEFAULT_SHARE_IMAGE;
   return {
     meta: [
       { title: opts.title },
@@ -259,17 +271,19 @@ export function publicSeo(opts: {
       { property: "og:title", content: opts.title },
       { property: "og:description", content: opts.description },
       { property: "og:url", content: url },
-      { property: "og:type", content: "website" },
-      { property: "og:image", content: SHARE_IMAGE },
-      { property: "og:image:secure_url", content: SHARE_IMAGE },
-      { property: "og:image:type", content: "image/png" },
-      { property: "og:image:width", content: "1200" },
-      { property: "og:image:height", content: "630" },
+      { property: "og:type", content: opts.ogType ?? "website" },
+      { property: "og:image", content: image.url },
+      { property: "og:image:secure_url", content: image.url },
+      ...(image.type ? [{ property: "og:image:type", content: image.type }] : []),
+      ...(image.width ? [{ property: "og:image:width", content: String(image.width) }] : []),
+      ...(image.height ? [{ property: "og:image:height", content: String(image.height) }] : []),
+      { property: "og:image:alt", content: opts.title },
       { property: "og:site_name", content: APP_NAME },
+      { property: "og:locale", content: "en_PK" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: opts.title },
       { name: "twitter:description", content: opts.description },
-      { name: "twitter:image", content: SHARE_IMAGE },
+      { name: "twitter:image", content: image.url },
     ],
     links: [{ rel: "canonical", href: url }],
   };
@@ -491,6 +505,10 @@ export function listingSeo(p: ListingSeoInput | null | undefined): HeadSnippet {
     description: listingSeoDescription(p),
     path: `/property/${p.slug}`,
     index: publicListing,
+    image: p.coverImage?.url
+      ? { url: p.coverImage.url, width: p.coverImage.width ?? null, height: p.coverImage.height ?? null }
+      : null,
+    ogType: "article",
   });
 }
 
