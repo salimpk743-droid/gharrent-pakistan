@@ -34,12 +34,12 @@ export type ListingInput = {
 
 export function validateForSubmit(input: ListingInput): string[] {
   const errors: string[] = [];
+  // Title is optional: an empty or very short title is replaced with an automatic one on publish.
   const title = (input.title || "").trim();
-  if (title.length < 8) errors.push("Add a clear title of at least 8 characters.");
   if (title.length > 80) errors.push("Title must be 80 characters or fewer.");
   if (!input.provinceId) errors.push("Choose a province or region.");
   if (!input.districtId) errors.push("Choose a city.");
-  if (!(input.areaId || input.area || "").toString().trim()) errors.push("Choose the area or locality.");
+  // Area is recommended but optional: some cities have no area list yet.
   if (!PROPERTY_TYPES.includes((input.propertyType || "") as PropertyType)) {
     errors.push("Choose a valid property type.");
   }
@@ -55,12 +55,12 @@ export function validateForSubmit(input: ListingInput): string[] {
     if (amount < 1000) errors.push("Monthly rent must be at least Rs. 1,000.");
     if (amount > 50_000_000) errors.push("Monthly rent is unreasonably high. Please check the amount.");
   }
-  const beds = Number(input.bedrooms);
+  const beds = Number(input.bedrooms ?? 0);
   if (!Number.isFinite(beds) || beds < 0 || beds > 20) errors.push("Bedrooms must be between 0 and 20.");
-  const baths = Number(input.bathrooms);
+  const baths = Number(input.bathrooms ?? 0);
   if (!Number.isFinite(baths) || baths < 0 || baths > 20) errors.push("Bathrooms must be between 0 and 20.");
+  // Description is optional.
   const desc = (input.description || "").trim();
-  if (desc.length < 40) errors.push("Write a description of at least 40 characters.");
   if (desc.length > 4000) errors.push("Description must be 4,000 characters or fewer.");
   if (!normalizePkPhone(input.contactPhone)) {
     errors.push("Enter a valid Pakistani mobile number so renters can contact you.");

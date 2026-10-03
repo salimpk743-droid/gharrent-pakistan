@@ -72,6 +72,7 @@ export function SignInPanel({
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [company, setCompany] = useState(""); // honeypot: hidden from people, filled by bots
   const [googleBusy, setGoogleBusy] = useState(false);
   const [formBusy, setFormBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -114,6 +115,10 @@ export function SignInPanel({
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (busy) return;
+    if (company.trim()) {
+      setError("Could not create your account. Please try again.");
+      return;
+    }
     const problem = validate();
     if (problem) {
       setError(problem);
@@ -192,6 +197,18 @@ export function SignInPanel({
                     required
                   />
                 </Label>
+                <div aria-hidden="true" className="absolute -left-[9999px] h-px w-px overflow-hidden">
+                  <label>
+                    Company
+                    <input
+                      tabIndex={-1}
+                      autoComplete="off"
+                      name="company"
+                      value={company}
+                      onChange={(e) => setCompany(e.target.value)}
+                    />
+                  </label>
+                </div>
                 <Label>
                   Password
                   <Input
