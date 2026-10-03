@@ -5,9 +5,9 @@ import { APP_NAME, PUBLIC_SITE_ORIGIN } from "@/lib/constants";
 import { breadcrumbJsonLd, canonicalUrl, guideSeo } from "@/lib/seo";
 
 const PATH = "/guides/buying/property-buying-due-diligence-pakistan";
-const TITLE = "Property Buying Due Diligence in Pakistan | Apna Ghar";
+const TITLE = "How to Verify Property Documents Before Buying in Pakistan | Apna Ghar";
 const DESCRIPTION =
-  "A practical legal and document checklist for buying property in Pakistan, including ownership records, title documents, seller identity, encumbrances, registration and payment records.";
+  "How to verify property documents before you buy in Pakistan: ownership records, title documents, seller identity, encumbrances, registration and payment records, with official checks.";
 
 export const Route = createFileRoute("/guides/buying/property-buying-due-diligence-pakistan")({
   head: () => guideSeo({ title: TITLE, description: DESCRIPTION, path: PATH }),
@@ -31,13 +31,13 @@ function Page() {
         description: DESCRIPTION,
         inLanguage: "en-PK",
         datePublished: "2026-09-22",
-        dateModified: "2026-09-22",
+        dateModified: "2026-10-03",
         mainEntityOfPage: url,
         url,
         author: { "@type": "Organization", name: APP_NAME, url: PUBLIC_SITE_ORIGIN + "/" },
         publisher: { "@type": "Organization", name: APP_NAME, url: PUBLIC_SITE_ORIGIN + "/" },
       }} />
-      <LegalPage eyebrow="BUYING GUIDE" title="Property Buying Due Diligence in Pakistan" updated="22 September 2026">
+      <LegalPage eyebrow="BUYING GUIDE" title="How to verify property documents before buying in Pakistan" updated="3 October 2026">
         <div className="rounded-lg border border-line bg-cream p-4 text-ink">
           This is general information, not legal advice. Property law, land records, taxes, development-authority
           rules and registration procedures can differ by province, territory, housing scheme and property type.
@@ -155,6 +155,10 @@ function Page() {
           <li><a href="https://onlinefard.punjab-zameen.gov.pk/verifydocument">PLRA — Verify Fard / Mutation</a></li>
         </ul>
 
+        <p>
+          Taxes are separate from these checks: see{" "}
+          <a href="/guides/property-tax-on-buying-and-selling-property-pakistan">property tax on buying and selling (2026-27)</a>.
+        </p>
         <p className="mt-8">
           Looking for properties? <Link to="/sale">Browse properties for sale on Apna Ghar</Link>.
         </p>

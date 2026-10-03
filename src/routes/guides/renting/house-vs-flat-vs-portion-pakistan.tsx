@@ -5,7 +5,7 @@ import { APP_NAME, PUBLIC_SITE_ORIGIN } from "@/lib/constants";
 import { breadcrumbJsonLd, canonicalUrl, guideSeo } from "@/lib/seo";
 
 const PATH = "/guides/renting/house-vs-flat-vs-portion-pakistan";
-const TITLE = "House vs Flat vs Portion for Rent in Pakistan | Apna Ghar";
+const TITLE = "House vs Flat vs Portion for Rent in Pakistan: Which Suits You? | Apna Ghar";
 const DESCRIPTION = "Compare houses, flats and portions for rent in Pakistan by privacy, space, recurring costs, parking, building rules and household needs.";
 
 export const Route = createFileRoute("/guides/renting/house-vs-flat-vs-portion-pakistan")({
@@ -18,8 +18,8 @@ function Page() {
   return (
     <>
       <JsonLd data={breadcrumbJsonLd([{ name: "Home", path: "/" }, { name: "Guides", path: "/guides" }, { name: "House vs Flat vs Portion", path: PATH }])} />
-      <JsonLd data={{ "@context": "https://schema.org", "@type": "Article", headline: TITLE, description: DESCRIPTION, inLanguage: "en-PK", mainEntityOfPage: url, url, author: { "@type": "Organization", name: APP_NAME, url: PUBLIC_SITE_ORIGIN + "/" }, publisher: { "@type": "Organization", name: APP_NAME, url: PUBLIC_SITE_ORIGIN + "/" } }} />
-      <LegalPage eyebrow="RENTING IN PAKISTAN" title="House vs Flat vs Portion for Rent in Pakistan">
+      <JsonLd data={{ "@context": "https://schema.org", "@type": "Article", headline: "House vs flat vs portion for rent in Pakistan: which suits you?", description: DESCRIPTION, inLanguage: "en-PK", mainEntityOfPage: url, url, author: { "@type": "Organization", name: APP_NAME, url: PUBLIC_SITE_ORIGIN + "/" }, publisher: { "@type": "Organization", name: APP_NAME, url: PUBLIC_SITE_ORIGIN + "/" } }} />
+      <LegalPage eyebrow="RENTING IN PAKISTAN" title="House vs flat vs portion for rent in Pakistan: which suits you?" updated="3 October 2026">
         <p>The right property type depends on household size, privacy, budget, parking, building or society rules and how much maintenance you want to handle. Compare the whole living arrangement rather than only the advertised rent.</p>
         <h2>House</h2>
         <p>A house can provide more private space, outdoor or parking space and control over the immediate property. It may also involve a higher rent and more responsibility for utilities, security, maintenance or access arrangements.</p>

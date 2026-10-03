@@ -39,7 +39,6 @@ export async function sitemapStaticEntries(): Promise<SitemapEntry[]> {
     { path: "/guides/buying/property-buying-due-diligence-pakistan" },
     { path: "/guides/buying/fard-registry-intiqal-punjab" },
     { path: "/guides/buying/sale-agreement-registration-pakistan" },
-    { path: "/guides/landlords/rental-agreement-legal-checklist" },
     { path: "/guides/landlords/landlord-responsibilities-pakistan" },
     { path: "/guides/landlords/security-deposit-rent-terms-pakistan" },
     { path: "/how-to-rent-a-house-in-pakistan" },

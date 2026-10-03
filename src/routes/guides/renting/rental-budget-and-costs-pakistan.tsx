@@ -5,8 +5,9 @@ import { APP_NAME, PUBLIC_SITE_ORIGIN } from "@/lib/constants";
 import { breadcrumbJsonLd, canonicalUrl, guideSeo } from "@/lib/seo";
 
 const PATH = "/guides/renting/rental-budget-and-costs-pakistan";
-const TITLE = "Rental Budget and Hidden Costs in Pakistan | Apna Ghar";
-const DESCRIPTION = "How to plan a rental budget in Pakistan, including monthly rent, security deposit, advance rent, utilities, maintenance and moving costs.";
+const TITLE = "Cost of Renting a House in Pakistan: Move-In & Monthly Costs | Apna Ghar";
+const DESCRIPTION =
+  "What it really costs to rent a house in Pakistan: monthly rent, security deposit, advance rent, utilities, maintenance and moving costs, and how to plan a realistic budget.";
 
 export const Route = createFileRoute("/guides/renting/rental-budget-and-costs-pakistan")({
   head: () => guideSeo({ title: TITLE, description: DESCRIPTION, path: PATH }),
@@ -18,8 +19,8 @@ function Page() {
   return (
     <>
       <JsonLd data={breadcrumbJsonLd([{ name: "Home", path: "/" }, { name: "Guides", path: "/guides" }, { name: "Rental Budget", path: PATH }])} />
-      <JsonLd data={{ "@context": "https://schema.org", "@type": "Article", headline: TITLE, description: DESCRIPTION, inLanguage: "en-PK", mainEntityOfPage: url, url, author: { "@type": "Organization", name: APP_NAME, url: PUBLIC_SITE_ORIGIN + "/" }, publisher: { "@type": "Organization", name: APP_NAME, url: PUBLIC_SITE_ORIGIN + "/" } }} />
-      <LegalPage eyebrow="RENTING IN PAKISTAN" title="Rental Budget and Hidden Costs in Pakistan">
+      <JsonLd data={{ "@context": "https://schema.org", "@type": "Article", headline: "Cost of renting a house in Pakistan: what to budget for", description: DESCRIPTION, inLanguage: "en-PK", mainEntityOfPage: url, url, author: { "@type": "Organization", name: APP_NAME, url: PUBLIC_SITE_ORIGIN + "/" }, publisher: { "@type": "Organization", name: APP_NAME, url: PUBLIC_SITE_ORIGIN + "/" } }} />
+      <LegalPage eyebrow="RENTING IN PAKISTAN" title="Cost of renting a house in Pakistan: what to budget for" updated="3 October 2026">
         <p>Choosing a rental is not only about finding a monthly rent you can pay. A realistic budget should account for the recurring cost of living in the property and the one-time cash needed to move in.</p>
         <h2>Start with total monthly housing cost</h2>
         <p>Compare the advertised rent with any maintenance, society, building or service charges that apply. Also consider electricity, gas, water, internet and transport costs where they materially affect the household budget.</p>
@@ -47,6 +48,11 @@ function Page() {
         </ul>
         <h2>Browse by budget</h2>
         <p>Once you know your maximum monthly rent, use Apna Ghar's budget-based rental pages where live inventory meets the threshold. For example, you can browse <Link className="font-semibold text-forest no-underline hover:underline" to="/rent">current rental listings</Link> and then narrow to a city and property type.</p>
+        <p>
+          Before you pay a deposit or advance, read{" "}
+          <a href="/guides/landlords/security-deposit-rent-terms-pakistan">security deposit and advance rent</a> and put
+          every amount in the <a href="/guides/rent-agreement-format-pakistan">rent agreement</a>.
+        </p>
         <section className="mt-10 rounded-xl border border-line bg-cream p-5">
           <h2 className="mt-0! text-xl!">Next step</h2>
           <p>For the complete rental process, read <Link className="font-semibold text-forest no-underline hover:underline" to="/how-to-rent-a-house-in-pakistan">How to Rent a House in Pakistan</Link> and use the live listings to compare available homes.</p>

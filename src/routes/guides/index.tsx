@@ -11,60 +11,65 @@ export const Route = createFileRoute("/guides/")({
 
 const groups = [
   {
-    title: "Affordable homes",
-    description: "Question-and-answer guides with reported 2026 asking ranges. Figures are labelled by source. They are not quotes.",
+    title: "Find a home by city",
+    description: "Where to look, what to check and the local registration rules, linked to live Apna Ghar listings.",
     links: [
-      { label: "Where can I rent an affordable home in Pakistan?", to: "/guides/where-can-i-rent-an-affordable-home-in-pakistan" },
-      { label: "Where can I rent an affordable home in Lahore?", to: "/guides/where-can-i-rent-an-affordable-home-in-lahore" },
-      { label: "Where can I rent an affordable home in Karachi?", to: "/guides/where-can-i-rent-an-affordable-home-in-karachi" },
-      { label: "Where can I rent an affordable home in Islamabad?", to: "/guides/where-can-i-rent-an-affordable-home-in-islamabad" },
-      { label: "Where can I rent an affordable home in Rawalpindi?", to: "/guides/where-can-i-rent-an-affordable-home-in-rawalpindi" },
-      { label: "Where can I buy an affordable home in Pakistan?", to: "/guides/where-can-i-buy-an-affordable-home-in-pakistan" },
-      { label: "Where can I buy an affordable home in Lahore?", to: "/guides/where-can-i-buy-an-affordable-home-in-lahore" },
-      { label: "Where can I buy an affordable home in Karachi?", to: "/guides/where-can-i-buy-an-affordable-home-in-karachi" },
-      { label: "Where can I buy an affordable home in Islamabad?", to: "/guides/where-can-i-buy-an-affordable-home-in-islamabad" },
-      { label: "Where can I buy an affordable home in Rawalpindi?", to: "/guides/where-can-i-buy-an-affordable-home-in-rawalpindi" },
+      { label: "House for rent in Lahore", to: "/guides/cities/lahore" },
+      { label: "How to find a flat for rent in Karachi", to: "/guides/cities/karachi" },
+      { label: "House for rent in Rawalpindi", to: "/guides/cities/rawalpindi" },
     ],
   },
   {
     title: "Renting",
-    description: "Practical help for finding, checking and renting a home in Pakistan.",
+    description: "Practical and legal steps for tenants, from the search to the agreement and police registration.",
     links: [
-      { label: "How to Rent a House in Pakistan", to: "/how-to-rent-a-house-in-pakistan" },
-      { label: "Rental Safety Checks", to: "/safety" },
-      { label: "Rental Budget and Hidden Costs", to: "/guides/renting/rental-budget-and-costs-pakistan" },
-      { label: "House vs Flat vs Portion", to: "/guides/renting/house-vs-flat-vs-portion-pakistan" },
-    ],
-  },
-  {
-    title: "City guides",
-    description: "Location-focused housing information connected to live Apna Ghar inventory.",
-    links: [
-      { label: "Rawalpindi Property & Rental Guide", to: "/guides/cities/rawalpindi" },
-      { label: "Lahore Property & Rental Guide", to: "/guides/cities/lahore" },
-      { label: "Karachi Property & Rental Guide", to: "/guides/cities/karachi" },
-    ],
-  },
-  {
-    title: "Buying",
-    description: "Legal and practical guidance for checking property documents, sale agreements, registration and Punjab land records.",
-    links: [
-      { label: "How to Buy Property in Pakistan", to: "/guides/buying/how-to-buy-property-in-pakistan" },
-      { label: "Property Buying Due Diligence in Pakistan", to: "/guides/buying/property-buying-due-diligence-pakistan" },
-      { label: "Fard, Registry and Intiqal in Punjab", to: "/guides/buying/fard-registry-intiqal-punjab" },
-      { label: "Sale Agreement and Property Registration", to: "/guides/buying/sale-agreement-registration-pakistan" },
+      { label: "How to rent a house in Pakistan", to: "/how-to-rent-a-house-in-pakistan" },
+      { label: "Rent agreement format in Pakistan", to: "/guides/rent-agreement-format-pakistan" },
+      { label: "Tenant registration with Punjab Police", to: "/guides/tenant-registration-punjab-police" },
+      { label: "Cost of renting a house in Pakistan", to: "/guides/renting/rental-budget-and-costs-pakistan" },
+      { label: "House vs flat vs portion", to: "/guides/renting/house-vs-flat-vs-portion-pakistan" },
+      { label: "Safety checks before you pay", to: "/safety" },
     ],
   },
   {
     title: "Landlords",
-    description: "Practical and legal guidance for owners preparing, documenting and managing rental properties.",
+    description: "For owners renting out a house, portion or flat.",
     links: [
-      { label: "Rental Agreement Legal Checklist", to: "/guides/landlords/rental-agreement-legal-checklist" },
-      { label: "Landlord Responsibilities in Pakistan", to: "/guides/landlords/landlord-responsibilities-pakistan" },
-      { label: "Security Deposit, Advance Rent and Rent Terms", to: "/guides/landlords/security-deposit-rent-terms-pakistan" },
+      { label: "How to rent out your house in Pakistan", to: "/guides/how-to-rent-out-your-house-in-pakistan" },
+      { label: "Landlord responsibilities in Pakistan", to: "/guides/landlords/landlord-responsibilities-pakistan" },
+      { label: "Security deposit and advance rent", to: "/guides/landlords/security-deposit-rent-terms-pakistan" },
+      { label: "Post your property free", to: "/post" },
+    ],
+  },
+  {
+    title: "Buying",
+    description: "The buying process, document checks, sale agreements, Punjab land records and taxes.",
+    links: [
+      { label: "How to buy property in Pakistan", to: "/guides/buying/how-to-buy-property-in-pakistan" },
+      { label: "How to verify property documents", to: "/guides/buying/property-buying-due-diligence-pakistan" },
+      { label: "Sale agreement, token money and registration", to: "/guides/buying/sale-agreement-registration-pakistan" },
+      { label: "Fard, registry and intiqal in Punjab", to: "/guides/buying/fard-registry-intiqal-punjab" },
+      { label: "Property tax on buying and selling (2026-27)", to: "/guides/property-tax-on-buying-and-selling-property-pakistan" },
+    ],
+  },
+  {
+    title: "Low-budget homes: reported prices",
+    description: "Reported 2026 asking ranges, each labelled by its source. They are not quotes.",
+    links: [
+      { label: "Cheap house for rent in Lahore", to: "/guides/where-can-i-rent-an-affordable-home-in-lahore" },
+      { label: "Cheap flat for rent in Karachi", to: "/guides/where-can-i-rent-an-affordable-home-in-karachi" },
+      { label: "Cheap house or portion for rent in Islamabad", to: "/guides/where-can-i-rent-an-affordable-home-in-islamabad" },
+      { label: "Cheap house for rent in Rawalpindi", to: "/guides/where-can-i-rent-an-affordable-home-in-rawalpindi" },
+      { label: "Affordable homes for rent in Pakistan", to: "/guides/where-can-i-rent-an-affordable-home-in-pakistan" },
+      { label: "Cheap house for sale in Lahore", to: "/guides/where-can-i-buy-an-affordable-home-in-lahore" },
+      { label: "Cheap house for sale in Karachi", to: "/guides/where-can-i-buy-an-affordable-home-in-karachi" },
+      { label: "Cheap house for sale in Islamabad", to: "/guides/where-can-i-buy-an-affordable-home-in-islamabad" },
+      { label: "Cheap house for sale in Rawalpindi", to: "/guides/where-can-i-buy-an-affordable-home-in-rawalpindi" },
+      { label: "Affordable houses for sale in Pakistan", to: "/guides/where-can-i-buy-an-affordable-home-in-pakistan" },
     ],
   },
 ];
+
 
 function Page() {
   const url = canonicalUrl(GUIDES_PATH);
@@ -82,7 +87,7 @@ function Page() {
           publisher: { "@type": "Organization", name: APP_NAME, url: PUBLIC_SITE_ORIGIN + "/" },
         }}
       />
-      <LegalPage eyebrow="PROPERTY & RENTAL GUIDES" title="Property & Rental Guides in Pakistan">
+      <LegalPage eyebrow="PROPERTY & RENTAL GUIDES" title="Property and rental guides for Pakistan" updated="3 October 2026">
         <p>
           Practical information for renters, property owners and people researching the Pakistan property market.
           These guides answer common rent and sale questions with sourced figures, then connect you to live Apna Ghar
@@ -118,7 +123,11 @@ function Page() {
             <Link className="font-semibold text-forest no-underline hover:underline" to="/sale">
               properties for sale
             </Link>{" "}
-            on Apna Ghar.
+            on Apna Ghar. Have a property?{" "}
+            <Link className="font-semibold text-forest no-underline hover:underline" to="/post">
+              Post it free
+            </Link>
+            .
           </p>
         </section>
       </LegalPage>

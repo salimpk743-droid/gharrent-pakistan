@@ -22,29 +22,34 @@ export const HOME_SEO_DESCRIPTION =
   "Search houses, flats, portions and rooms for rent or sale in Lahore, Karachi, Islamabad and Rawalpindi. Apna Ghar is a private marketplace, not the government housing-loan scheme.";
 
 export const GUIDE_HOW_TO_RENT_PATH = "/how-to-rent-a-house-in-pakistan";
-export const GUIDE_HOW_TO_RENT_TITLE = "How to Rent a House in Pakistan | Apna Ghar";
+export const GUIDE_HOW_TO_RENT_TITLE =
+  "How to Rent a House in Pakistan: Step-by-Step Guide | Apna Ghar";
 export const GUIDE_HOW_TO_RENT_DESCRIPTION =
   "A practical guide to renting a house in Pakistan: how to search, inspect the property, agree rent and a deposit, and what to put in writing before you move in.";
 
 export const GUIDES_PATH = "/guides";
-export const GUIDES_TITLE = "Property & Rental Guides in Pakistan | Apna Ghar";
+export const GUIDES_TITLE =
+  "Property & Rental Guides for Pakistan (2026) | Apna Ghar";
 export const GUIDES_DESCRIPTION =
-  "Where to rent or buy an affordable home in Lahore, Karachi, Islamabad and Rawalpindi, plus practical renting, buying and landlord guides from Apna Ghar.";
+  "Guides for renting, letting and buying in Pakistan: rent agreement format, Punjab Police tenant registration, property tax 2026-27, and finding a house in Lahore, Karachi or Rawalpindi.";
 
 export const RAWALPINDI_GUIDE_PATH = "/guides/cities/rawalpindi";
-export const RAWALPINDI_GUIDE_TITLE = "Rawalpindi Property & Rental Guide | Apna Ghar";
+export const RAWALPINDI_GUIDE_TITLE =
+  "House for Rent in Rawalpindi: Areas & How to Find One | Apna Ghar";
 export const RAWALPINDI_GUIDE_DESCRIPTION =
-  "A practical Rawalpindi property and rental guide covering house and flat rentals, common property types, areas, budgets, inspections and current Apna Ghar listings.";
+  "How to find a house, portion or flat for rent in Rawalpindi: areas to compare, what to check on a visit, the Punjab rent agreement and tenant registration rules, and where to look.";
 
 export const LAHORE_GUIDE_PATH = "/guides/cities/lahore";
-export const LAHORE_GUIDE_TITLE = "Lahore Property & Rental Guide | Apna Ghar";
+export const LAHORE_GUIDE_TITLE =
+  "House for Rent in Lahore: Where to Look & What to Check | Apna Ghar";
 export const LAHORE_GUIDE_DESCRIPTION =
-  "A practical Lahore property and rental guide covering houses, flats, portions, common areas, 5 Marla and 10 Marla homes, budgets, inspections and current Apna Ghar listings.";
+  "How to find a house for rent in Lahore: which areas to search, what to check on a visit, the Punjab rent agreement and police tenant registration rules, and where to look.";
 
 export const KARACHI_GUIDE_PATH = "/guides/cities/karachi";
-export const KARACHI_GUIDE_TITLE = "Karachi Property & Rental Guide | Apna Ghar";
+export const KARACHI_GUIDE_TITLE =
+  "How to Find a Flat for Rent in Karachi (2026 Guide) | Apna Ghar";
 export const KARACHI_GUIDE_DESCRIPTION =
-  "A comprehensive Karachi property and rental guide covering major residential areas, apartments, houses, portions, square-yard sizes, commute planning, costs, inspections and current Apna Ghar listings.";
+  "Step by step: finding a flat or house for rent in Karachi — areas, square-yard sizes, maintenance and water questions, Sindh tenant registration within 48 hours, and where to search.";
 
 const SHARE_IMAGE = `${PUBLIC_SITE_ORIGIN}/apna-ghar-facebook.jpg?v=20260920`;
 

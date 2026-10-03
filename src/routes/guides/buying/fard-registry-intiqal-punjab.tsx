@@ -5,7 +5,7 @@ import { APP_NAME, PUBLIC_SITE_ORIGIN } from "@/lib/constants";
 import { breadcrumbJsonLd, canonicalUrl, guideSeo } from "@/lib/seo";
 
 const PATH = "/guides/buying/fard-registry-intiqal-punjab";
-const TITLE = "Fard, Registry and Intiqal in Punjab Explained | Apna Ghar";
+const TITLE = "Fard, Registry and Intiqal in Punjab: What Each Document Means | Apna Ghar";
 const DESCRIPTION =
   "Understand Fard, Registry and Intiqal in Punjab, what each record is used for, how to verify documents and what buyers should check before purchasing property.";
 
@@ -31,13 +31,13 @@ function Page() {
         description: DESCRIPTION,
         inLanguage: "en-PK",
         datePublished: "2026-09-22",
-        dateModified: "2026-09-22",
+        dateModified: "2026-10-03",
         mainEntityOfPage: url,
         url,
         author: { "@type": "Organization", name: APP_NAME, url: PUBLIC_SITE_ORIGIN + "/" },
         publisher: { "@type": "Organization", name: APP_NAME, url: PUBLIC_SITE_ORIGIN + "/" },
       }} />
-      <LegalPage eyebrow="BUYING • PUNJAB" title="Fard, Registry and Intiqal in Punjab Explained" updated="22 September 2026">
+      <LegalPage eyebrow="BUYING • PUNJAB" title="Fard, registry and intiqal in Punjab: what each document means" updated="3 October 2026">
         <div className="rounded-lg border border-line bg-cream p-4 text-ink">
           This guide is about Punjab land records. It is general information, not legal advice. Procedures and
           records can change, and a housing society or development authority may have additional requirements.

@@ -73,14 +73,14 @@ function Page() {
           description: GUIDE_HOW_TO_RENT_DESCRIPTION,
           inLanguage: "en-PK",
           datePublished: "2026-09-18",
-          dateModified: "2026-09-18",
+          dateModified: "2026-10-03",
           mainEntityOfPage: url,
           url,
           author: { "@type": "Organization", name: APP_NAME, url: `${PUBLIC_SITE_ORIGIN}/` },
           publisher: { "@type": "Organization", name: APP_NAME, url: `${PUBLIC_SITE_ORIGIN}/` },
         }}
       />
-      <LegalPage eyebrow="RENTER GUIDE" title="How to Rent a House in Pakistan" updated="18 September 2026">
+      <LegalPage eyebrow="RENTER GUIDE" title="How to Rent a House in Pakistan" updated="3 October 2026">
         <div className="rounded-lg border border-line bg-cream p-4 text-ink">
           This is practical guidance for ordinary renters, not legal advice. Rent law and local practice in Pakistan
           differ by province and city. Confirm the terms of your own agreement and any local requirements before you
@@ -270,6 +270,12 @@ function Page() {
           or who pays for a major repair — ask for it to be written in plain language. Keep your own original or a
           certified copy.
         </p>
+        <p>
+          For a clause-by-clause template, see the <a className="font-semibold text-forest no-underline hover:underline" href="/guides/rent-agreement-format-pakistan">rent agreement
+          format in Pakistan</a>. In Punjab, the tenancy must also be registered with the police within fifteen
+          days of moving in — see <a className="font-semibold text-forest no-underline hover:underline" href="/guides/tenant-registration-punjab-police">tenant registration with Punjab
+          Police</a>. In Sindh the period is forty-eight hours.
+        </p>
 
         <h2>9. Record the property’s condition</h2>
         <p>On handover, make a simple record that both sides can keep:</p>
@@ -301,7 +307,7 @@ function Page() {
           <li>Visit the area and the property; inspect water, power, gas, leaks and existing damage.</li>
           <li>Confirm who is authorised to rent it; do not pay a large sum on a listing alone.</li>
           <li>Agree rent, payment date, deposit, utilities and repairs in writing.</li>
-          <li>Read the rent agreement; keep a copy. Confirm any local registration or stamp step that applies.</li>
+          <li>Read the rent agreement; keep a copy. Confirm any local registration or stamp step that applies, and register the tenancy with the police (Punjab: 15 days; Sindh: 48 hours).</li>
           <li>Photograph the condition, record meter readings and list included items.</li>
           <li>Collect keys, receipts and emergency contacts before you move in.</li>
         </ul>

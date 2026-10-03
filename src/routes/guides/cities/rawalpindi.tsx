@@ -1,5 +1,7 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { LegalPage } from "@/components/layout/legal-page";
+import { GuideFaq } from "@/components/guides/guide-faq";
+import { PostPropertyCta } from "@/components/guides/post-property-cta";
 import { JsonLd } from "@/components/seo/json-ld";
 import { APP_NAME, PUBLIC_SITE_ORIGIN } from "@/lib/constants";
 import {
@@ -36,33 +38,60 @@ function Page() {
         data={{
           "@context": "https://schema.org",
           "@type": "Article",
-          headline: "Rawalpindi Property & Rental Guide",
+          headline: "House for rent in Rawalpindi: how to find one",
           description: RAWALPINDI_GUIDE_DESCRIPTION,
           inLanguage: "en-PK",
           datePublished: "2026-09-22",
-          dateModified: "2026-09-22",
+          dateModified: "2026-10-03",
           mainEntityOfPage: url,
           url,
           author: { "@type": "Organization", name: APP_NAME, url: PUBLIC_SITE_ORIGIN + "/" },
           publisher: { "@type": "Organization", name: APP_NAME, url: PUBLIC_SITE_ORIGIN + "/" },
         }}
       />
-      <LegalPage eyebrow="CITY PROPERTY GUIDE" title="Rawalpindi Property & Rental Guide" updated="22 September 2026">
+      <LegalPage eyebrow="RENTING IN RAWALPINDI" title="House for rent in Rawalpindi: how to find one" updated="3 October 2026">
         <div className="rounded-lg border border-line bg-cream p-4 text-ink">
           This guide is practical property information, not legal or financial advice. Rents, availability and local
           requirements can change, so confirm current details before signing an agreement or paying money.
         </div>
         <p>
           For where to look, and which prices this site will not invent, see{" "}
-          <a href="/guides/where-can-i-rent-an-affordable-home-in-rawalpindi">where you can rent an affordable home in Rawalpindi</a>
+          <a href="/guides/where-can-i-rent-an-affordable-home-in-rawalpindi">cheap homes for rent in Rawalpindi (reported 2026 ranges)</a>
           {" "}and{" "}
-          <a href="/guides/where-can-i-buy-an-affordable-home-in-rawalpindi">where you can buy an affordable home in Rawalpindi</a>.
+          <a href="/guides/where-can-i-buy-an-affordable-home-in-rawalpindi">cheap houses for sale in Rawalpindi</a>.
         </p>
         <p>
           Rawalpindi is one of Pakistan’s major urban rental markets and is closely connected to Islamabad. For a
           renter, the useful starting points are the part of the city you need, the property type, the size of home,
           and the total monthly budget rather than rent alone.
         </p>
+
+        <h2>How to find a house for rent in Rawalpindi, step by step</h2>
+        <ol className="my-3 list-decimal ps-5 [&_li]:my-1.5">
+          <li>Shortlist two or three areas by your real commute, then visit them at the times you will travel.</li>
+          <li>
+            Set a total monthly budget, not just a rent figure — see 
+            <a href="/guides/renting/rental-budget-and-costs-pakistan">the cost of renting a house</a>.
+          </li>
+          <li>
+            Search 
+            <Link to="/rent/$province/$district" params={{ province: "punjab", district: "rawalpindi" }}>
+              houses, portions and flats for rent in Rawalpindi
+            </Link>
+            . New ads appear there as soon as owners publish them.
+          </li>
+          <li>Visit before paying anything substantial, and ask who owns the property or is authorised to rent it.</li>
+          <li>
+            Sign a written agreement — Punjab law requires one, presented to the Rent Registrar. Use the 
+            <a href="/guides/rent-agreement-format-pakistan">rent agreement format</a>.
+          </li>
+          <li>
+            Register the tenancy with Punjab Police within fifteen days of moving in — see 
+            <a href="/guides/tenant-registration-punjab-police">tenant registration with Punjab Police</a>.
+          </li>
+          <li>Photograph the condition, record meter readings and keep receipts for every payment.</li>
+        </ol>
+
         <h2>Find current rental properties</h2>
         <p>
           Apna Ghar has a dedicated results page for{" "}
@@ -160,6 +189,45 @@ function Page() {
             .
           </p>
         </section>
+              <h2>Sources</h2>
+        <ul>
+          <li>
+            <a href="https://punjablaws.gov.pk/laws/498.html" target="_blank" rel="noopener noreferrer">
+              The Punjab Rented Premises Act 2009 — Punjab Laws
+            </a>
+          </li>
+          <li>
+            <a href="https://natlex.ilo.org/dyn/natlex2/natlex2/files/download/102085/PAK102085.pdf" target="_blank" rel="noopener noreferrer">
+              The Punjab Information of Temporary Residents Act 2015
+            </a>
+          </li>
+          <li>
+            <a href="https://punjabpolice.gov.pk/trs" target="_blank" rel="noopener noreferrer">
+              Punjab Police — Tenant Registration System
+            </a>
+          </li>
+        </ul>
+        <PostPropertyCta city="Rawalpindi" />
+        <GuideFaq
+          faqs={[
+            {
+              q: "Where can I find a house for rent in Rawalpindi?",
+              a: "Search the Rawalpindi rental page on Apna Ghar (apnaaghar.pk/rent/punjab/rawalpindi), where owners and agents post houses, portions and flats directly, then visit the area and the property before you pay.",
+            },
+            {
+              q: "Is a written rent agreement required in Rawalpindi?",
+              a: "Yes. Rawalpindi is in Punjab, where section 5 of the Punjab Rented Premises Act 2009 says a landlord shall not let premises except by a written tenancy agreement, which is presented before the Rent Registrar.",
+            },
+            {
+              q: "Do I need to register as a tenant with the police in Rawalpindi?",
+              a: "Yes. Under the Punjab Information of Temporary Residents Act 2015 the landlord, tenant or property dealer must give the tenant's details to the police within fifteen days of possession, online at trs.punjabpolice.gov.pk or at a police station or Khidmat Markaz.",
+            },
+            {
+              q: "How much is rent for a cheap house in Rawalpindi?",
+              a: "It depends on the area, size and condition. Apna Ghar does not quote rents; reported 2026 ranges with their sources are collected in the guide 'cheap house for rent in Rawalpindi'.",
+            },
+          ]}
+        />
       </LegalPage>
     </>
   );

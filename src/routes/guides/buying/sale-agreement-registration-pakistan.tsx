@@ -5,7 +5,7 @@ import { APP_NAME, PUBLIC_SITE_ORIGIN } from "@/lib/constants";
 import { breadcrumbJsonLd, canonicalUrl, guideSeo } from "@/lib/seo";
 
 const PATH = "/guides/buying/sale-agreement-registration-pakistan";
-const TITLE = "Sale Agreement and Property Registration in Pakistan | Apna Ghar";
+const TITLE = "Sale Agreement, Token Money & Property Registration in Pakistan | Apna Ghar";
 const DESCRIPTION =
   "A practical guide to sale agreements, token money, registration and transfer when buying property in Pakistan, with official legal references.";
 
@@ -31,13 +31,13 @@ function Page() {
         description: DESCRIPTION,
         inLanguage: "en-PK",
         datePublished: "2026-09-22",
-        dateModified: "2026-09-22",
+        dateModified: "2026-10-03",
         mainEntityOfPage: url,
         url,
         author: { "@type": "Organization", name: APP_NAME, url: PUBLIC_SITE_ORIGIN + "/" },
         publisher: { "@type": "Organization", name: APP_NAME, url: PUBLIC_SITE_ORIGIN + "/" },
       }} />
-      <LegalPage eyebrow="BUYING GUIDE" title="Sale Agreement and Property Registration in Pakistan" updated="22 September 2026">
+      <LegalPage eyebrow="BUYING GUIDE" title="Sale agreement, token money and property registration in Pakistan" updated="3 October 2026">
         <div className="rounded-lg border border-line bg-cream p-4 text-ink">
           This is general property information, not a substitute for legal advice. The required documents, taxes,
           registration process and authority can vary by province, territory, development authority and housing scheme.
