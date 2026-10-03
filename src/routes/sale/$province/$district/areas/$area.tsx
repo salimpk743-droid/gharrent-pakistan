@@ -5,7 +5,7 @@ import { getSeoArea } from "@/lib/server/locations";
 import { areaRouteSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/sale/$province/$district/areas/$area")({
-  validateSearch: ({}) => ({}),
+  validateSearch: () => ({}),
   loader: async ({ params }) => {
     const area = await getSeoArea({
       provinceSlug: params.province,

@@ -1,9 +1,9 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { ResultsPage } from "@/components/search/results-page";
 import { searchProperties } from "@/lib/server/properties";
-import { getSeoArea, listSeoAreas } from "@/lib/server/locations";
+import { getSeoArea } from "@/lib/server/locations";
 import { parseRentSearch } from "@/lib/rent-search";
-import { areaPath, areaRouteSeo, assertCanonicalMarketplacePath } from "@/lib/seo";
+import { areaPath, areaRouteSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/rent/$province/$district/areas/$area")({
   validateSearch: parseRentSearch,

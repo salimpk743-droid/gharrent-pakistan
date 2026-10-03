@@ -132,7 +132,7 @@ export const saveDraft = createServerFn({ method: "POST" })
     const title = (data.title ?? String(row.title)).trim().slice(0, 80) || "Untitled listing";
     let slug = String(row.slug);
     let areaName = data.area ?? String(row.area || "");
-    let areaId = data.areaId === undefined ? (row.area_id as string | null) : data.areaId;
+    const areaId = data.areaId === undefined ? (row.area_id as string | null) : data.areaId;
     if (areaId) {
       const areaRows = await sql<{ name: string }>`select name from areas where id = ${areaId} limit 1`;
       if (areaRows[0]) areaName = areaRows[0].name;

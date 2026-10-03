@@ -237,7 +237,7 @@ export function ResultsPage({
                 <p className="mt-1 text-sm text-muted">Browse live inventory by budget, bedrooms and property size.</p>
                 <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
                   {intents.slice(0, 18).map((intent) => {
-                    const hrefParams = { province: provinceSlug, district: districtSlug, area: areaSlug, type: typeSlug, intent: intent.slug };
+                    const hrefParams = { province: provinceSlug, district: districtSlug, area: areaSlug ?? "", type: typeSlug, intent: intent.slug };
                     if (purpose === "SALE") {
                       return areaSlug ? (
                         <Link

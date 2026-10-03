@@ -4,7 +4,7 @@ import { searchProperties } from "@/lib/server/properties";
 import { getSeoArea, listSeoIntents } from "@/lib/server/locations";
 import { typeFromSlug, PROPERTY_TYPE_META } from "@/lib/constants";
 import { parseRentSearch } from "@/lib/rent-search";
-import { areaPath, areaRouteSeo } from "@/lib/seo";
+import { areaRouteSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/rent/$province/$district/areas/$area/$type")({
   validateSearch: parseRentSearch,
@@ -46,7 +46,7 @@ export const Route = createFileRoute("/rent/$province/$district/areas/$area/$typ
 });
 
 function Page() {
-  const { data, area, type } = Route.useLoaderData();
+  const { data, area, type, intents } = Route.useLoaderData();
   const { province, district } = Route.useParams();
   const typeName = PROPERTY_TYPE_META[type].plural;
   return (
@@ -64,7 +64,7 @@ function Page() {
       purpose="RENT"
       title={`${typeName} for Rent in ${area.name}`}
       description={`Find ${typeName.toLowerCase()} for rent in ${area.name}. Compare current listings, monthly rent, size and location on Apna Ghar.`}
-      intents={data.intents}
+      intents={intents}
     />
   );
 }
