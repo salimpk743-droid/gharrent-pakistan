@@ -1,6 +1,7 @@
 import { Footer } from "./footer";
 import { Header } from "./header";
 import { MobileNav } from "./mobile-nav";
+import { FloatingWhatsApp } from "./floating-whatsapp";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
@@ -17,6 +18,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </div>
       <Footer />
       <MobileNav />
+      <FloatingWhatsApp />
     </div>
   );
 }

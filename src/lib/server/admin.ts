@@ -183,11 +183,23 @@ export const adminResolveReport = createServerFn({ method: "POST" })
   });
 
 export const sendContactMessage = createServerFn({ method: "POST" })
-  .validator((data: { name?: string; email?: string; subject: string; message: string; userId?: string }) => data)
+  .validator(
+    (data: { name?: string; email?: string; subject: string; message: string; userId?: string; website?: string }) => data,
+  )
   .handler(async ({ data }) => {
+    // Honeypot: the hidden "website" field is only ever filled by bots. Pretend success.
+    if ((data.website || "").trim()) return { ok: true as const };
     const message = data.message.trim();
     if (message.length < 10) return { ok: false as const, error: "Please write a little more so we can help." };
     const sql = await getSql();
+    // Basic flood control: the same message, or many messages from one email, within an hour.
+    const email = (data.email || "").trim().slice(0, 120);
+    const recent = await sql<{ n: number }>`select count(*)::int as n from contact_messages
+      where created_at > now() - interval '1 hour'
+        and (message = ${message.slice(0, 4000)} or (${email} <> '' and email = ${email}))`;
+    if ((recent[0]?.n ?? 0) >= 3) {
+      return { ok: false as const, error: "We already received your message. Please wait a while before sending another." };
+    }
     await sql`insert into contact_messages (id, user_id, name, email, subject, message)
       values (${crypto.randomUUID()}, ${data.userId ?? null}, ${(data.name || "").trim().slice(0, 80) || null},
         ${(data.email || "").trim().slice(0, 120) || null}, ${data.subject.trim().slice(0, 120)}, ${message.slice(0, 4000)})`;
