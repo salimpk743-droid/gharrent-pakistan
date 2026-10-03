@@ -9,6 +9,8 @@ import { byteLengthOfBase64, sniffImageMime } from "@/lib/image-magic";
 import { normalizePkPhone } from "@/lib/phone";
 import { slugify, newId } from "@/lib/utils";
 import { validateForSubmit } from "@/lib/validate-listing";
+import { autoListingTitle, needsAutoTitle } from "@/lib/listing-title";
+import { isLikelyDuplicate, MAX_DRAFTS_PER_HOUR, MAX_PUBLISHES_PER_DAY } from "@/lib/listing-spam";
 import { requireActiveProfile } from "./profile";
 import { ensureSeedData } from "./seed";
 import { mapImage, mapOwner, mapPublic, PROPERTY_FROM, PROPERTY_SELECT, type PropertyRow } from "./mappers";
@@ -100,6 +102,19 @@ export const createDraft = createServerFn({ method: "POST" })
     await ensureSeedData();
     await requireActiveProfile(context.userId);
     const sql = await getSql();
+    // Reuse an untouched recent draft instead of piling up empty ones.
+    const blank = await sql<{ id: string }>`select p.id from properties p
+      where p.owner_id = ${context.userId} and p.status = 'DRAFT' and p.title = 'Untitled listing'
+        and p.monthly_rent = 0 and p.district_id is null and p.contact_phone = ''
+        and p.created_at > now() - interval '7 days'
+        and not exists (select 1 from property_images i where i.property_id = p.id)
+      order by p.created_at desc limit 1`;
+    if (blank[0]) return (await loadOwnerListing(blank[0].id, context.userId))!;
+    const recent = await sql<{ n: number }>`select count(*)::int as n from properties
+      where owner_id = ${context.userId} and created_at > now() - interval '1 hour'`;
+    if ((recent[0]?.n ?? 0) >= MAX_DRAFTS_PER_HOUR) {
+      throw new Error("Too many new listings in a short time. Please wait an hour and try again.");
+    }
     const id = newId();
     const slug = `draft-${id.slice(0, 8)}`;
     await sql`insert into properties (id, owner_id, title, slug, status)
@@ -215,6 +230,72 @@ export const submitListing = createServerFn({ method: "POST" })
     if (errors.length) return { ok: false as const, error: errors[0], errors };
     const next = ownerNextStatus(listing.status, "submit");
     if (!next) return { ok: false as const, error: "This listing cannot be submitted in its current state." };
+
+    // Spam controls: a daily publish cap per account and no copies of an ad that is already live.
+    const today = await sql<{ n: number }>`select count(*)::int as n from audit_log
+      where actor_id = ${context.userId} and action = 'submit' and created_at > now() - interval '24 hours'`;
+    if ((today[0]?.n ?? 0) >= MAX_PUBLISHES_PER_DAY) {
+      return {
+        ok: false as const,
+        error: `You can publish up to ${MAX_PUBLISHES_PER_DAY} ads a day. Please try again tomorrow, or WhatsApp us if you need more.`,
+      };
+    }
+    const live = await sql<{
+      id: string;
+      title: string;
+      area: string;
+      contact_phone: string;
+      district_id: string | null;
+      property_type: string;
+      listing_purpose: string;
+      monthly_rent: number;
+    }>`select id, title, area, contact_phone, district_id, property_type, listing_purpose, monthly_rent
+      from properties
+      where status in ('PUBLISHED', 'PAUSED', 'PENDING_REVIEW') and id <> ${data.id}
+        and contact_phone = ${listing.contactPhone || ""} and district_id = ${listing.districtId}
+      limit 50`;
+    const duplicate = live.some((row) =>
+      isLikelyDuplicate(
+        {
+          contactPhone: listing.contactPhone,
+          districtId: listing.districtId,
+          propertyType: listing.propertyType,
+          listingPurpose: listing.listingPurpose,
+          monthlyRent: listing.monthlyRent,
+          area: listing.area,
+          title: listing.title,
+        },
+        {
+          contactPhone: row.contact_phone,
+          districtId: row.district_id,
+          propertyType: row.property_type,
+          listingPurpose: row.listing_purpose,
+          monthlyRent: Number(row.monthly_rent),
+          area: row.area,
+          title: row.title,
+        },
+      ),
+    );
+    if (duplicate) {
+      return {
+        ok: false as const,
+        error:
+          "This property already has a live ad with the same phone number, area and price. Edit or renew that ad from My listings instead of posting it again.",
+      };
+    }
+
+    // No title written? Use a plain one built from the advertiser's own details.
+    if (needsAutoTitle(listing.title)) {
+      const title = autoListingTitle({
+        propertyType: listing.propertyType,
+        bedrooms: listing.bedrooms,
+        listingPurpose: listing.listingPurpose,
+        area: listing.area,
+        districtName: listing.districtName,
+      });
+      const slug = await uniqueSlug(title, listing.area, listing.districtName || "", data.id);
+      await sql`update properties set title = ${title}, slug = ${slug} where id = ${data.id} and owner_id = ${context.userId}`;
+    }
     const durationRows = await sql<{ value: string }>`select value from platform_settings where key = 'listing_duration_days'`;
     const days = Number(durationRows[0]?.value) || LISTING_DURATION_DAYS;
     const expires = daysFromNow(days).toISOString();

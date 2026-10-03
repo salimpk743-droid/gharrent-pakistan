@@ -6,7 +6,8 @@ import { whatsappChatUrl } from "@/lib/site-contact";
 function hiddenOn(pathname: string): boolean {
   // The homepage must stay exactly as it is.
   if (pathname === "/") return true;
-  return pathname.startsWith("/admin") || pathname.startsWith("/login");
+  // /post has its own WhatsApp box and its buttons must never be covered.
+  return pathname.startsWith("/admin") || pathname.startsWith("/login") || pathname.startsWith("/post");
 }
 
 export function FloatingWhatsApp() {

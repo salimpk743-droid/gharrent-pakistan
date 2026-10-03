@@ -20,6 +20,10 @@ import {
   type ListingPurpose,
 } from "@/lib/constants";
 import { formatListingPrice, formatLocation } from "@/lib/utils";
+import { MAX_IMAGES } from "@/lib/constants";
+import { autoListingTitle, needsAutoTitle } from "@/lib/listing-title";
+import { validateForSubmit } from "@/lib/validate-listing";
+import { pickDraftFields, saveLocalFields, saveLocalPhotos } from "@/lib/local-draft";
 import type { AreaNode, LocationNode, OwnerListing } from "@/lib/types";
 import { Star, Trash2, Upload } from "lucide-react";
 
@@ -36,7 +40,24 @@ const AMENITIES = [
   ["petsAllowed", "Pets allowed"],
 ] as const;
 
-export function PropertyWizard({ initial }: { initial: OwnerListing }) {
+/** Which wizard step fixes a given validation message. */
+function stepForError(message: string): number {
+  if (/province|city|area/i.test(message)) return 0;
+  if (/title|price|rent|bedroom|bathroom|property type|furnished/i.test(message)) return 1;
+  if (/photo/i.test(message)) return 2;
+  if (/description/i.test(message)) return 3;
+  if (/mobile|whatsapp/i.test(message)) return 4;
+  return 5;
+}
+
+export function PropertyWizard({
+  initial,
+  local,
+}: {
+  initial: OwnerListing;
+  /** Logged-out mode: keep everything on this device and ask for sign-in only at Publish. */
+  local?: { onPublish: (listing: OwnerListing) => void };
+}) {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [provinces, setProvinces] = useState<LocationNode[]>([]);
@@ -88,9 +109,30 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
     };
   }, [listing.districtId]);
 
+  useEffect(() => {
+    if (local) saveLocalFields(pickDraftFields(listing));
+  }, [local, listing]);
+
+  useEffect(() => {
+    if (!local) return;
+    void saveLocalPhotos(
+      listing.images.map((img) => ({
+        id: img.id,
+        dataUrl: img.url,
+        width: img.width ?? 0,
+        height: img.height ?? 0,
+        isCover: img.isCover,
+      })),
+    );
+  }, [local, listing.images]);
+
   async function persist(patch: Partial<OwnerListing> = {}) {
     const next = { ...listing, ...patch };
     setListing(next);
+    if (local) {
+      saveLocalFields(pickDraftFields(next));
+      return { ok: true as const, listing: next };
+    }
     const result = await saveDraft({
       data: {
         id: next.id,
@@ -140,6 +182,18 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
   async function onSubmit() {
     setBusy(true);
     setError(null);
+    if (local) {
+      const errors = validateForSubmit({ ...listing, imageCount: listing.images.length });
+      setBusy(false);
+      if (errors.length) {
+        setError(errors[0]);
+        setStep(stepForError(errors[0]));
+        return;
+      }
+      saveLocalFields({ ...pickDraftFields(listing), publishRequested: true });
+      local.onPublish(listing);
+      return;
+    }
     try {
       const saved = await persist();
       const status = saved.ok && saved.listing ? saved.listing.status : listing.status;
@@ -152,7 +206,7 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
       if (!result.ok) {
         setError(result.error);
         toast.error(result.error);
-        if (/mobile number|WhatsApp/i.test(result.error)) setStep(4);
+        setStep(stepForError(result.error));
         return;
       }
       toast.success("Your property is now live.");
@@ -168,6 +222,29 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
     if (!files?.length) return;
     setBusy(true);
     try {
+      if (local) {
+        let images = [...listing.images];
+        for (const file of Array.from(files)) {
+          if (images.length >= MAX_IMAGES) {
+            toast.error(`You can add up to ${MAX_IMAGES} photos.`);
+            break;
+          }
+          const compressed = await compressImageFile(file);
+          images = [
+            ...images,
+            {
+              id: `local-${Date.now()}-${images.length}`,
+              url: compressed.dataUrl,
+              sortOrder: images.length,
+              isCover: images.length === 0,
+              width: compressed.width,
+              height: compressed.height,
+            },
+          ];
+        }
+        setListing((cur) => ({ ...cur, images, coverImage: images.find((i) => i.isCover) ?? null }));
+        return;
+      }
       for (const file of Array.from(files)) {
         const compressed = await compressImageFile(file);
         const result = await addListingImage({
@@ -198,6 +275,36 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
   const progress = ((step + 1) / STEPS.length) * 100;
   const locLabel = useMemo(() => formatLocation(listing), [listing]);
   const price = formatListingPrice(listing.monthlyRent, listing.listingPurpose);
+  const suggestedTitle = autoListingTitle({
+    propertyType: listing.propertyType,
+    bedrooms: listing.bedrooms,
+    listingPurpose: listing.listingPurpose,
+    area: listing.area,
+    districtName: cities.find((c) => c.id === listing.districtId)?.name ?? listing.districtName,
+  });
+  const shownTitle = needsAutoTitle(listing.title) ? suggestedTitle : listing.title;
+
+  function setCover(imgId: string) {
+    const apply = () =>
+      setListing((l) => ({
+        ...l,
+        images: l.images.map((i) => ({ ...i, isCover: i.id === imgId })),
+        coverImage: l.images.find((i) => i.id === imgId) ?? l.coverImage,
+      }));
+    if (local) return apply();
+    void setCoverImage({ data: { propertyId: listing.id, imageId: imgId } }).then(apply);
+  }
+
+  function removeImage(imgId: string) {
+    const apply = () =>
+      setListing((l) => {
+        const images = l.images.filter((i) => i.id !== imgId);
+        if (local && images.length && !images.some((i) => i.isCover)) images[0] = { ...images[0], isCover: true };
+        return { ...l, images, coverImage: images.find((i) => i.isCover) ?? null };
+      });
+    if (local) return apply();
+    void deleteListingImage({ data: { propertyId: listing.id, imageId: imgId } }).then(apply);
+  }
 
   return (
     <div className="mx-auto w-[min(760px,calc(100%-24px))] py-8 pb-28">
@@ -206,6 +313,12 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
       <p className="mt-1 text-sm text-muted">
         Step {step + 1} of {STEPS.length}: {STEPS[step]}. Your ad goes live as soon as you publish.
       </p>
+      {local ? (
+        <p className="mt-1 text-xs text-muted">
+          No account needed to fill this in. Your details and photos are saved on this device; you sign in only when
+          you press Publish.
+        </p>
+      ) : null}
       <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-sand" aria-hidden="true">
         <div className="h-full bg-forest transition-[width] duration-200" style={{ width: `${progress}%` }} />
       </div>
@@ -274,7 +387,7 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
               </Select>
             </Label>
             <Label>
-              Area
+              Area (recommended)
               <Select
                 value={listing.areaId || ""}
                 disabled={!listing.districtId}
@@ -312,11 +425,11 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
         {step === 1 && (
           <>
             <Label>
-              Listing title
+              Listing title (optional)
               <Input
                 value={listing.title === "Untitled listing" ? "" : listing.title}
                 maxLength={80}
-                placeholder="e.g. 5 Marla family house in Johar Town"
+                placeholder={`Leave blank to use: ${suggestedTitle}`}
                 onChange={(e) => setListing((l) => ({ ...l, title: e.target.value }))}
               />
             </Label>
@@ -411,26 +524,14 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
                     <button
                       type="button"
                       className="flex min-h-10 flex-1 items-center justify-center gap-1 text-xs"
-                      onClick={() =>
-                        void setCoverImage({ data: { propertyId: listing.id, imageId: img.id } }).then(() =>
-                          setListing((l) => ({
-                            ...l,
-                            images: l.images.map((i) => ({ ...i, isCover: i.id === img.id })),
-                            coverImage: img,
-                          })),
-                        )
-                      }
+                      onClick={() => setCover(img.id)}
                     >
                       <Star className="size-3.5" /> Cover
                     </button>
                     <button
                       type="button"
                       className="flex min-h-10 flex-1 items-center justify-center gap-1 text-xs text-danger"
-                      onClick={() =>
-                        void deleteListingImage({ data: { propertyId: listing.id, imageId: img.id } }).then(() =>
-                          setListing((l) => ({ ...l, images: l.images.filter((i) => i.id !== img.id) })),
-                        )
-                      }
+                      onClick={() => removeImage(img.id)}
                     >
                       <Trash2 className="size-3.5" /> Remove
                     </button>
@@ -444,7 +545,7 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
         {step === 3 && (
           <>
             <Label>
-              Description
+              Description (optional)
               <Textarea
                 rows={6}
                 maxLength={4000}
@@ -503,7 +604,7 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
               <p className="mt-2 text-[10px] font-extrabold tracking-[0.14em] text-forest">
                 {PURPOSE_KICKER[listing.listingPurpose as ListingPurpose]}
               </p>
-              <h2 className="font-display mt-1 text-2xl">{listing.title || "Untitled listing"}</h2>
+              <h2 className="font-display mt-1 text-2xl">{shownTitle}</h2>
               <p className="mt-1 text-lg font-extrabold">
                 {price.amount}
                 {price.suffix ? <span className="text-sm font-normal text-muted"> {price.suffix}</span> : null}
@@ -521,7 +622,11 @@ export function PropertyWizard({ initial }: { initial: OwnerListing }) {
                 Phone: {listing.contactPhone || "Not set"}
                 {listing.contactWhatsapp ? ` · WhatsApp: ${listing.contactWhatsapp}` : ""}
               </p>
-              <p className="mt-4 text-sm text-muted">This listing will go live immediately after you publish.</p>
+              <p className="mt-4 text-sm text-muted">
+                {local
+                  ? "When you press Publish you will be asked to sign in (Google or email). Your ad then goes live straight away."
+                  : "This listing will go live immediately after you publish."}
+              </p>
             </div>
           </>
         )}

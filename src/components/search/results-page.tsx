@@ -8,6 +8,7 @@ import { searchPageCopy } from "@/lib/search-copy";
 import { affordableGuideLabel, affordableGuidePath } from "@/lib/question-guides";
 import { resultsBreadcrumbJsonLd, resultsItemListJsonLd } from "@/lib/seo";
 import { JsonLd } from "@/components/seo/json-ld";
+import { WhatsAppPostForMe } from "@/components/listing/whatsapp-post-for-me";
 
 export function ResultsPage({
   items,
@@ -314,15 +315,28 @@ export function ResultsPage({
         ) : null}
         {items.length === 0 ? (
           <div className="rounded-xl border border-line bg-white px-6 py-8">
-            <p className="font-semibold text-ink">
-              {copy ? "No published listings match this landing page right now." : "No matching properties are currently available."}
+            <p className="text-[10px] font-extrabold tracking-[0.16em] text-forest">BE THE FIRST TO LIST HERE</p>
+            <h2 className="font-display mt-2 text-2xl text-ink">
+              {purpose === "SALE" ? "Selling" : "Renting out"} a property in {areaName || locationLabel}? Post it free.
+            </h2>
+            <p className="mt-2 text-sm leading-6 text-muted">
+              There are no live ads on this page yet. Owners and agents can post a {purpose === "SALE" ? "sale" : "rental"}{" "}
+              ad in a few minutes, free, and people searching here will see it first.
+            </p>
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              <Link
+                to="/post"
+                className="inline-flex min-h-11 items-center rounded-md bg-forest px-5 text-sm font-bold text-white no-underline hover:opacity-90"
+              >
+                Post your property free
+              </Link>
+              <span className="text-sm text-muted">No account needed until you publish.</span>
+            </div>
+            <WhatsAppPostForMe className="mt-5" />
+            <p className="mt-5 text-sm leading-6 text-muted">
+              Looking for a home instead? Try a broader location, property type or budget in the search above.
             </p>
             <p className="mt-2 text-sm leading-6 text-muted">
-              {copy
-                ? "The page remains available as a permanent location and property-type landing page. Broaden the search above, explore the main location page, or check again after advertisers publish new properties."
-                : "Try a broader location, property type or budget."}
-            </p>
-            <p className="mt-3 text-sm leading-6 text-muted">
               For reported 2026 ranges, read{" "}
               <a className="font-semibold text-forest underline" href={affordableGuidePath(districtSlug, purpose)}>
                 {affordableGuideLabel(districtSlug, purpose)}

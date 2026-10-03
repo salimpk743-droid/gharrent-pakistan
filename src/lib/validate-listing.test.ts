@@ -24,18 +24,29 @@ describe("listing submit validation", () => {
     assert.deepEqual(validateForSubmit(valid), []);
   });
 
-  it("requires location, photos, phone and a real title", () => {
+  it("requires location, photos, phone and a price", () => {
     const errors = validateForSubmit({
       title: "Home",
       monthlyRent: 0,
       imageCount: 0,
       contactPhone: "abc",
     });
-    assert.ok(errors.some((e) => /title/i.test(e)));
     assert.ok(errors.some((e) => /province/i.test(e)));
+    assert.ok(errors.some((e) => /city/i.test(e)));
     assert.ok(errors.some((e) => /cover photo/i.test(e)));
     assert.ok(errors.some((e) => /mobile/i.test(e)));
     assert.ok(errors.some((e) => /rent/i.test(e)));
+  });
+
+  it("does not require a title, description, area or bathrooms", () => {
+    assert.deepEqual(
+      validateForSubmit({ ...valid, title: "", description: "", area: "", bathrooms: undefined }),
+      [],
+    );
+  });
+
+  it("rejects an over-long title", () => {
+    assert.ok(validateForSubmit({ ...valid, title: "x".repeat(81) }).some((e) => /title/i.test(e)));
   });
 
   it("does not require floor, size, deposit, advance rent or available-from", () => {
