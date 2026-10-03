@@ -49,6 +49,7 @@ export async function sitemapStaticEntries(): Promise<SitemapEntry[]> {
     // Empty rent and sale URLs are soft 404s. A province enters this sitemap
     // only when it has a real published listing. City and area URLs are added
     // by sitemapLocationEntries on the same rule.
+    { path: "/about" },
     { path: "/safety" },
     { path: "/privacy" },
     { path: "/terms" },

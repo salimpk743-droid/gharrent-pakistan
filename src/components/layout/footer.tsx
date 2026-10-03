@@ -1,7 +1,9 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { Brand } from "./brand";
 
 export function Footer() {
+  // The homepage footer must stay exactly as it is; inner pages also link About.
+  const isHome = useRouterState({ select: (s) => s.location.pathname }) === "/";
   return (
     <footer className="mt-auto bg-[#f6f8f5] pb-20 pt-12 md:pb-0">
       <div className="mx-auto grid w-[min(1120px,calc(100%-32px))] gap-8 md:grid-cols-[2fr_1fr_1fr_1fr]">
@@ -25,6 +27,7 @@ export function Footer() {
           <FooterLink to="/guides">Guides</FooterLink>
           <FooterLink to="/safety">Safer buying & renting</FooterLink>
           <FooterLink to="/how-to-rent-a-house-in-pakistan">How to rent a house</FooterLink>
+          {!isHome && <FooterLink to="/about">About Apna Ghar</FooterLink>}
           <FooterLink to="/contact">Contact us</FooterLink>
           <FooterLink to="/report">Report a problem</FooterLink>
         </div>
