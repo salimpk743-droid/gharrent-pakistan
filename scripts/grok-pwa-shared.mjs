@@ -421,6 +421,51 @@ export function grokOgHeadTags({
   return tags;
 }
 
+/** Lower-cased share-meta key (`og:title`, `twitter:card`, …) of one tag, or "". */
+function shareMetaKey(tag) {
+  const attrs = [...String(tag).matchAll(/\b(?:property|name)\s*=\s*["']([^"']+)["']/gi)];
+  for (const match of attrs) {
+    const key = String(match[1]).toLowerCase();
+    if (SHARE_META_KEYS.has(key)) return key;
+  }
+  return "";
+}
+
+/**
+ * Share-card metas the page itself rendered (first occurrence per key).
+ * Apna Ghar sets per-page og:title / og:description / og:image in route
+ * `head()`; those must survive so shared links preview the real page.
+ */
+export function extractShareMetaTags(html) {
+  const found = new Map();
+  for (const match of String(html).matchAll(/<meta\b[^>]*>/gi)) {
+    const key = shareMetaKey(match[0]);
+    if (key && !found.has(key)) found.set(key, match[0]);
+  }
+  return found;
+}
+
+/**
+ * Platform defaults, with every key the page provided replaced by the page's
+ * own tag, plus page-only keys appended. Pages without share metas keep the
+ * platform card unchanged.
+ */
+export function mergeShareMetaTags(platformTags, pageTags) {
+  const used = new Set();
+  const merged = platformTags.map((tag) => {
+    const key = shareMetaKey(tag);
+    if (key && pageTags.has(key)) {
+      used.add(key);
+      return pageTags.get(key);
+    }
+    return tag;
+  });
+  for (const [key, tag] of pageTags) {
+    if (!used.has(key)) merged.push(tag);
+  }
+  return merged;
+}
+
 export function stripShareMetaTags(html) {
   return String(html).replace(/<meta\b[^>]*>/gi, (tag) => {
     const attrs = [...tag.matchAll(/\b(?:property|name)\s*=\s*["']([^"']+)["']/gi)];
@@ -480,6 +525,7 @@ export function injectGrokPwaHead(html, ctx = {}) {
     host,
     documentTitle,
   );
+  const pageShareTags = extractShareMetaTags(html);
   let next = stripShareMetaTags(html);
 
   const missing = grokPwaHeadTags(appName)
@@ -492,7 +538,10 @@ export function injectGrokPwaHead(html, ctx = {}) {
 
   next = insertAfterHeadOpen(
     next,
-    grokOgHeadTags({ host, appName, site, documentTitle, cwd, path, canonicalHref }).join(""),
+    mergeShareMetaTags(
+      grokOgHeadTags({ host, appName, site, documentTitle, cwd, path, canonicalHref }),
+      pageShareTags,
+    ).join(""),
   );
 
   if (!next.includes("/grok-app-builder/extensions.js")) {

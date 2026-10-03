@@ -600,3 +600,15 @@ describe("structured data", () => {
     assert.equal(listingItems[3].item, "https://apnaaghar.pk/sale/punjab/lahore");
   });
 });
+
+describe("hero preload", () => {
+  it("preloads exactly the CSS hero background URL", async () => {
+    const { readFileSync } = await import("node:fs");
+    const css = readFileSync(new URL("../styles.css", import.meta.url), "utf8");
+    const home = readFileSync(new URL("../routes/index.tsx", import.meta.url), "utf8");
+    const cssUrl = css.match(/\.hero-photo \{[\s\S]*?url\("([^"]+)"\)/)?.[1];
+    const preloadUrl = home.match(/HERO_IMAGE_URL =\s*"([^"]+)"/)?.[1];
+    assert.ok(cssUrl);
+    assert.equal(preloadUrl, cssUrl);
+  });
+});
