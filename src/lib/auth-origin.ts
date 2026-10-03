@@ -5,6 +5,12 @@ import { PUBLIC_SITE_ORIGIN } from "./constants.ts";
  * Isolated so it can be unit-tested without loading the Better Auth server.
  */
 
+/**
+ * Legacy Vercel production host. Auth falls back to it only when neither
+ * BETTER_AUTH_URL nor VERCEL_PROJECT_PRODUCTION_URL is set. The intended
+ * production value is BETTER_AUTH_URL=https://apnaaghar.pk (PUBLIC_SITE_ORIGIN),
+ * set once the matching Google OAuth redirect URI is registered.
+ */
 export const KNOWN_PRODUCTION_ORIGIN = "https://gharrent-pakistan.vercel.app";
 export const GOOGLE_CALLBACK_PATH = "/api/auth/callback/google";
 
@@ -91,3 +97,38 @@ export function resolveTrustedOrigins(env: EnvMap): string[] {
 }
 
 export { LOCAL_DEV_ORIGINS };
+
+function hostOnly(host: string | undefined): string {
+  return String(host ?? "")
+    .split(",")[0]
+    .trim()
+    .split(":")[0]
+    .toLowerCase();
+}
+
+/**
+ * Where a request to a legacy `*.vercel.app` production host should be
+ * permanently redirected, or null to serve it as-is.
+ *
+ * Only redirects when ALL of these hold, so previews and auth never break:
+ * - this is the production deployment (`VERCEL_ENV=production`; previews are untouched);
+ * - the request host is a `*.vercel.app` host (never the custom domain itself);
+ * - auth has already moved to the public domain (`BETTER_AUTH_URL` resolves to
+ *   PUBLIC_SITE_ORIGIN). Until then Google sign-in still completes on the
+ *   vercel.app host and must keep working there;
+ * - the path is not an API route (OAuth callbacks, image API).
+ */
+export function legacyHostRedirect(opts: {
+  env: EnvMap;
+  host: string | undefined;
+  pathname: string;
+  search?: string;
+}): string | null {
+  if (trim(opts.env.VERCEL_ENV) !== "production") return null;
+  const host = hostOnly(opts.host);
+  if (!host.endsWith(".vercel.app")) return null;
+  if (resolveAuthBaseURL(opts.env) !== PUBLIC_SITE_ORIGIN) return null;
+  const pathname = opts.pathname.startsWith("/") ? opts.pathname : `/${opts.pathname}`;
+  if (pathname === "/api" || pathname.startsWith("/api/")) return null;
+  return `${PUBLIC_SITE_ORIGIN}${pathname}${opts.search ?? ""}`;
+}

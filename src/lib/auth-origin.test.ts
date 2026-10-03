@@ -5,6 +5,7 @@ import {
   KNOWN_PRODUCTION_ORIGIN,
   googleCallbackURL,
   isLoopbackOrigin,
+  legacyHostRedirect,
   resolveAuthBaseURL,
   resolveTrustedOrigins,
   shouldUsePreviewBrokerFallback,
@@ -74,5 +75,39 @@ describe("auth origin", () => {
     assert.ok(origins.includes(PUBLIC_SITE_ORIGIN));
     assert.ok(origins.includes("https://www.apnaaghar.pk"));
     assert.ok(origins.includes("https://*.vercel.app"));
+  });
+
+  describe("legacy vercel.app redirect", () => {
+    const prodApex = { VERCEL: "1", VERCEL_ENV: "production", BETTER_AUTH_URL: "https://apnaaghar.pk" };
+    it("redirects the production vercel.app host to apnaaghar.pk once auth uses it", () => {
+      assert.equal(
+        legacyHostRedirect({ env: prodApex, host: "gharrent-pakistan.vercel.app", pathname: "/rent/punjab", search: "?page=2" }),
+        "https://apnaaghar.pk/rent/punjab?page=2",
+      );
+    });
+    it("never redirects API and auth callback paths", () => {
+      assert.equal(legacyHostRedirect({ env: prodApex, host: "gharrent-pakistan.vercel.app", pathname: "/api/auth/callback/google" }), null);
+      assert.equal(legacyHostRedirect({ env: prodApex, host: "gharrent-pakistan.vercel.app", pathname: "/api/images/x" }), null);
+    });
+    it("leaves previews alone", () => {
+      assert.equal(
+        legacyHostRedirect({ env: { ...prodApex, VERCEL_ENV: "preview" }, host: "gharrent-pakistan-git-x.vercel.app", pathname: "/" }),
+        null,
+      );
+    });
+    it("does nothing while auth still runs on vercel.app", () => {
+      assert.equal(
+        legacyHostRedirect({
+          env: { VERCEL: "1", VERCEL_ENV: "production", BETTER_AUTH_URL: "https://gharrent-pakistan.vercel.app" },
+          host: "gharrent-pakistan.vercel.app",
+          pathname: "/",
+        }),
+        null,
+      );
+    });
+    it("never redirects the custom domain to itself", () => {
+      assert.equal(legacyHostRedirect({ env: prodApex, host: "apnaaghar.pk", pathname: "/" }), null);
+      assert.equal(legacyHostRedirect({ env: prodApex, host: "www.apnaaghar.pk", pathname: "/" }), null);
+    });
   });
 });
