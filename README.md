@@ -61,7 +61,8 @@ Two Google sign-in modes:
 1. **Grok App Builder / live preview** — Continue with Google federates through the Grok auth broker (popup). No Google Cloud project required in the sandbox.
 2. **Independent GitHub → Vercel (production)** — set your own Google OAuth client (below). The app then uses Better Auth `socialProviders.google`. Callback path:
 
-   `https://gharrent-pakistan.vercel.app/api/auth/callback/google`
+   `https://apnaaghar.pk/api/auth/callback/google` (production domain). Keep the legacy
+   `https://gharrent-pakistan.vercel.app/api/auth/callback/google` registered too until the switch below is done.
 
 ## Local development
 
@@ -89,7 +90,7 @@ npm run build
 | --- | --- | --- |
 | `DATABASE_URL` | Yes | Neon / Postgres connection string |
 | `BETTER_AUTH_SECRET` | Yes | 32+ character secret for signing sessions (must be stable across deploys) |
-| `BETTER_AUTH_URL` | Yes | Public origin: `https://gharrent-pakistan.vercel.app` |
+| `BETTER_AUTH_URL` | Yes | Public origin: `https://apnaaghar.pk` (set only after the Google redirect URI below is registered) |
 | `GOOGLE_CLIENT_ID` | Yes (production Google) | Google OAuth 2.0 client ID |
 | `GOOGLE_CLIENT_SECRET` | Yes (production Google) | Google OAuth 2.0 client secret (**server-only**, never `VITE_`) |
 | `ADMIN_EMAIL` | Strongly recommended | Google email that is always `ADMIN` |
@@ -108,22 +109,29 @@ Do **not** add `VITE_GOOGLE_CLIENT_SECRET`. Do **not** put the Google client sec
 
 1. Open [Google Cloud Console](https://console.cloud.google.com/) → APIs & Services → Credentials → Create OAuth client ID → **Web application**.
 2. Authorized JavaScript origins:
-   - `https://gharrent-pakistan.vercel.app`
+   - `https://apnaaghar.pk`
+   - `https://www.apnaaghar.pk`
+   - `https://gharrent-pakistan.vercel.app` (legacy; keep during the switch)
 3. Authorized redirect URIs (must match Better Auth exactly):
-   - `https://gharrent-pakistan.vercel.app/api/auth/callback/google`
-4. OAuth consent screen: app name **Apna Ghar**, scopes `openid`, `email`, `profile`.
+   - `https://apnaaghar.pk/api/auth/callback/google`
+   - `https://gharrent-pakistan.vercel.app/api/auth/callback/google` (legacy; keep during the switch)
+4. OAuth consent screen (Google Auth Platform → Branding): app name **Apna Ghar**, home page `https://apnaaghar.pk`, privacy policy `https://apnaaghar.pk/privacy`, terms `https://apnaaghar.pk/terms`, authorized domain `apnaaghar.pk`; scopes `openid`, `email`, `profile`.
 5. In the Vercel project → Settings → Environment Variables, add for **Production** (and Preview if you use it):
 
 | Name | Value |
 | --- | --- |
 | `GOOGLE_CLIENT_ID` | the client ID |
 | `GOOGLE_CLIENT_SECRET` | the client secret |
-| `BETTER_AUTH_URL` | `https://gharrent-pakistan.vercel.app` |
+| `BETTER_AUTH_URL` | `https://apnaaghar.pk` |
 | `BETTER_AUTH_SECRET` | a new random 32+ character string |
 | `DATABASE_URL` | your Neon URL (if not already set) |
 | `ADMIN_EMAIL` | your Google address |
 
 6. Redeploy after saving the variables (they are not picked up by an already-running deployment).
+
+**Order matters.** Register the `https://apnaaghar.pk/api/auth/callback/google` redirect URI in Google Cloud *first*, then set `BETTER_AUTH_URL=https://apnaaghar.pk` and redeploy. Doing it the other way round makes Google reject sign-in with `redirect_uri_mismatch`.
+
+Once `BETTER_AUTH_URL` is `https://apnaaghar.pk`, `server/middleware/canonical-host.ts` automatically 308-redirects the legacy production host `gharrent-pakistan.vercel.app` to `https://apnaaghar.pk` (API/auth paths and preview deployments are never redirected).
 
 The app derives `BETTER_AUTH_URL` from `VERCEL_PROJECT_PRODUCTION_URL` when the explicit var is missing, so OAuth will not point at localhost. The Google Cloud redirect URI must still be the production callback above.
 
@@ -189,5 +197,5 @@ With Google:
 
 ## Android app (Trusted Web Activity)
 
-The Play Store shell lives in [`android/`](android/). It is a Trusted Web Activity that opens `https://gharrent-pakistan.vercel.app/` — the same website, backend, and Google sign-in. It is **not** Capacitor and does not copy the marketplace UI. See [`android/README.md`](android/README.md).
+The Play Store shell lives in [`android/`](android/). It is a Trusted Web Activity that opens `https://apnaaghar.pk/` — the same website, backend, and Google sign-in. It is **not** Capacitor and does not copy the marketplace UI. See [`android/README.md`](android/README.md).
 
