@@ -9,7 +9,7 @@ import {
   type PropertyType,
 } from "./constants.ts";
 import { searchPageCopy } from "./search-copy.ts";
-import { CONTACT_EMAIL, WHATSAPP_NUMBER } from "./site-contact.ts";
+import { CONTACT_EMAIL } from "./site-contact.ts";
 
 export { PUBLIC_SITE_ORIGIN, PUBLIC_SITE_HOST } from "./constants.ts";
 
@@ -549,7 +549,6 @@ export function homeJsonLd() {
           "@type": "ContactPoint",
           contactType: "customer support",
           email: CONTACT_EMAIL,
-          telephone: `+${WHATSAPP_NUMBER}`,
           areaServed: "PK",
         },
       },
