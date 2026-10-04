@@ -2,16 +2,17 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { authMiddleware } from "@/lib/auth/middleware";
 import { getSql } from "@/lib/db";
-import { LISTING_DURATION_DAYS, MAX_IMAGE_BYTES, MAX_IMAGES } from "@/lib/constants";
+import { LISTING_DURATION_DAYS } from "@/lib/constants";
 import { canMutateListing } from "@/lib/authz";
 import { canOwnerTransition, daysFromNow, isExpired, ownerNextStatus, type OwnerAction } from "@/lib/listing-lifecycle";
-import { byteLengthOfBase64, sniffImageMime } from "@/lib/image-magic";
 import { normalizePkPhone } from "@/lib/phone";
 import { slugify, newId } from "@/lib/utils";
 import { validateForSubmit } from "@/lib/validate-listing";
 import { autoListingTitle, needsAutoTitle } from "@/lib/listing-title";
 import { isLikelyDuplicate, MAX_DRAFTS_PER_HOUR, MAX_PUBLISHES_PER_DAY } from "@/lib/listing-spam";
+import { isClientId, normalizeCover } from "@/lib/post-ad";
 import { requireActiveProfile } from "./profile";
+import { ensureOneCover, insertListingImage, syncDraftImages } from "./listing-images.server";
 import { ensureSeedData } from "./seed";
 import { mapImage, mapOwner, mapPublic, PROPERTY_FROM, PROPERTY_SELECT, type PropertyRow } from "./mappers";
 
@@ -98,29 +99,40 @@ async function loadOwnerListing(id: string, userId: string) {
 
 export const createDraft = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
-  .handler(async ({ context }) => {
+  .validator((data: { id?: string } | undefined) => ({ id: isClientId(data?.id) ? data.id : undefined }))
+  .handler(async ({ context, data }) => {
     await ensureSeedData();
     await requireActiveProfile(context.userId);
     const sql = await getSql();
-    // Reuse an untouched recent draft instead of piling up empty ones.
-    const blank = await sql<{ id: string }>`select p.id from properties p
-      where p.owner_id = ${context.userId} and p.status = 'DRAFT' and p.title = 'Untitled listing'
-        and p.monthly_rent = 0 and p.district_id is null and p.contact_phone = ''
-        and p.created_at > now() - interval '7 days'
-        and not exists (select 1 from property_images i where i.property_id = p.id)
-      order by p.created_at desc limit 1`;
-    if (blank[0]) return (await loadOwnerListing(blank[0].id, context.userId))!;
+    if (data.id) {
+      // The form made this id once and reuses it on every retry, so a retry never makes a second ad.
+      const mine = await loadOwnerListing(data.id, context.userId);
+      if (mine) return mine;
+      const taken = await sql<{ id: string }>`select id from properties where id = ${data.id} limit 1`;
+      if (taken[0]) throw new Error("This form is out of date. Please refresh the page and try again.");
+    } else {
+      // Reuse an untouched recent draft instead of piling up empty ones.
+      const blank = await sql<{ id: string }>`select p.id from properties p
+        where p.owner_id = ${context.userId} and p.status = 'DRAFT' and p.title = 'Untitled listing'
+          and p.monthly_rent = 0 and p.district_id is null and p.contact_phone = ''
+          and p.created_at > now() - interval '7 days'
+          and not exists (select 1 from property_images i where i.property_id = p.id)
+        order by p.created_at desc limit 1`;
+      if (blank[0]) return (await loadOwnerListing(blank[0].id, context.userId))!;
+    }
     const recent = await sql<{ n: number }>`select count(*)::int as n from properties
       where owner_id = ${context.userId} and created_at > now() - interval '1 hour'`;
     if ((recent[0]?.n ?? 0) >= MAX_DRAFTS_PER_HOUR) {
       throw new Error("Too many new listings in a short time. Please wait an hour and try again.");
     }
-    const id = newId();
-    const slug = `draft-${id.slice(0, 8)}`;
+    const id = data.id ?? newId();
+    const slug = `draft-${id.slice(0, 8)}-${id.slice(-4)}`;
     await sql`insert into properties (id, owner_id, title, slug, status)
-      values (${id}, ${context.userId}, ${"Untitled listing"}, ${slug}, ${"DRAFT"})`;
+      values (${id}, ${context.userId}, ${"Untitled listing"}, ${slug}, ${"DRAFT"})
+      on conflict (id) do nothing`;
     const listing = await loadOwnerListing(id, context.userId);
-    return listing!;
+    if (!listing) throw new Error("Could not start your listing. Please try again.");
+    return listing;
   });
 
 export const saveDraft = createServerFn({ method: "POST" })
@@ -144,7 +156,11 @@ export const saveDraft = createServerFn({ method: "POST" })
       : data.contactPhone
         ? phone
         : String(row.contact_whatsapp || "");
-    const title = (data.title ?? String(row.title)).trim().slice(0, 80) || "Untitled listing";
+    let title = (data.title ?? String(row.title)).trim().slice(0, 80) || "Untitled listing";
+    // A live ad already got an automatic title on publish; a blank title from the form (a retry, or an edit
+    // that left the title empty) must not turn it back into "Untitled listing".
+    const isLive = row.status === "PUBLISHED" || row.status === "PAUSED" || row.status === "PENDING_REVIEW";
+    if (isLive && needsAutoTitle(title) && !needsAutoTitle(String(row.title))) title = String(row.title);
     let slug = String(row.slug);
     let areaName = data.area ?? String(row.area || "");
     const areaId = data.areaId === undefined ? (row.area_id as string | null) : data.areaId;
@@ -201,12 +217,32 @@ export const saveDraft = createServerFn({ method: "POST" })
 
 export const submitListing = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
-  .validator((data: { id: string }) => data)
+  .validator((data: { id: string; imageIds?: string[]; coverId?: string | null }) => ({
+    id: String(data.id),
+    imageIds: Array.isArray(data.imageIds) ? data.imageIds.filter((x) => typeof x === "string").slice(0, 50) : undefined,
+    coverId: typeof data.coverId === "string" ? data.coverId : null,
+  }))
   .handler(async ({ context, data }) => {
     await requireActiveProfile(context.userId);
     const sql = await getSql();
-    const listing = await loadOwnerListing(data.id, context.userId);
-    if (!listing) return { ok: false as const, error: "Listing not found." };
+    const current = await loadOwnerListing(data.id, context.userId);
+    if (!current) return { ok: false as const, error: "Listing not found." };
+    // Publishing twice (double tap, or a retry after the answer was lost) is not an error: the ad is already up.
+    if (current.status === "PUBLISHED" || current.status === "PENDING_REVIEW") {
+      return { ok: true as const, status: current.status, listing: current, alreadyLive: true };
+    }
+    // Photos and cover are fixed BEFORE the ad can go live: only the photos the form still shows, one cover.
+    if (data.imageIds) {
+      await syncDraftImages(
+        data.id,
+        normalizeCover(
+          data.imageIds.map((id, i) => ({ id, sortOrder: i })),
+          data.coverId,
+        ),
+      );
+    }
+    await ensureOneCover(data.id);
+    const listing = (await loadOwnerListing(data.id, context.userId))!;
     const imageCount = listing.images.length;
     const errors = validateForSubmit({
       title: listing.title,
@@ -263,7 +299,6 @@ export const submitListing = createServerFn({ method: "POST" })
           listingPurpose: listing.listingPurpose,
           monthlyRent: listing.monthlyRent,
           area: listing.area,
-          title: listing.title,
         },
         {
           contactPhone: row.contact_phone,
@@ -272,7 +307,6 @@ export const submitListing = createServerFn({ method: "POST" })
           listingPurpose: row.listing_purpose,
           monthlyRent: Number(row.monthly_rent),
           area: row.area,
-          title: row.title,
         },
       ),
     );
@@ -401,38 +435,21 @@ export const getMyListing = createServerFn({ method: "GET" })
 
 export const addListingImage = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
-  .validator((data: { propertyId: string; dataBase64: string; width?: number; height?: number }) => data)
+  .validator(
+    (data: {
+      propertyId: string;
+      dataBase64: string;
+      id?: string;
+      width?: number;
+      height?: number;
+      sortOrder?: number;
+      isCover?: boolean;
+    }) => data,
+  )
   .handler(async ({ context, data }) => {
-    const profile = await requireActiveProfile(context.userId);
-    const sql = await getSql();
-    const rows = await sql`select owner_id, status from properties where id = ${data.propertyId} limit 1`;
-    const row = rows[0];
-    if (!row) return { ok: false as const, error: "Listing not found." };
-    if (!canMutateListing({ userId: context.userId, role: profile.role, status: profile.status }, String(row.owner_id))) {
-      return { ok: false as const, error: "You do not have permission to change this listing." };
-    }
-    const count = await sql<{ n: number }>`select count(*)::int as n from property_images where property_id = ${data.propertyId}`;
-    if ((count[0]?.n ?? 0) >= MAX_IMAGES) {
-      return { ok: false as const, error: `You can add up to ${MAX_IMAGES} photos.` };
-    }
-    const raw = data.dataBase64.includes(",")
-      ? data.dataBase64.slice(data.dataBase64.indexOf(",") + 1)
-      : data.dataBase64;
-    const mime = sniffImageMime(raw);
-    if (!mime) return { ok: false as const, error: "Only JPEG, PNG and WebP images are allowed." };
-    const bytes = byteLengthOfBase64(raw);
-    if (bytes > MAX_IMAGE_BYTES) {
-      return { ok: false as const, error: "Each photo must be under 1.5 MB after compression." };
-    }
-    const id = newId();
-    const isCover = (count[0]?.n ?? 0) === 0;
-    await sql`insert into property_images (
-      id, property_id, storage_key, mime_type, byte_data, width, height, sort_order, is_cover
-    ) values (
-      ${id}, ${data.propertyId}, ${`properties/${data.propertyId}/${id}`}, ${mime}, ${raw},
-      ${data.width ?? null}, ${data.height ?? null}, ${count[0]?.n ?? 0}, ${isCover}
-    )`;
-    return { ok: true as const, image: { id, url: `/api/images/${id}`, sortOrder: count[0]?.n ?? 0, isCover, width: data.width ?? null, height: data.height ?? null } };
+    const result = await insertListingImage(context.userId, data);
+    if (!result.ok) return { ok: false as const, error: result.error };
+    return { ok: true as const, image: result.image };
   });
 
 export const deleteListingImage = createServerFn({ method: "POST" })

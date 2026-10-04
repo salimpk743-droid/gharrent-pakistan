@@ -1,12 +1,15 @@
-import { useState, type FormEvent } from "react";
-import { authClient, authEnabled, signIn } from "@/lib/auth/client";
+import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useRouter } from "@tanstack/react-router";
+import { Loader2 } from "lucide-react";
+import { authClient, authEnabled, getBearerToken, signIn } from "@/lib/auth/client";
+import { friendlyAuthError, MAX_PASSWORD, MIN_PASSWORD, safeCallback } from "@/lib/auth-errors";
 import { emailAndPasswordEnabled } from "@/lib/auth/email-password";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 
-const MIN_PASSWORD = 8;
-const MAX_PASSWORD = 128;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+/** If Google has not opened after this long, let the visitor try again. */
+const GOOGLE_STUCK_MS = 15_000;
 
 function GoogleMark() {
   return (
@@ -31,43 +34,22 @@ function GoogleMark() {
   );
 }
 
-function safeCallback(url: string): string {
-  if (!url.startsWith("/") || url.startsWith("//")) return "/";
-  return url;
-}
-
-function friendlyAuthError(message: string, code?: string): string {
-  const text = `${code ?? ""} ${message}`.toLowerCase();
-  if (/user_already_exists|already exists|already registered/.test(text)) {
-    return "An account with this email already exists. Sign in, or continue with Google.";
-  }
-  if (/invalid_email_or_password|invalid email or password|invalid credentials/.test(text)) {
-    return "That email or password is not correct.";
-  }
-  if (/password_too_short|too short/.test(text)) {
-    return `Use a password of at least ${MIN_PASSWORD} characters.`;
-  }
-  if (/password_too_long|too long/.test(text)) {
-    return `Password must be ${MAX_PASSWORD} characters or fewer.`;
-  }
-  if (/invalid_email|invalid email/.test(text)) {
-    return "Enter a valid email address.";
-  }
-  if (/invalid origin/.test(text)) {
-    return "Sign-in could not start from this page. Please refresh and try again.";
-  }
-  return message.trim() || "Something went wrong. Please try again.";
-}
-
 export function SignInPanel({
   title = "Welcome to Apna Ghar",
   message = "Sign in to post properties, save homes and manage your listings.",
   callbackURL = "/",
+  initialError = null,
+  onSignedIn,
 }: {
   title?: string;
   message?: string;
   callbackURL?: string;
+  /** A message to show straight away (e.g. Google sent the visitor back with an error). */
+  initialError?: string | null;
+  /** Email sign-in: called instead of reloading the page (the session store updates by itself). */
+  onSignedIn?: () => void;
 }) {
+  const router = useRouter();
   const [mode, setMode] = useState<"register" | "signin">("register");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -75,23 +57,51 @@ export function SignInPanel({
   const [company, setCompany] = useState(""); // honeypot: hidden from people, filled by bots
   const [googleBusy, setGoogleBusy] = useState(false);
   const [formBusy, setFormBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setErrorText] = useState<string | null>(initialError);
+  const [errorFrom, setErrorFrom] = useState<"google" | "form">("google");
+  const setError = (message: string | null, from: "google" | "form" = "form") => {
+    setErrorText(message);
+    setErrorFrom(from);
+  };
+  const busyRef = useRef(false);
   const busy = googleBusy || formBusy;
   const next = safeCallback(callbackURL);
 
+  // Coming back to this page with the browser's Back button after Google opened: unlock the button.
+  useEffect(() => {
+    const onShow = (e: PageTransitionEvent) => {
+      if (e.persisted) {
+        busyRef.current = false;
+        setGoogleBusy(false);
+      }
+    };
+    window.addEventListener("pageshow", onShow);
+    return () => window.removeEventListener("pageshow", onShow);
+  }, []);
+
   async function continueWithGoogle() {
-    if (busy) return;
+    if (busyRef.current) return;
+    busyRef.current = true;
     setGoogleBusy(true);
     setError(null);
+    const stuck = window.setTimeout(() => {
+      busyRef.current = false;
+      setGoogleBusy(false);
+      setError("Google is taking too long to open. Check your internet and tap Continue with Google again.", "google");
+    }, GOOGLE_STUCK_MS);
     try {
-      await signIn("grok-google", { callbackURL, errorCallbackURL: "/login" });
+      await signIn("grok-google", {
+        callbackURL: next,
+        // Keep the return path if Google sends the visitor back with an error.
+        errorCallbackURL: `/login?next=${encodeURIComponent(next)}`,
+        // This panel only shows when nobody is signed in, so the extra sign-out request is not needed.
+        skipPriorSignOut: !getBearerToken(),
+      });
+      // The browser is now leaving for Google; keep the loading state until it does.
     } catch (err) {
-      const raw = err instanceof Error ? err.message : "Sign-in failed";
-      setError(
-        /provider not found/i.test(raw)
-          ? "Google sign-in is not available yet. Please try again in a few minutes."
-          : raw,
-      );
+      window.clearTimeout(stuck);
+      setError(friendlyAuthError(err instanceof Error ? err.message : ""), "google");
+      busyRef.current = false;
       setGoogleBusy(false);
     }
   }
@@ -114,7 +124,7 @@ export function SignInPanel({
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (busy) return;
+    if (busyRef.current) return;
     if (company.trim()) {
       setError("Could not create your account. Please try again.");
       return;
@@ -124,6 +134,7 @@ export function SignInPanel({
       setError(problem);
       return;
     }
+    busyRef.current = true;
     setFormBusy(true);
     setError(null);
     try {
@@ -135,6 +146,7 @@ export function SignInPanel({
           callbackURL: next,
         });
         if (signUpError) {
+          if (/already/i.test(`${signUpError.code ?? ""} ${signUpError.message ?? ""}`)) setMode("signin");
           throw new Error(friendlyAuthError(signUpError.message ?? "", signUpError.code));
         }
         if (!data?.user) throw new Error("Could not create your account. Please try again.");
@@ -149,9 +161,18 @@ export function SignInPanel({
         }
         if (!data?.user) throw new Error("Could not sign you in. Please try again.");
       }
-      window.location.assign(next);
+      if (onSignedIn) {
+        busyRef.current = false;
+        setFormBusy(false);
+        onSignedIn();
+        return;
+      }
+      // No full page reload: refresh the signed-in state and go straight back to where the visitor was.
+      await router.invalidate().catch(() => undefined);
+      await router.navigate({ href: next, replace: true });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+      setError(friendlyAuthError(err instanceof Error ? err.message : ""));
+      busyRef.current = false;
       setFormBusy(false);
     }
   }
@@ -163,8 +184,30 @@ export function SignInPanel({
       <p className="mt-2 text-sm text-muted">{message}</p>
       {authEnabled ? (
         <div className="mt-6 flex flex-col gap-4">
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            className="min-h-13 w-full gap-3 border-line bg-white text-base text-ink hover:bg-sand"
+            disabled={busy}
+            aria-busy={googleBusy}
+            onClick={() => void continueWithGoogle()}
+          >
+            {googleBusy ? <Loader2 className="size-5 animate-spin" aria-hidden="true" /> : <GoogleMark />}
+            {googleBusy ? "Opening Google…" : "Continue with Google"}
+          </Button>
+          {error && (errorFrom === "google" || !emailAndPasswordEnabled) ? (
+            <p className="rounded-md bg-red-50 px-3 py-2.5 text-sm text-danger" role="alert" aria-live="assertive">
+              {error}
+            </p>
+          ) : null}
           {emailAndPasswordEnabled ? (
             <>
+              <div className="flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.14em] text-muted">
+                <span className="h-px flex-1 bg-line" />
+                or use your email
+                <span className="h-px flex-1 bg-line" />
+              </div>
               <form className="grid gap-3" onSubmit={(event) => void onSubmit(event)} noValidate>
                 <p className="text-[11px] font-extrabold tracking-[0.14em] text-forest">
                   {mode === "register" ? "CREATE AN ACCOUNT" : "SIGN IN"}
@@ -173,6 +216,7 @@ export function SignInPanel({
                   <Label>
                     Name
                     <Input
+                      className="min-h-12 text-base font-normal sm:text-sm"
                       name="name"
                       autoComplete="name"
                       value={name}
@@ -186,6 +230,7 @@ export function SignInPanel({
                 <Label>
                   Email
                   <Input
+                    className="min-h-12 text-base font-normal sm:text-sm"
                     name="email"
                     type="email"
                     autoComplete="email"
@@ -212,6 +257,7 @@ export function SignInPanel({
                 <Label>
                   Password
                   <Input
+                    className="min-h-12 text-base font-normal sm:text-sm"
                     name="password"
                     type="password"
                     autoComplete={mode === "register" ? "new-password" : "current-password"}
@@ -224,7 +270,13 @@ export function SignInPanel({
                     required
                   />
                 </Label>
-                <Button type="submit" size="lg" className="w-full" disabled={busy}>
+                {error && errorFrom === "form" ? (
+                  <p className="rounded-md bg-red-50 px-3 py-2.5 text-sm text-danger" role="alert" aria-live="assertive">
+                    {error}
+                  </p>
+                ) : null}
+                <Button type="submit" size="lg" className="w-full" disabled={busy} aria-busy={formBusy}>
+                  {formBusy ? <Loader2 className="size-5 animate-spin" aria-hidden="true" /> : null}
                   {formBusy
                     ? mode === "register"
                       ? "Creating account…"
@@ -239,7 +291,7 @@ export function SignInPanel({
                       Already have an account?{" "}
                       <button
                         type="button"
-                        className="font-semibold text-forest hover:underline"
+                        className="inline-flex min-h-11 items-center px-1 font-semibold text-forest hover:underline"
                         disabled={busy}
                         onClick={() => {
                           setMode("signin");
@@ -254,7 +306,7 @@ export function SignInPanel({
                       New to Apna Ghar?{" "}
                       <button
                         type="button"
-                        className="font-semibold text-forest hover:underline"
+                        className="inline-flex min-h-11 items-center px-1 font-semibold text-forest hover:underline"
                         disabled={busy}
                         onClick={() => {
                           setMode("register");
@@ -267,25 +319,8 @@ export function SignInPanel({
                   )}
                 </p>
               </form>
-              <div className="flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.14em] text-muted">
-                <span className="h-px flex-1 bg-line" />
-                or
-                <span className="h-px flex-1 bg-line" />
-              </div>
             </>
           ) : null}
-          <Button
-            type="button"
-            variant="outline"
-            size="lg"
-            className="w-full gap-3 border-line bg-white text-base text-ink hover:bg-sand"
-            disabled={busy}
-            onClick={() => void continueWithGoogle()}
-          >
-            <GoogleMark />
-            {googleBusy ? "Continuing…" : "Continue with Google"}
-          </Button>
-          {error ? <p className="text-sm text-danger">{error}</p> : null}
         </div>
       ) : (
         <p className="mt-6 text-sm text-muted">Sign-in is disabled in this environment.</p>

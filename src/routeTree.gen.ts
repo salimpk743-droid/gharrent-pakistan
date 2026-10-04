@@ -32,6 +32,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminListingsRouteImport } from './routes/admin/listings'
 import { Route as AdminReportsRouteImport } from './routes/admin/reports'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
+import { Route as ApiListingImagesRouteImport } from './routes/api/listing-images'
 import { Route as GuidesIndexRouteImport } from './routes/guides/index'
 import { Route as GuidesSlugRouteImport } from './routes/guides/$slug'
 import { Route as PostIndexRouteImport } from './routes/post/index'
@@ -182,6 +183,11 @@ const AdminReportsRoute = AdminReportsRouteImport.update({
 const AdminUsersRoute = AdminUsersRouteImport.update({
   id: '/admin/users',
   path: '/admin/users',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiListingImagesRoute = ApiListingImagesRouteImport.update({
+  id: '/api/listing-images',
+  path: '/api/listing-images',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GuidesIndexRoute = GuidesIndexRouteImport.update({
@@ -402,6 +408,7 @@ export interface FileRoutesByFullPath {
   '/admin/listings': typeof AdminListingsRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/users': typeof AdminUsersRoute
+  '/api/listing-images': typeof ApiListingImagesRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/post/$id': typeof PostIdRoute
   '/property/$slug': typeof PropertySlugRoute
@@ -462,6 +469,7 @@ export interface FileRoutesByTo {
   '/admin/listings': typeof AdminListingsRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/users': typeof AdminUsersRoute
+  '/api/listing-images': typeof ApiListingImagesRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/post/$id': typeof PostIdRoute
   '/property/$slug': typeof PropertySlugRoute
@@ -523,6 +531,7 @@ export interface FileRoutesById {
   '/admin/listings': typeof AdminListingsRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/users': typeof AdminUsersRoute
+  '/api/listing-images': typeof ApiListingImagesRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/post/$id': typeof PostIdRoute
   '/property/$slug': typeof PropertySlugRoute
@@ -585,6 +594,7 @@ export interface FileRouteTypes {
     | '/admin/listings'
     | '/admin/reports'
     | '/admin/users'
+    | '/api/listing-images'
     | '/guides/$slug'
     | '/post/$id'
     | '/property/$slug'
@@ -645,6 +655,7 @@ export interface FileRouteTypes {
     | '/admin/listings'
     | '/admin/reports'
     | '/admin/users'
+    | '/api/listing-images'
     | '/guides/$slug'
     | '/post/$id'
     | '/property/$slug'
@@ -705,6 +716,7 @@ export interface FileRouteTypes {
     | '/admin/listings'
     | '/admin/reports'
     | '/admin/users'
+    | '/api/listing-images'
     | '/guides/$slug'
     | '/post/$id'
     | '/property/$slug'
@@ -766,6 +778,7 @@ export interface RootRouteChildren {
   AdminListingsRoute: typeof AdminListingsRoute
   AdminReportsRoute: typeof AdminReportsRoute
   AdminUsersRoute: typeof AdminUsersRoute
+  ApiListingImagesRoute: typeof ApiListingImagesRoute
   GuidesSlugRoute: typeof GuidesSlugRoute
   PostIdRoute: typeof PostIdRoute
   PropertySlugRoute: typeof PropertySlugRoute
@@ -960,6 +973,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/users'
       fullPath: '/admin/users'
       preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/listing-images': {
+      id: '/api/listing-images'
+      path: '/api/listing-images'
+      fullPath: '/api/listing-images'
+      preLoaderRoute: typeof ApiListingImagesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/guides/': {
@@ -1320,6 +1340,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminListingsRoute: AdminListingsRoute,
   AdminReportsRoute: AdminReportsRoute,
   AdminUsersRoute: AdminUsersRoute,
+  ApiListingImagesRoute: ApiListingImagesRoute,
   GuidesSlugRoute: GuidesSlugRoute,
   PostIdRoute: PostIdRoute,
   PropertySlugRoute: PropertySlugRoute,

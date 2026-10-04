@@ -19,7 +19,7 @@
     "preview:stop": "node scripts/preview.mjs stop",
     "typecheck": "tsc --noEmit",
     "check:auth": "node scripts/check-auth-invariant.mjs",
-    "test": "node --test scripts/browser-smoke-verdict.test.mjs scripts/preview.test.mjs scripts/sign-out-plan.test.mjs scripts/share-meta-merge.test.mjs && node --experimental-strip-types --test src/lib/app-data/app-data.test.ts src/lib/app-data/readiness-schedule.test.ts src/lib/auth/gate-identity.test.ts src/lib/auth/sign-in-gate.test.ts src/lib/listing-lifecycle.test.ts src/lib/authz.test.ts src/lib/phone.test.ts src/lib/validate-listing.test.ts src/lib/listing-title.test.ts src/lib/listing-spam.test.ts src/lib/legacy-paths.test.ts src/lib/guides.test.ts src/lib/search.test.ts src/lib/search-copy.test.ts src/lib/image-magic.test.ts src/lib/auth-origin.test.ts src/data/pakistan-areas.test.ts src/lib/seo.test.ts",
+    "test": "node --test scripts/browser-smoke-verdict.test.mjs scripts/preview.test.mjs scripts/sign-out-plan.test.mjs scripts/share-meta-merge.test.mjs && node --experimental-strip-types --test src/lib/app-data/app-data.test.ts src/lib/app-data/readiness-schedule.test.ts src/lib/auth/gate-identity.test.ts src/lib/auth/sign-in-gate.test.ts src/lib/listing-lifecycle.test.ts src/lib/authz.test.ts src/lib/phone.test.ts src/lib/validate-listing.test.ts src/lib/listing-title.test.ts src/lib/listing-spam.test.ts src/lib/post-ad.test.ts src/lib/auth-errors.test.ts src/lib/legacy-paths.test.ts src/lib/guides.test.ts src/lib/search.test.ts src/lib/search-copy.test.ts src/lib/image-magic.test.ts src/lib/auth-origin.test.ts src/data/pakistan-areas.test.ts src/lib/seo.test.ts",
     "lint": "eslint .",
     "format": "prettier --write .",
     "test:template": "node --test scripts/*.test.mjs"
@@ -59,6 +59,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "date-fns": "^4.0.0",
+    "heic2any": "^0.0.4",
     "jose": "6.2.9",
     "kysely": "^0.28.5",
     "lucide-react": "^0.510.0",

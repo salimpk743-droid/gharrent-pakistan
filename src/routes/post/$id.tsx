@@ -51,5 +51,5 @@ function EditListing() {
     );
   }
   if (!listing) return <div className="grid min-h-[40vh] place-items-center text-sm text-muted">Loading listing…</div>;
-  return <PropertyWizard initial={listing} />;
+  return <PropertyWizard initial={listing} mode="edit" signedIn />;
 }

@@ -96,7 +96,16 @@ type PopupMessage = { source: "grok-auth-popup"; token: string | null; error?: s
  */
 export async function signIn(
   providerId: string,
-  opts: { callbackURL?: string; errorCallbackURL?: string } = {},
+  opts: {
+    callbackURL?: string;
+    errorCallbackURL?: string;
+    /**
+     * Deployed only: the caller knows nobody is signed in (no SSR session, no client session), so the
+     * pre-sign-in sign-out round trip is skipped. That request can wait up to 10s on a slow connection
+     * before Google even opens.
+     */
+    skipPriorSignOut?: boolean;
+  } = {},
 ): Promise<void> {
   const callbackURL = opts.callbackURL ?? "/";
   const errorCallbackURL = opts.errorCallbackURL ?? "/login";
@@ -130,7 +139,7 @@ export async function signIn(
     return;
   }
 
-  await runPreSignInSignOut({
+  if (!opts.skipPriorSignOut || getBearerToken()) await runPreSignInSignOut({
     livePreview: false,
     hasBearer: Boolean(getBearerToken()),
     requestSignOut: () => authClient.signOut(),

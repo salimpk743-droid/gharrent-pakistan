@@ -2,14 +2,28 @@
  * Keeps a logged-out visitor's listing on their own device until they sign in to publish.
  * Fields go to localStorage; compressed photos go to IndexedDB (too large for localStorage).
  */
+import { newClientId, parsePosterPrefs, POSTER_PREFS_KEY, type PosterPrefs } from "./post-ad";
 import type { OwnerListing } from "./types";
 
 const FIELDS_KEY = "apnaghar:post-draft:v1";
 const DB_NAME = "apnaghar-post";
 const STORE = "photos";
 const PHOTOS_KEY = "draft";
+const AD_ID_KEY = "apnaghar:post-ad-id:v1";
 
-export type LocalPhoto = { id: string; dataUrl: string; width: number; height: number; isCover: boolean };
+/**
+ * One photo kept on this device. New photos store the shrunk JPEG as a Blob; drafts saved before
+ * Oct 2026 stored a data: URL instead. `uploadedTo` is the ad id the photo is already saved on.
+ */
+export type LocalPhoto = {
+  id: string;
+  blob?: Blob;
+  dataUrl?: string;
+  width: number;
+  height: number;
+  isCover: boolean;
+  uploadedTo?: string;
+};
 export type LocalDraftFields = Pick<
   OwnerListing,
   | "title"
@@ -190,10 +204,55 @@ export async function loadLocalPhotos(): Promise<LocalPhoto[]> {
 export async function clearLocalDraft() {
   try {
     localStorage.removeItem(FIELDS_KEY);
+    localStorage.removeItem(AD_ID_KEY);
   } catch {
     /* ignore */
   }
   await saveLocalPhotos([]);
+}
+
+/**
+ * The id of the ad this form will create. Made once per form and reused on every retry, so a
+ * second tap or a retry after a dropped connection never creates a second ad.
+ */
+export function getLocalAdId(): string {
+  try {
+    const existing = localStorage.getItem(AD_ID_KEY);
+    if (existing) return existing;
+    const id = newClientId();
+    localStorage.setItem(AD_ID_KEY, id);
+    return id;
+  } catch {
+    return newClientId();
+  }
+}
+
+/** Start over with a fresh ad id (used when the old id belongs to a different account on this device). */
+export function resetLocalAdId(): string {
+  const id = newClientId();
+  try {
+    localStorage.setItem(AD_ID_KEY, id);
+  } catch {
+    /* ignore */
+  }
+  return id;
+}
+
+export function loadPosterPrefs(): PosterPrefs {
+  try {
+    return parsePosterPrefs(localStorage.getItem(POSTER_PREFS_KEY));
+  } catch {
+    return {};
+  }
+}
+
+/** Remember the poster's city and phone so their next ad is pre-filled. */
+export function savePosterPrefs(prefs: PosterPrefs) {
+  try {
+    localStorage.setItem(POSTER_PREFS_KEY, JSON.stringify(prefs));
+  } catch {
+    /* ignore */
+  }
 }
 
 export function hasMeaningfulDraft(fields: LocalDraftFields | null): boolean {
