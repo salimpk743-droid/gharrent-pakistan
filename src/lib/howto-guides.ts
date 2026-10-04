@@ -478,7 +478,7 @@ const rentOutYourHouse: QuestionGuide = {
         [
           "You can ",
           POST,
-          " — add the city and area, rent, bedrooms, a few clear photos and your phone number. You only sign in when you press Publish. Prefer WhatsApp? Send the details and photos to Apna Ghar and we will post it for you, free.",
+          " — add the city and area, rent, bedrooms, a few clear photos and your phone number. You only sign in when you press Publish.",
         ],
       ],
     },
@@ -534,7 +534,7 @@ const rentOutYourHouse: QuestionGuide = {
   faqs: [
     {
       q: "Can I post my house for rent for free?",
-      a: ["Yes. Posting a property on Apna Ghar is free. You can fill in the ad without an account and sign in only when you publish, or send the details on WhatsApp and Apna Ghar will post it for you."],
+      a: ["Yes. Posting a property on Apna Ghar is free. You can fill in the ad without an account and sign in only when you publish."],
     },
     {
       q: "Do I have to register my tenant with the police?",

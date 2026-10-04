@@ -273,7 +273,7 @@ export const submitListing = createServerFn({ method: "POST" })
     if ((today[0]?.n ?? 0) >= MAX_PUBLISHES_PER_DAY) {
       return {
         ok: false as const,
-        error: `You can publish up to ${MAX_PUBLISHES_PER_DAY} ads a day. Please try again tomorrow, or WhatsApp us if you need more.`,
+        error: `You can publish up to ${MAX_PUBLISHES_PER_DAY} ads a day. Please try again tomorrow.`,
       };
     }
     const live = await sql<{

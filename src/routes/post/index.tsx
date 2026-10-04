@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { SignInPanel } from "@/components/auth/sign-in-panel";
 import { useAuthGate } from "@/components/auth/use-auth-gate";
 import { PropertyWizard } from "@/components/listing/property-wizard";
-import { WhatsAppPostForMe } from "@/components/listing/whatsapp-post-for-me";
 import {
   blankLocalListing,
   loadLocalFields,
@@ -73,9 +72,6 @@ function PostStart() {
         onNeedSignIn={() => setAskSignIn(true)}
         autoPublish={Boolean(restored?.publishRequested) || publishAfterSignIn}
       />
-      <div className="mx-auto -mt-24 w-[min(760px,calc(100%-24px))] pb-36">
-        <WhatsAppPostForMe />
-      </div>
       {askSignIn && !signedIn ? (
         <div
           className="fixed inset-0 z-50 overflow-y-auto bg-ink/50 px-3 py-6 sm:grid sm:place-items-center"

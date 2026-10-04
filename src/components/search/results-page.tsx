@@ -8,7 +8,6 @@ import { searchPageCopy } from "@/lib/search-copy";
 import { affordableGuideLabel, affordableGuidePath } from "@/lib/question-guides";
 import { resultsBreadcrumbJsonLd, resultsItemListJsonLd } from "@/lib/seo";
 import { JsonLd } from "@/components/seo/json-ld";
-import { WhatsAppPostForMe } from "@/components/listing/whatsapp-post-for-me";
 
 export function ResultsPage({
   items,
@@ -332,7 +331,6 @@ export function ResultsPage({
               </Link>
               <span className="text-sm text-muted">No account needed until you publish.</span>
             </div>
-            <WhatsAppPostForMe className="mt-5" />
             <p className="mt-5 text-sm leading-6 text-muted">
               Looking for a home instead? Try a broader location, property type or budget in the search above.
             </p>
