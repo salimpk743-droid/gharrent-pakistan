@@ -1,9 +1,12 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
+import { loginHrefFor } from "@/lib/auth-errors";
 import { useAuthGate } from "@/components/auth/use-auth-gate";
 import { UserButton } from "@/lib/auth/gates";
 
-export function AuthSlot({ loginHref = "/login" }: { loginHref?: string }) {
+export function AuthSlot() {
   const { user, isPending, showSignIn } = useAuthGate();
+  // Come back to the page you were on after signing in (on the homepage this stays /login?next=/).
+  const location = useLocation();
   if (isPending && !user && !showSignIn) {
     return <div className="h-9 w-24 animate-pulse rounded-md bg-sand" aria-hidden="true" />;
   }
@@ -17,11 +20,11 @@ export function AuthSlot({ loginHref = "/login" }: { loginHref?: string }) {
       </div>
     );
   }
-  const next = loginHref && loginHref !== "/login" ? loginHref : "/";
+  const search = loginHrefFor(location.pathname, location.searchStr ?? "");
   return (
     <Link
       to="/login"
-      search={{ next }}
+      search={search}
       className="inline-flex min-h-11 items-center rounded-md px-3 text-sm font-semibold text-ink hover:text-forest"
     >
       Sign in
